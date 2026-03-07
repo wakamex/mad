@@ -29,11 +29,30 @@ Weave the sample story-element IR into a compiled season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
 ```
 
+Generate the larger reusable 1000-tick dev season IR:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-devgen -ticks 1000 -out ./seasons/dev1000/season_ir.json
+```
+
+Compile that larger dev season:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
+```
+
 Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple `greedy_best`-vs-`always_hold` score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate):
 
 ```bash
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
 ```
+
+The generated `seasons/dev1000` fixture is the current long-form dev season. At the moment it compiles to:
+
+- `1000` ticks
+- about `14.3` hours total runtime
+- `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, preparedness hazards, and payoff gates
+- random-play audit around `mean=-1601`, `p90=-146`, `positive_rate≈8.1%` using `5000` runs and seed `11`
 
 For CI or release gating, fail the run if the random-play audit says the season is too easy to luck through:
 
@@ -53,6 +72,8 @@ go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
 2. Deterministically interleave those elements into a compiled `season.json`.
 3. Dry-run the compiled season and inspect the generated schedule/reveal report.
 4. Compile immutable public tick artifacts from that compiled season.
+
+For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic authoring and simulation loop, use `seasons/dev1000/`.
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
 The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful.

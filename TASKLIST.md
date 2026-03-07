@@ -118,7 +118,7 @@ Needed:
 
 ## 8. Generator Prototype
 
-Status: pending
+Status: completed
 
 Goal:
 
@@ -129,6 +129,13 @@ Needed:
 - add at least one `Standing Work Loop` template with diminishing returns or cooldowns
 - make that work feed multiple later branches rather than one hidden payoff
 - verify the random audit still stays deeply negative once ambient work exists
+
+Current execution:
+
+- `cmd/mad-devgen` now generates a canonical `1000`-tick dev season IR into `seasons/dev1000/season_ir.json`
+- the generated season compiles to `250` variable-length story elements and `1000` ticks across standing work, clue chains, ladders, hazards, and payoff gates
+- the current audit is clean at weave time: `cross_element_dependencies=701`, `flat_greedy_beats=0`, `weak_standing_work=0`
+- the current random audit over `5000` runs yields roughly `mean=-1601`, `p90=-146`, and `positive_rate≈8.1%`
 
 ## 9. Standing Work Loop Audits
 

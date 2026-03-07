@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mad.local/schemas/score_snapshot.schema.json",
+  "title": "ScoreEpochSnapshot",
+  "type": "object",
+  "required": ["score_epoch", "published_at", "top", "shards"],
+  "properties": {
+    "score_epoch": {"type": "string"},
+    "published_at": {"type": "integer"},
+    "top": {"type": "array"},
+    "shards": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

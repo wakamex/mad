@@ -1,0 +1,184 @@
+{
+  "schema_version": "v1alpha1",
+  "season_id": "dev-season",
+  "title": "The Latent Labyrinth (Dev)",
+  "score_epoch_ticks": 2,
+  "reveal_lag_ticks": 2,
+  "shard_count": 16,
+  "ticks": [
+    {
+      "tick_id": "S1-T0001",
+      "clock_class": "standard",
+      "duration_ms": 15000,
+      "sources": [
+        {
+          "source_id": "archive.bulletin.77",
+          "source_type": "official_bulletin",
+          "text": "The Choir of Glass denies all contact with rain-touched cargo."
+        },
+        {
+          "source_id": "market.gossip.901",
+          "source_type": "market_gossip",
+          "text": "Rain-touched glass is trading at a premium in the southern wards."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.glass_choir.7",
+          "allowed_commands": ["inspect", "commit", "hold"],
+          "allowed_options": ["penitent", "broker", "smuggler"],
+          "text_slot": false
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {"command": "commit", "target": "quest.glass_choir.7", "option": "broker"},
+            "delta": {"yield": 120, "insight": 40, "aura": 8, "debt": 0, "miss_penalties": 0},
+            "label": "During the Omission phase, the Choir rewards discretion. Broker aligned with the phase and current value chain.",
+            "classification": "best"
+          },
+          {
+            "match": {"command": "commit", "target": "quest.glass_choir.7", "option": "smuggler"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 50, "miss_penalties": 10},
+            "label": "Smuggler triggered debt and suspicion. The market signal was public, but the faction notice punished brazenness.",
+            "classification": "bad"
+          },
+          {
+            "match": {"command": "hold"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 0, "miss_penalties": 10},
+            "label": "The opportunity passed.",
+            "classification": "miss"
+          }
+        ]
+      }
+    },
+    {
+      "tick_id": "S1-T0002",
+      "clock_class": "dossier",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "archive.console.5",
+          "source_type": "archive_fragment",
+          "text": "Terminal requests a three-word authorization pattern."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "auth.vault.3",
+          "allowed_commands": ["commit", "hold"],
+          "allowed_options": ["authorize"],
+          "text_slot": true,
+          "phrase_hint": "three_word_pattern"
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {"command": "commit", "target": "auth.vault.3", "option": "authorize", "phrase": "green rain broker"},
+            "delta": {"yield": 0, "insight": 220, "aura": 15, "debt": 0, "miss_penalties": 0},
+            "label": "The terminal accepted the remembered phrase tied back to the earlier rain-and-broker contradiction.",
+            "classification": "best"
+          },
+          {
+            "match": {"command": "commit", "target": "auth.vault.3", "option": "authorize"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 40, "miss_penalties": 15},
+            "label": "The terminal rejected the phrase and logged the attempt as suspicious.",
+            "classification": "bad"
+          },
+          {
+            "match": {"command": "hold"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 0, "miss_penalties": 5},
+            "label": "No authorization attempt was made.",
+            "classification": "miss"
+          }
+        ]
+      }
+    },
+    {
+      "tick_id": "S1-T0003",
+      "clock_class": "interrupt",
+      "duration_ms": 12000,
+      "sources": [
+        {
+          "source_id": "system.broadcast.11",
+          "source_type": "critical_broadcast",
+          "text": "Containment failure in the northern hub. Unshielded carriers must vacate or deploy a dampener."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.northern_hub.2",
+          "allowed_commands": ["equip", "commit", "hold"],
+          "allowed_options": ["evacuate", "deploy_dampener"],
+          "text_slot": false
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {"command": "commit", "target": "hazard.northern_hub.2", "option": "deploy_dampener"},
+            "delta": {"yield": 40, "insight": 30, "aura": 10, "debt": 0, "miss_penalties": 0},
+            "label": "Prepared players deployed the dampener in time.",
+            "classification": "best"
+          },
+          {
+            "match": {"command": "commit", "target": "hazard.northern_hub.2", "option": "evacuate"},
+            "delta": {"yield": 0, "insight": 10, "aura": 2, "debt": 0, "miss_penalties": 2},
+            "label": "Evacuation worked but gave up the best outcome.",
+            "classification": "bad"
+          },
+          {
+            "match": {"command": "hold"},
+            "delta": {"yield": 0, "insight": 0, "aura": -5, "debt": 15, "miss_penalties": 20},
+            "label": "The hazard landed because no action was taken.",
+            "classification": "miss"
+          }
+        ]
+      }
+    },
+    {
+      "tick_id": "S1-T0004",
+      "clock_class": "standard",
+      "duration_ms": 15000,
+      "sources": [
+        {
+          "source_id": "faction.notice.22",
+          "source_type": "faction_notice",
+          "text": "The Choir seeks discreet brokers for a second, more delicate shipment."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.glass_choir.8",
+          "allowed_commands": ["inspect", "commit", "hold"],
+          "allowed_options": ["broker", "penitent"],
+          "text_slot": false
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {"command": "commit", "target": "quest.glass_choir.8", "option": "broker"},
+            "delta": {"yield": 160, "insight": 60, "aura": 12, "debt": 0, "miss_penalties": 0},
+            "label": "The pattern held: discretion still dominated in the current phase.",
+            "classification": "best"
+          },
+          {
+            "match": {"command": "commit", "target": "quest.glass_choir.8", "option": "penitent"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 30, "miss_penalties": 10},
+            "label": "Penitent signaled the wrong social model for this phase.",
+            "classification": "bad"
+          },
+          {
+            "match": {"command": "hold"},
+            "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 0, "miss_penalties": 8},
+            "label": "Another profitable broker window passed.",
+            "classification": "miss"
+          }
+        ]
+      }
+    }
+  ]
+}

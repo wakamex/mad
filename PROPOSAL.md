@@ -59,6 +59,8 @@ This creates three simultaneous experiences:
 - A personal optimization problem that is hard to solve
 - A replayable benchmark with identical public input for all entrants
 
+For tractability at large scale, the public read path should be immutable and CDN-cacheable. The origin should behave like an authoritative scheduler and scorer, not a bespoke fanout service.
+
 ## Core Loop
 
 1. The server broadcasts a public tick.

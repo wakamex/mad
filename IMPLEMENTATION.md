@@ -184,47 +184,6 @@ Immutable public tick packet.
 
 This is the main read object clients care about.
 
-Each tick beyond the first includes a `previous_result` block with the
-public answer reveal for the prior tick:
-
-```json
-{
-  "tick_id": "S1-T2045",
-  "previous_result": {
-    "tick_id": "S1-T2044",
-    "opportunity_id": "quest.glass_choir.7",
-    "correct_command": "commit",
-    "correct_option": "broker",
-    "correct_phrase": null,
-    "explanation": "The Glass Choir's severance from the Resonance Collective inverted broker value. The green rain from T1800 made glass fragile — only a broker, not a penitent, could profit from fragile cargo.",
-    "stats": {
-      "submissions": 847293,
-      "correct_pct": 23.4,
-      "mean_confidence_correct": 0.71,
-      "mean_confidence_incorrect": 0.84,
-      "most_common_wrong_option": "penitent"
-    }
-  },
-  "clock_class": "standard",
-  "deadline_ms": 90000,
-  "sources": ["..."],
-  "opportunities": ["..."]
-}
-```
-
-This is how players learn whether they were right — from the shared
-public stream, not from a private packet. Everyone sees the answer at
-the same time, after the deadline when it can no longer be exploited.
-
-The `explanation` field ties the answer to prior narrative events,
-reinforcing the long-context memory game. The `stats` block creates
-spectator entertainment ("84% average confidence among those who got it
-wrong" is the Twitch moment).
-
-Players who want to track their own state locally can do so
-deterministically: they know their action, they know the answer key.
-The score shards provide authoritative verification every score epoch.
-
 ### `POST /actions`
 
 Authenticated action submission.
@@ -287,6 +246,8 @@ The read path should be almost entirely static.
 - Serve with `ETag` and `Cache-Control`
 - Make `current.json` an atomically swapped file
 - Prefer immutable tick URLs over "give me the latest full payload" endpoints
+- Put Cloudflare or equivalent CDN in front of all public GET paths
+- Add explicit cache rules for `/ticks/*`, `/reveals/*`, and `/score-epochs/*`
 
 ### Anti-Spam Behavior
 
@@ -297,6 +258,26 @@ You cannot stop a malicious client from polling too often. You can make it point
 - nginx can rate-limit obvious abuse at the edge
 
 If a client still spam-refreshes, that becomes an abuse-control problem, not a product-design problem.
+
+### Cloudflare Role
+
+Cloudflare largely solves the read-side egress problem if the origin is disciplined:
+
+- cache immutable public GETs at the edge
+- keep `current.json` tiny
+- never personalize cacheable responses
+
+Cloudflare does not solve:
+
+- `POST /actions`
+- ingest abuse
+- score computation
+- competition fairness
+
+So the correct statement is:
+
+- Cloudflare or another CDN solves most public-read egress
+- the origin still has to survive peak write load and batch scoring
 
 ## Public Feedback Model
 
@@ -739,6 +720,223 @@ Go stdlib net/http handles this comfortably on 16 cores.
 Without an external cache layer, the realistic ceiling is tens to low hundreds of thousands of well-behaved active readers, not one million readers hammering origin directly.
 
 With a CDN in front of the immutable tick files, one million readers becomes straightforward while the origin remains one box.
+
+## Current Bottlenecks
+
+With Cloudflare or another CDN serving immutable public reads, the bottleneck is no longer origin egress for `GET /ticks/*`.
+
+### Primary Runtime Bottleneck: Write Bursts
+
+The main bottleneck becomes `POST /actions`, especially near deadlines.
+
+At `1,000,000` active players:
+
+- average standard-tick ingest is about `11,111 POST/s`
+- actual traffic will bunch near the deadline
+- interrupt ticks can create much sharper bursts
+
+The expensive part is not business logic. It is reliably absorbing a large burst of tiny writes while doing:
+
+- auth lookup
+- schema validation
+- deadline check
+- last-write-wins replacement
+- WAL append
+- abuse control
+
+Mitigations:
+
+- keep the hot path memory resident
+- use dense numeric `player_id`s
+- append compact WAL records only
+- shard locks or lock-free queues by player-id range
+- accept and fsync in batches instead of per request
+- keep responses tiny and constant-shape
+
+### Secondary Runtime Bottleneck: Ingest Abuse
+
+Once reads are cached, hostile traffic shifts to the uncached write path.
+
+Abuse modes:
+
+- replaying POSTs aggressively near deadlines
+- flooding account creation
+- multi-account farming
+- saturating origin with junk bodies
+
+Mitigations:
+
+- strict body size caps
+- IP and token bucket rate limits
+- authenticated writes only
+- optional emergency proof-of-work mode
+- account creation friction if ranked play matters
+
+### Tertiary Runtime Bottleneck: Batch Scoring
+
+Batch scoring should be tractable if:
+
+- tick plans are precompiled
+- scoring is O(active players + scheduled due)
+- no database sits in the inner loop
+
+It becomes a bottleneck only if the implementation gets too dynamic or allocates too much.
+
+Mitigations:
+
+- immutable tick plans
+- fixed-width player state
+- due lists / timing wheels
+- parallel worker pools with deterministic partitioning
+
+### Product Bottleneck: Season Authoring
+
+The biggest non-runtime bottleneck is still content production.
+
+The server can be made efficient. The hard part is generating seasons with:
+
+- lawful hidden axioms
+- coherent narrator phase shifts
+- valid delayed answer keys
+- ontological drift that is hard but fair
+- memory-distance annotations
+
+If season tooling is weak, the project fails even if the server is fast.
+
+Mitigations:
+
+- build a tick compiler early
+- define a small intermediate representation for season logic
+- support dry-run simulation and validation
+- auto-derive as many annotations as possible instead of hand-authoring them
+
+## Priority Order
+
+The problems should not be tackled in the same order they appear conceptually.
+
+The correct implementation order is:
+
+1. Freeze schemas
+2. Prove write-burst ingest
+3. Prove batch scoring and due-state handling
+4. Ship the public feedback loop
+5. Harden abuse controls
+6. Build season-authoring tooling
+
+The reason is simple:
+
+- write ingest is the first runtime bottleneck
+- season tooling is the biggest long-term project risk
+- both matter, but only one blocks a minimal working runtime
+
+### 1. Freeze Schemas
+
+Lock the wire contracts for:
+
+- `current.json`
+- tick packets
+- action submission
+- score snapshots
+- reveal packets
+
+Exit criteria:
+
+- versioned JSON schemas
+- canonical example payloads
+- fixture corpus for parser tests
+
+### 2. Prove Write-Burst Ingest
+
+Before building anything fancy, prove the origin can absorb deadline spikes.
+
+Build:
+
+- token auth
+- dense `player_id` mapping
+- last-write-wins pending-action array
+- WAL append
+- tiny `202` response path
+
+Exit criteria:
+
+- synthetic load test at and above expected standard-tick burst
+- bounded p99 latency under load
+- no per-request DB dependency
+
+### 3. Prove Batch Scoring and Due-State Handling
+
+Once actions land reliably, prove ticks can close cheaply.
+
+Build:
+
+- immutable tick plans
+- fixed-width player state
+- due lists / timing wheel
+- score epoch builder
+
+Exit criteria:
+
+- batch close comfortably inside the standard-tick budget
+- absent players do not force global scans
+- replay from WAL reproduces the same score state
+
+### 4. Ship the Public Feedback Loop
+
+Players need to understand the game without private packets.
+
+Build:
+
+- score epoch snapshots
+- top-N leaderboards
+- delayed reveal packets
+- shard checkpoints
+
+Exit criteria:
+
+- a player can submit, wait, and later understand whether the play was good
+- spectators can follow the game from public artifacts alone
+
+### 5. Harden Abuse Controls
+
+Basic abuse controls should exist from day one, but deeper hardening comes after the hot path is proven.
+
+Build:
+
+- IP and token rate limits
+- strict body caps
+- retry/idempotency handling
+- account-creation friction if ranked play exists
+
+Exit criteria:
+
+- spammy clients cannot starve the origin cheaply
+- repeated submissions mostly cost the attacker, not the server
+
+### 6. Build Season-Authoring Tooling
+
+This is the biggest long-term risk and should start as soon as the runtime loop exists, but not before the runtime contract is stable.
+
+Build:
+
+- tick compiler
+- season intermediate representation
+- validator
+- dry-run simulator
+- annotation helpers for memory distance and reveal generation
+
+Exit criteria:
+
+- produce a coherent 100-tick test season
+- generate lawful answer keys and reveals automatically where possible
+- support repeatable content iteration without hand-editing raw tick JSON
+
+### Practical Recommendation
+
+Treat steps 1 through 4 as the MVP critical path.
+
+Treat step 5 as launch hardening.
+
+Treat step 6 as the program-level success criterion. If season tooling stays weak, the runtime can work and the project can still fail.
 
 ## Recommended Runtime Layout
 

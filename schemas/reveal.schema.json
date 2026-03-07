@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mad.local/schemas/reveal.schema.json",
+  "title": "RevealPacket",
+  "type": "object",
+  "required": ["tick_id", "reveal_lag_ticks", "published_at", "resolutions"],
+  "properties": {
+    "tick_id": {"type": "string"},
+    "reveal_lag_ticks": {"type": "integer"},
+    "published_at": {"type": "integer"},
+    "resolutions": {"type": "array"}
+  },
+  "additionalProperties": false
+}

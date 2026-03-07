@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mad.local/schemas/tick.schema.json",
+  "title": "Tick",
+  "type": "object",
+  "required": ["tick_id", "clock_class", "deadline_ms", "sources", "opportunities"],
+  "properties": {
+    "tick_id": {"type": "string"},
+    "clock_class": {"type": "string"},
+    "deadline_ms": {"type": "integer"},
+    "sources": {"type": "array"},
+    "opportunities": {"type": "array"}
+  },
+  "additionalProperties": false
+}

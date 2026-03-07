@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mad.local/schemas/current.schema.json",
+  "title": "Current",
+  "type": "object",
+  "required": ["season_id", "tick_id", "tick_url", "next_tick_at", "next_poll_after_ms"],
+  "properties": {
+    "season_id": {"type": "string"},
+    "tick_id": {"type": "string"},
+    "tick_url": {"type": "string"},
+    "next_tick_at": {"type": "integer"},
+    "next_poll_after_ms": {"type": "integer"},
+    "current_score_epoch": {"type": "string"},
+    "score_epoch_url": {"type": "string"}
+  },
+  "additionalProperties": false
+}

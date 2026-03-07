@@ -103,12 +103,18 @@ type SimulatedBadAction struct {
 }
 
 type simulatedPlayerState struct {
-	Ledger       SimulatedLedger
-	Tags         map[string]struct{}
-	Reputation   map[string]int64
-	Availability string
-	Inventory    int
+	CurrentTick             int
+	Ledger                  SimulatedLedger
+	Tags                    map[string]struct{}
+	Reputation              map[string]int64
+	Availability            string
+	AvailabilityResetTick   int
+	AvailabilityBeforeLock  string
+	CooldownReadyTickByName map[string]int
+	Inventory               int
 }
+
+const defaultAvailability = "available"
 
 func Simulate(file File) (SimulationReport, error) {
 	return SimulateWithOptions(file, SimulationOptions{})
@@ -143,6 +149,8 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	holdState := newSimulatedPlayerState()
 	var nowMS int64
 	for i, tick := range file.Ticks {
+		advanceSimulatedStateToTick(&greedyState, i)
+		advanceSimulatedStateToTick(&holdState, i)
 		resolution := simulateResolution(tick, greedyState)
 
 		bestBaseline := report.Baselines["greedy_best"]
@@ -284,7 +292,8 @@ func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomA
 	for i := 0; i < options.RandomRuns; i++ {
 		state := newSimulatedPlayerState()
 		beatBestHits := 0
-		for _, tick := range file.Ticks {
+		for tickIndex, tick := range file.Ticks {
+			advanceSimulatedStateToTick(&state, tickIndex)
 			action := randomActionForTick(tick, rng)
 			rule, isBest := evaluateSimulatedAction(tick.Scoring, action, state)
 			applyRuleToSimulatedState(&state, rule)
@@ -438,8 +447,23 @@ func applyLedgerDelta(ledger *SimulatedLedger, delta ScoreDelta) {
 
 func newSimulatedPlayerState() simulatedPlayerState {
 	return simulatedPlayerState{
-		Tags:       make(map[string]struct{}),
-		Reputation: make(map[string]int64),
+		Tags:                    make(map[string]struct{}),
+		Reputation:              make(map[string]int64),
+		Availability:            defaultAvailability,
+		CooldownReadyTickByName: make(map[string]int),
+	}
+}
+
+func advanceSimulatedStateToTick(state *simulatedPlayerState, tickIndex int) {
+	state.CurrentTick = tickIndex
+	if state.AvailabilityResetTick > 0 && tickIndex >= state.AvailabilityResetTick {
+		if state.AvailabilityBeforeLock != "" {
+			state.Availability = state.AvailabilityBeforeLock
+		} else {
+			state.Availability = defaultAvailability
+		}
+		state.AvailabilityBeforeLock = ""
+		state.AvailabilityResetTick = 0
 	}
 }
 
@@ -466,6 +490,17 @@ func requirementsMet(requirements RuleRequirements, state simulatedPlayerState) 
 			return false
 		}
 	}
+	if len(requirements.RequiresAvailability) > 0 && !contains(requirements.RequiresAvailability, state.Availability) {
+		return false
+	}
+	if len(requirements.ForbidsAvailability) > 0 && contains(requirements.ForbidsAvailability, state.Availability) {
+		return false
+	}
+	for _, cooldownName := range requirements.RequiresCooldownReady {
+		if readyTick, ok := state.CooldownReadyTickByName[cooldownName]; ok && state.CurrentTick < readyTick {
+			return false
+		}
+	}
 	if requirements.MaxDebt != 0 && state.Ledger.Debt > requirements.MaxDebt {
 		return false
 	}
@@ -488,8 +523,23 @@ func applyRuleToSimulatedState(state *simulatedPlayerState, rule Rule) {
 	for _, tag := range rule.Effects.RemoveTags {
 		delete(state.Tags, tag)
 	}
-	if rule.Effects.AvailabilityDelta != "" {
+	if rule.Effects.LockTicks > 0 {
+		state.AvailabilityBeforeLock = state.Availability
+		if rule.Effects.AvailabilityDelta != "" {
+			state.Availability = rule.Effects.AvailabilityDelta
+		} else {
+			state.Availability = "locked"
+		}
+		state.AvailabilityResetTick = state.CurrentTick + rule.Effects.LockTicks + 1
+	} else if rule.Effects.AvailabilityDelta != "" {
 		state.Availability = rule.Effects.AvailabilityDelta
+	}
+	for cooldownName, cooldownTicks := range rule.Effects.SetCooldowns {
+		if cooldownTicks <= 0 {
+			delete(state.CooldownReadyTickByName, cooldownName)
+			continue
+		}
+		state.CooldownReadyTickByName[cooldownName] = state.CurrentTick + cooldownTicks + 1
 	}
 	state.Inventory += rule.Effects.InventoryDelta
 	for faction, delta := range rule.Effects.ReputationDelta {

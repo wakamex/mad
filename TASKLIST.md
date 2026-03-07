@@ -16,10 +16,11 @@ Current execution:
 - add beat-level produced/consumed tags
 - add internal rule requirements/effects metadata
 - reject beats that consume tags without a guaranteed earlier producer
+- simulate availability locks and cooldown readiness in the baseline/random audit path
 
 Next steps:
 
-- extend tags into explicit availability, cooldown, inventory, and faction-state transitions
+- propagate availability and cooldown state into richer compiled-season planning and authoring templates
 - propagate those state transitions into a richer compiled-season plan
 
 ## 2. Reachability and Dominance Audits

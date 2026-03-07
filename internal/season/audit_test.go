@@ -82,3 +82,45 @@ func TestAuditIRCountsTransitiveCrossElementDependencies(t *testing.T) {
 		t.Fatalf("unexpected cross-element dependency count: got %d want 2", report.CrossElementDependencyBeats)
 	}
 }
+
+func TestAuditIRDoesNotFlagAvailabilityBeatAsFlatGreedy(t *testing.T) {
+	ir := IRFile{
+		SeasonID: "audit-availability",
+		Elements: []StoryElement{
+			{
+				ElementID: "work",
+				Family:    "standing_work_loop",
+				Beats: []StoryBeat{
+					{
+						BeatID:        "work.1",
+						ClockClass:    "standard",
+						Sources:       []Source{{SourceID: "work.1.source", SourceType: "test", Text: "work"}},
+						Opportunities: []Opportunity{{OpportunityID: "work.op.1", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"shift"}}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "work.op.1", Option: "shift"},
+									Effects:        StateEffects{AvailabilityDelta: "committed", LockTicks: 1},
+									Delta:          ScoreDelta{Yield: 5},
+									Label:          "shift",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "hold",
+									Classification: "miss",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	report := AuditIR(ir)
+	if len(report.FlatGreedyBeats) != 0 {
+		t.Fatalf("expected availability-changing beat not to be flat greedy: %#v", report.FlatGreedyBeats)
+	}
+}

@@ -194,3 +194,197 @@ func TestGreedyBaselineRespectsRequirementsAndEffects(t *testing.T) {
 		t.Fatalf("expected requirement-aware resolution preview on second tick")
 	}
 }
+
+func TestGreedyBaselineRespectsAvailabilityLocks(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "sim-locks",
+		Title:           "sim locks",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "S1-T0001",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "work", Option: "shift"},
+							Effects:        StateEffects{AvailabilityDelta: "committed", LockTicks: 1},
+							Delta:          ScoreDelta{Yield: 5},
+							Label:          "take the shift",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "work", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"shift"}}},
+			},
+			{
+				TickID:     "S1-T0002",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "broker.2", Option: "take"},
+							Requirements:   RuleRequirements{RequiresAvailability: []string{defaultAvailability}},
+							Delta:          ScoreDelta{Yield: 100},
+							Label:          "take broker job",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 2},
+							Label:          "too busy to act",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "broker.2", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"take"}}},
+			},
+			{
+				TickID:     "S1-T0003",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "broker.3", Option: "take"},
+							Requirements:   RuleRequirements{RequiresAvailability: []string{defaultAvailability}},
+							Delta:          ScoreDelta{Yield: 100},
+							Label:          "take broker job",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 1},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "broker.3", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"take"}}},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+
+	if report.Baselines["greedy_best"].Ledger.Score != 103 {
+		t.Fatalf("unexpected greedy score: got %d want 103", report.Baselines["greedy_best"].Ledger.Score)
+	}
+	if report.Ticks[1].ResolutionPreview != nil {
+		t.Fatalf("expected no eligible best action while locked on second tick")
+	}
+	if report.Ticks[2].ResolutionPreview == nil || report.Ticks[2].ResolutionPreview.BestKnownAction.Option != "take" {
+		t.Fatalf("expected lock to expire before third tick")
+	}
+}
+
+func TestGreedyBaselineRespectsCooldownReadiness(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "sim-cooldowns",
+		Title:           "sim cooldowns",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "S1-T0001",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "work", Option: "patrol"},
+							Effects:        StateEffects{SetCooldowns: map[string]int{"favors.choir": 1}},
+							Delta:          ScoreDelta{Insight: 3},
+							Label:          "use the favor",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "work", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"patrol"}}},
+			},
+			{
+				TickID:     "S1-T0002",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "favor.2", Option: "cash_in"},
+							Requirements:   RuleRequirements{RequiresCooldownReady: []string{"favors.choir"}},
+							Delta:          ScoreDelta{Yield: 50},
+							Label:          "cash in favor",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 2},
+							Label:          "favor still cooling down",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "favor.2", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"cash_in"}}},
+			},
+			{
+				TickID:     "S1-T0003",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "favor.3", Option: "cash_in"},
+							Requirements:   RuleRequirements{RequiresCooldownReady: []string{"favors.choir"}},
+							Delta:          ScoreDelta{Yield: 50},
+							Label:          "cash in favor",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 1},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "favor.3", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"cash_in"}}},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+
+	if report.Baselines["greedy_best"].Ledger.Score != 51 {
+		t.Fatalf("unexpected greedy score: got %d want 51", report.Baselines["greedy_best"].Ledger.Score)
+	}
+	if report.Ticks[1].ResolutionPreview != nil {
+		t.Fatalf("expected no eligible best action while cooldown is active on second tick")
+	}
+	if report.Ticks[2].ResolutionPreview == nil || report.Ticks[2].ResolutionPreview.BestKnownAction.Option != "cash_in" {
+		t.Fatalf("expected cooldown to expire before third tick")
+	}
+}

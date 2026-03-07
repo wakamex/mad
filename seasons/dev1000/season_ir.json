@@ -3713,8 +3713,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 26,
+                  "label": "Aura 26+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -3731,7 +3731,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 26
                 },
                 "delta": {
                   "yield": 114,
@@ -3838,8 +3838,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 28,
+                  "label": "Aura 28+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -3925,8 +3925,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 26,
+                  "label": "Aura 26+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -3943,7 +3943,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 26
                 },
                 "delta": {
                   "yield": 138,
@@ -4050,8 +4050,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 28,
+                  "label": "Aura 28+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -6403,8 +6403,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 46,
+                  "label": "Aura 46+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -6421,7 +6421,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 46
                 },
                 "delta": {
                   "yield": 114,
@@ -6528,8 +6528,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 48,
+                  "label": "Aura 48+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -6615,8 +6615,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 46,
+                  "label": "Aura 46+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -6633,7 +6633,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 46
                 },
                 "delta": {
                   "yield": 138,
@@ -8714,8 +8714,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 60,
+                  "label": "Aura 60+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -8732,7 +8732,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 60
                 },
                 "delta": {
                   "yield": 114,
@@ -8839,8 +8839,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 62,
+                  "label": "Aura 62+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -8926,8 +8926,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 60,
+                  "label": "Aura 60+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -8944,7 +8944,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 60
                 },
                 "delta": {
                   "yield": 138,
@@ -9051,8 +9051,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 62,
+                  "label": "Aura 62+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -11267,8 +11267,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 80,
+                  "label": "Aura 80+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -11285,7 +11285,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 80
                 },
                 "delta": {
                   "yield": 114,
@@ -11392,8 +11392,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 82,
+                  "label": "Aura 82+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -11479,8 +11479,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 80,
+                  "label": "Aura 80+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -11497,7 +11497,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 80
                 },
                 "delta": {
                   "yield": 138,
@@ -11604,8 +11604,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 82,
+                  "label": "Aura 82+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -13609,8 +13609,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 100,
+                  "label": "Aura 100+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -13627,7 +13627,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 100
                 },
                 "delta": {
                   "yield": 114,
@@ -13734,8 +13734,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 102,
+                  "label": "Aura 102+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -13821,8 +13821,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 100,
+                  "label": "Aura 100+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -13839,7 +13839,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 100
                 },
                 "delta": {
                   "yield": 138,
@@ -13946,8 +13946,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 102,
+                  "label": "Aura 102+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -16028,8 +16028,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 114,
+                  "label": "Aura 114+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -16046,7 +16046,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 114
                 },
                 "delta": {
                   "yield": 114,
@@ -16153,8 +16153,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 116,
+                  "label": "Aura 116+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -16240,8 +16240,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 114,
+                  "label": "Aura 114+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -16258,7 +16258,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 114
                 },
                 "delta": {
                   "yield": 138,
@@ -16365,8 +16365,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 116,
+                  "label": "Aura 116+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -18581,8 +18581,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 134,
+                  "label": "Aura 134+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -18599,7 +18599,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 134
                 },
                 "delta": {
                   "yield": 114,
@@ -18706,8 +18706,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 136,
+                  "label": "Aura 136+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -18793,8 +18793,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 134,
+                  "label": "Aura 134+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -18811,7 +18811,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 134
                 },
                 "delta": {
                   "yield": 138,
@@ -18918,8 +18918,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 136,
+                  "label": "Aura 136+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -21097,8 +21097,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 154,
+                  "label": "Aura 154+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -21115,7 +21115,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 154
                 },
                 "delta": {
                   "yield": 114,
@@ -21222,8 +21222,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 156,
+                  "label": "Aura 156+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -21309,8 +21309,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 154,
+                  "label": "Aura 154+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -21327,7 +21327,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 154
                 },
                 "delta": {
                   "yield": 138,
@@ -21434,8 +21434,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 156,
+                  "label": "Aura 156+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -23438,8 +23438,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 168,
+                  "label": "Aura 168+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -23456,7 +23456,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 168
                 },
                 "delta": {
                   "yield": 114,
@@ -23563,8 +23563,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 170,
+                  "label": "Aura 170+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -23650,8 +23650,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 168,
+                  "label": "Aura 168+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -23668,7 +23668,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 168
                 },
                 "delta": {
                   "yield": 138,
@@ -23775,8 +23775,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 170,
+                  "label": "Aura 170+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -25854,8 +25854,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 188,
+                  "label": "Aura 188+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -25872,7 +25872,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 188
                 },
                 "delta": {
                   "yield": 114,
@@ -25979,8 +25979,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 190,
+                  "label": "Aura 190+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -26066,8 +26066,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 188,
+                  "label": "Aura 188+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -26084,7 +26084,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 188
                 },
                 "delta": {
                   "yield": 138,
@@ -26191,8 +26191,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 190,
+                  "label": "Aura 190+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -28544,8 +28544,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 208,
+                  "label": "Aura 208+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -28562,7 +28562,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 208
                 },
                 "delta": {
                   "yield": 114,
@@ -28669,8 +28669,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 210,
+                  "label": "Aura 210+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -28756,8 +28756,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 208,
+                  "label": "Aura 208+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -28774,7 +28774,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 208
                 },
                 "delta": {
                   "yield": 138,
@@ -30855,8 +30855,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 222,
+                  "label": "Aura 222+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -30873,7 +30873,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 222
                 },
                 "delta": {
                   "yield": 114,
@@ -30980,8 +30980,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 224,
+                  "label": "Aura 224+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -31067,8 +31067,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 222,
+                  "label": "Aura 222+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -31085,7 +31085,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 222
                 },
                 "delta": {
                   "yield": 138,
@@ -31192,8 +31192,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 224,
+                  "label": "Aura 224+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -33408,8 +33408,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 242,
+                  "label": "Aura 242+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -33426,7 +33426,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 242
                 },
                 "delta": {
                   "yield": 114,
@@ -33533,8 +33533,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 244,
+                  "label": "Aura 244+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -33620,8 +33620,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 242,
+                  "label": "Aura 242+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -33638,7 +33638,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 242
                 },
                 "delta": {
                   "yield": 138,
@@ -33745,8 +33745,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 244,
+                  "label": "Aura 244+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -35750,8 +35750,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 262,
+                  "label": "Aura 262+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -35768,7 +35768,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 262
                 },
                 "delta": {
                   "yield": 114,
@@ -35875,8 +35875,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 264,
+                  "label": "Aura 264+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -35962,8 +35962,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 262,
+                  "label": "Aura 262+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -35980,7 +35980,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 262
                 },
                 "delta": {
                   "yield": 138,
@@ -36087,8 +36087,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 264,
+                  "label": "Aura 264+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -38169,8 +38169,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 276,
+                  "label": "Aura 276+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -38187,7 +38187,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 276
                 },
                 "delta": {
                   "yield": 114,
@@ -38294,8 +38294,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 278,
+                  "label": "Aura 278+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -38381,8 +38381,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 276,
+                  "label": "Aura 276+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -38399,7 +38399,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 276
                 },
                 "delta": {
                   "yield": 138,
@@ -38506,8 +38506,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 278,
+                  "label": "Aura 278+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -40722,8 +40722,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 296,
+                  "label": "Aura 296+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -40740,7 +40740,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 296
                 },
                 "delta": {
                   "yield": 114,
@@ -40847,8 +40847,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 298,
+                  "label": "Aura 298+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -40934,8 +40934,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 296,
+                  "label": "Aura 296+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -40952,7 +40952,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 296
                 },
                 "delta": {
                   "yield": 138,
@@ -41059,8 +41059,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 298,
+                  "label": "Aura 298+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -43238,8 +43238,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 316,
+                  "label": "Aura 316+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -43256,7 +43256,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 316
                 },
                 "delta": {
                   "yield": 114,
@@ -43363,8 +43363,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 318,
+                  "label": "Aura 318+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -43450,8 +43450,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 316,
+                  "label": "Aura 316+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -43468,7 +43468,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 316
                 },
                 "delta": {
                   "yield": 138,
@@ -43575,8 +43575,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 318,
+                  "label": "Aura 318+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -45579,8 +45579,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 330,
+                  "label": "Aura 330+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -45597,7 +45597,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 330
                 },
                 "delta": {
                   "yield": 114,
@@ -45704,8 +45704,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 332,
+                  "label": "Aura 332+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -45791,8 +45791,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 330,
+                  "label": "Aura 330+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -45809,7 +45809,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 330
                 },
                 "delta": {
                   "yield": 138,
@@ -45916,8 +45916,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 332,
+                  "label": "Aura 332+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -47995,8 +47995,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 350,
+                  "label": "Aura 350+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -48013,7 +48013,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 350
                 },
                 "delta": {
                   "yield": 114,
@@ -48120,8 +48120,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 352,
+                  "label": "Aura 352+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -48207,8 +48207,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 350,
+                  "label": "Aura 350+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -48225,7 +48225,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 350
                 },
                 "delta": {
                   "yield": 138,
@@ -48332,8 +48332,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 352,
+                  "label": "Aura 352+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -50685,8 +50685,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 370,
+                  "label": "Aura 370+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -50703,7 +50703,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 370
                 },
                 "delta": {
                   "yield": 114,
@@ -50810,8 +50810,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 372,
+                  "label": "Aura 372+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -50897,8 +50897,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 370,
+                  "label": "Aura 370+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -50915,7 +50915,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 370
                 },
                 "delta": {
                   "yield": 138,
@@ -52996,8 +52996,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 384,
+                  "label": "Aura 384+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -53014,7 +53014,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 384
                 },
                 "delta": {
                   "yield": 114,
@@ -53121,8 +53121,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 386,
+                  "label": "Aura 386+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -53208,8 +53208,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 384,
+                  "label": "Aura 384+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -53226,7 +53226,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 384
                 },
                 "delta": {
                   "yield": 138,
@@ -53333,8 +53333,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 386,
+                  "label": "Aura 386+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -55549,8 +55549,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 404,
+                  "label": "Aura 404+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -55567,7 +55567,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 404
                 },
                 "delta": {
                   "yield": 114,
@@ -55674,8 +55674,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 406,
+                  "label": "Aura 406+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -55761,8 +55761,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 404,
+                  "label": "Aura 404+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -55779,7 +55779,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 404
                 },
                 "delta": {
                   "yield": 138,
@@ -55886,8 +55886,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 406,
+                  "label": "Aura 406+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -57891,8 +57891,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 424,
+                  "label": "Aura 424+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -57909,7 +57909,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 424
                 },
                 "delta": {
                   "yield": 114,
@@ -58016,8 +58016,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 426,
+                  "label": "Aura 426+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -58103,8 +58103,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 424,
+                  "label": "Aura 424+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -58121,7 +58121,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 424
                 },
                 "delta": {
                   "yield": 138,
@@ -58228,8 +58228,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 426,
+                  "label": "Aura 426+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -60310,8 +60310,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 438,
+                  "label": "Aura 438+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -60328,7 +60328,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 438
                 },
                 "delta": {
                   "yield": 114,
@@ -60435,8 +60435,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 440,
+                  "label": "Aura 440+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -60522,8 +60522,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 438,
+                  "label": "Aura 438+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -60540,7 +60540,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 438
                 },
                 "delta": {
                   "yield": 138,
@@ -60647,8 +60647,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 440,
+                  "label": "Aura 440+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -62863,8 +62863,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 458,
+                  "label": "Aura 458+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -62881,7 +62881,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 458
                 },
                 "delta": {
                   "yield": 114,
@@ -62988,8 +62988,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 460,
+                  "label": "Aura 460+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -63075,8 +63075,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 458,
+                  "label": "Aura 458+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -63093,7 +63093,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 458
                 },
                 "delta": {
                   "yield": 138,
@@ -63200,8 +63200,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 460,
+                  "label": "Aura 460+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -65379,8 +65379,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 478,
+                  "label": "Aura 478+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -65397,7 +65397,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 478
                 },
                 "delta": {
                   "yield": 114,
@@ -65504,8 +65504,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 480,
+                  "label": "Aura 480+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -65591,8 +65591,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 478,
+                  "label": "Aura 478+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -65609,7 +65609,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 478
                 },
                 "delta": {
                   "yield": 138,
@@ -65716,8 +65716,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 480,
+                  "label": "Aura 480+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -67720,8 +67720,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 492,
+                  "label": "Aura 492+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -67738,7 +67738,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 492
                 },
                 "delta": {
                   "yield": 114,
@@ -67845,8 +67845,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 494,
+                  "label": "Aura 494+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -67932,8 +67932,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 492,
+                  "label": "Aura 492+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -67950,7 +67950,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 492
                 },
                 "delta": {
                   "yield": 138,
@@ -68057,8 +68057,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 494,
+                  "label": "Aura 494+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -70136,8 +70136,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 512,
+                  "label": "Aura 512+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -70154,7 +70154,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 512
                 },
                 "delta": {
                   "yield": 114,
@@ -70261,8 +70261,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 514,
+                  "label": "Aura 514+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -70348,8 +70348,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 512,
+                  "label": "Aura 512+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -70366,7 +70366,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 512
                 },
                 "delta": {
                   "yield": 138,
@@ -70473,8 +70473,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 514,
+                  "label": "Aura 514+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -72826,8 +72826,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 532,
+                  "label": "Aura 532+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -72844,7 +72844,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 532
                 },
                 "delta": {
                   "yield": 114,
@@ -72951,8 +72951,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 534,
+                  "label": "Aura 534+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -73038,8 +73038,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 532,
+                  "label": "Aura 532+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -73056,7 +73056,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 532
                 },
                 "delta": {
                   "yield": 138,
@@ -75137,8 +75137,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 546,
+                  "label": "Aura 546+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -75155,7 +75155,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 546
                 },
                 "delta": {
                   "yield": 114,
@@ -75262,8 +75262,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 548,
+                  "label": "Aura 548+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -75349,8 +75349,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 546,
+                  "label": "Aura 546+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -75367,7 +75367,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 546
                 },
                 "delta": {
                   "yield": 138,
@@ -75474,8 +75474,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 548,
+                  "label": "Aura 548+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -77690,8 +77690,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 566,
+                  "label": "Aura 566+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -77708,7 +77708,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 566
                 },
                 "delta": {
                   "yield": 114,
@@ -77815,8 +77815,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 568,
+                  "label": "Aura 568+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -77902,8 +77902,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 566,
+                  "label": "Aura 566+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -77920,7 +77920,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 566
                 },
                 "delta": {
                   "yield": 138,
@@ -78027,8 +78027,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 568,
+                  "label": "Aura 568+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -80032,8 +80032,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 586,
+                  "label": "Aura 586+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -80050,7 +80050,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 586
                 },
                 "delta": {
                   "yield": 114,
@@ -80157,8 +80157,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 588,
+                  "label": "Aura 588+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -80244,8 +80244,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 586,
+                  "label": "Aura 586+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -80262,7 +80262,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 586
                 },
                 "delta": {
                   "yield": 138,
@@ -80369,8 +80369,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 588,
+                  "label": "Aura 588+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -82451,8 +82451,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 600,
+                  "label": "Aura 600+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -82469,7 +82469,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 600
                 },
                 "delta": {
                   "yield": 114,
@@ -82576,8 +82576,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 602,
+                  "label": "Aura 602+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -82663,8 +82663,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 600,
+                  "label": "Aura 600+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -82681,7 +82681,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 600
                 },
                 "delta": {
                   "yield": 138,
@@ -82788,8 +82788,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 602,
+                  "label": "Aura 602+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -85004,8 +85004,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 620,
+                  "label": "Aura 620+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -85022,7 +85022,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 620
                 },
                 "delta": {
                   "yield": 114,
@@ -85129,8 +85129,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 622,
+                  "label": "Aura 622+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -85216,8 +85216,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 620,
+                  "label": "Aura 620+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -85234,7 +85234,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 620
                 },
                 "delta": {
                   "yield": 138,
@@ -85341,8 +85341,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 622,
+                  "label": "Aura 622+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -87520,8 +87520,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 640,
+                  "label": "Aura 640+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -87538,7 +87538,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 640
                 },
                 "delta": {
                   "yield": 114,
@@ -87645,8 +87645,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 642,
+                  "label": "Aura 642+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -87732,8 +87732,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 640,
+                  "label": "Aura 640+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -87750,7 +87750,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 640
                 },
                 "delta": {
                   "yield": 138,
@@ -87857,8 +87857,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 642,
+                  "label": "Aura 642+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -89861,8 +89861,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 654,
+                  "label": "Aura 654+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -89879,7 +89879,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 654
                 },
                 "delta": {
                   "yield": 114,
@@ -89986,8 +89986,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 656,
+                  "label": "Aura 656+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -90073,8 +90073,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 654,
+                  "label": "Aura 654+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -90091,7 +90091,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 654
                 },
                 "delta": {
                   "yield": 138,
@@ -90198,8 +90198,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 656,
+                  "label": "Aura 656+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -92277,8 +92277,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 674,
+                  "label": "Aura 674+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -92295,7 +92295,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 674
                 },
                 "delta": {
                   "yield": 114,
@@ -92402,8 +92402,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 676,
+                  "label": "Aura 676+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -92489,8 +92489,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 674,
+                  "label": "Aura 674+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -92507,7 +92507,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 674
                 },
                 "delta": {
                   "yield": 138,
@@ -92614,8 +92614,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 676,
+                  "label": "Aura 676+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -94967,8 +94967,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 694,
+                  "label": "Aura 694+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -94985,7 +94985,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 694
                 },
                 "delta": {
                   "yield": 114,
@@ -95092,8 +95092,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 696,
+                  "label": "Aura 696+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -95179,8 +95179,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 694,
+                  "label": "Aura 694+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -95197,7 +95197,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 694
                 },
                 "delta": {
                   "yield": 138,
@@ -97278,8 +97278,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 708,
+                  "label": "Aura 708+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -97296,7 +97296,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 708
                 },
                 "delta": {
                   "yield": 114,
@@ -97403,8 +97403,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 710,
+                  "label": "Aura 710+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -97490,8 +97490,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 708,
+                  "label": "Aura 708+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -97508,7 +97508,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 708
                 },
                 "delta": {
                   "yield": 138,
@@ -97615,8 +97615,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 710,
+                  "label": "Aura 710+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -99831,8 +99831,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 728,
+                  "label": "Aura 728+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -99849,7 +99849,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 728
                 },
                 "delta": {
                   "yield": 114,
@@ -99956,8 +99956,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 730,
+                  "label": "Aura 730+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -100043,8 +100043,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 728,
+                  "label": "Aura 728+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -100061,7 +100061,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 728
                 },
                 "delta": {
                   "yield": 138,
@@ -100168,8 +100168,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 730,
+                  "label": "Aura 730+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -102173,8 +102173,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 748,
+                  "label": "Aura 748+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -102191,7 +102191,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 748
                 },
                 "delta": {
                   "yield": 114,
@@ -102298,8 +102298,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 750,
+                  "label": "Aura 750+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -102385,8 +102385,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 748,
+                  "label": "Aura 748+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -102403,7 +102403,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 748
                 },
                 "delta": {
                   "yield": 138,
@@ -102510,8 +102510,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 750,
+                  "label": "Aura 750+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -104592,8 +104592,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 762,
+                  "label": "Aura 762+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -104610,7 +104610,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 762
                 },
                 "delta": {
                   "yield": 114,
@@ -104717,8 +104717,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 764,
+                  "label": "Aura 764+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -104804,8 +104804,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 762,
+                  "label": "Aura 762+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -104822,7 +104822,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 762
                 },
                 "delta": {
                   "yield": 138,
@@ -104929,8 +104929,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 764,
+                  "label": "Aura 764+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -107145,8 +107145,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 782,
+                  "label": "Aura 782+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -107163,7 +107163,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 782
                 },
                 "delta": {
                   "yield": 114,
@@ -107270,8 +107270,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 784,
+                  "label": "Aura 784+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -107357,8 +107357,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 782,
+                  "label": "Aura 782+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -107375,7 +107375,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 782
                 },
                 "delta": {
                   "yield": 138,
@@ -107482,8 +107482,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 784,
+                  "label": "Aura 784+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -109661,8 +109661,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 802,
+                  "label": "Aura 802+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -109679,7 +109679,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 802
                 },
                 "delta": {
                   "yield": 114,
@@ -109786,8 +109786,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 804,
+                  "label": "Aura 804+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -109873,8 +109873,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 802,
+                  "label": "Aura 802+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -109891,7 +109891,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 802
                 },
                 "delta": {
                   "yield": 138,
@@ -109998,8 +109998,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 804,
+                  "label": "Aura 804+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -112002,8 +112002,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 816,
+                  "label": "Aura 816+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -112020,7 +112020,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 816
                 },
                 "delta": {
                   "yield": 114,
@@ -112127,8 +112127,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 818,
+                  "label": "Aura 818+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -112214,8 +112214,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 816,
+                  "label": "Aura 816+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -112232,7 +112232,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 816
                 },
                 "delta": {
                   "yield": 138,
@@ -112339,8 +112339,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 818,
+                  "label": "Aura 818+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -114418,8 +114418,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 836,
+                  "label": "Aura 836+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -114436,7 +114436,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 836
                 },
                 "delta": {
                   "yield": 114,
@@ -114543,8 +114543,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 838,
+                  "label": "Aura 838+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -114630,8 +114630,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 836,
+                  "label": "Aura 836+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -114648,7 +114648,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 836
                 },
                 "delta": {
                   "yield": 138,
@@ -114755,8 +114755,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 838,
+                  "label": "Aura 838+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -117108,8 +117108,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 856,
+                  "label": "Aura 856+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -117126,7 +117126,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 856
                 },
                 "delta": {
                   "yield": 114,
@@ -117233,8 +117233,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Aura 12+ unlocks reliable dampener deployment."
+                  "value": 858,
+                  "label": "Aura 858+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -117320,8 +117320,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 856,
+                  "label": "Aura 856+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -117338,7 +117338,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 10
+                  "min_aura": 856
                 },
                 "delta": {
                   "yield": 138,
@@ -119419,8 +119419,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 870,
+                  "label": "Aura 870+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -119437,7 +119437,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 870
                 },
                 "delta": {
                   "yield": 114,
@@ -119544,8 +119544,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 872,
+                  "label": "Aura 872+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -119631,8 +119631,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Aura 6+ unlocks reliable dampener deployment."
+                  "value": 870,
+                  "label": "Aura 870+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -119649,7 +119649,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 6
+                  "min_aura": 870
                 },
                 "delta": {
                   "yield": 138,
@@ -119756,8 +119756,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 872,
+                  "label": "Aura 872+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -121972,8 +121972,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 890,
+                  "label": "Aura 890+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -121990,7 +121990,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 890
                 },
                 "delta": {
                   "yield": 114,
@@ -122097,8 +122097,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 892,
+                  "label": "Aura 892+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -122184,8 +122184,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Aura 8+ unlocks reliable dampener deployment."
+                  "value": 890,
+                  "label": "Aura 890+ unlocks reliable dampener deployment."
                 }
               ]
             }
@@ -122202,7 +122202,7 @@
                   "requires_availability": [
                     "available"
                   ],
-                  "min_aura": 8
+                  "min_aura": 890
                 },
                 "delta": {
                   "yield": 138,
@@ -122309,8 +122309,8 @@
                 {
                   "metric": "aura",
                   "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Aura 10+ unlocks reliable dampener deployment."
+                  "value": 892,
+                  "label": "Aura 892+ unlocks reliable dampener deployment."
                 }
               ]
             }

@@ -44,3 +44,20 @@ func TestBuildGeneratedDevSeasonIRRejectsUnsupportedTickCounts(t *testing.T) {
 		t.Fatal("expected error for unsupported tick count")
 	}
 }
+
+func TestHazardAuraThresholdScalesWithClusterProgress(t *testing.T) {
+	t.Parallel()
+
+	theme := devTheme{AuraTier: 8}
+
+	early := hazardAuraThreshold(theme, 0, 2)
+	mid := hazardAuraThreshold(theme, 10, 2)
+	late := hazardAuraThreshold(theme, 49, 2)
+
+	if !(early < mid && mid < late) {
+		t.Fatalf("expected aura threshold to grow with cluster progress: early=%d mid=%d late=%d", early, mid, late)
+	}
+	if early != 8 {
+		t.Fatalf("unexpected early threshold: got %d want 8", early)
+	}
+}

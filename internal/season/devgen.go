@@ -479,11 +479,12 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 
 		publicReqs := []PublicRequirement(nil)
 		if i >= 2 {
+			minAura := hazardAuraThreshold(theme, cluster, i)
 			publicReqs = append(publicReqs, PublicRequirement{
 				Metric:   "aura",
 				Operator: ">=",
-				Value:    theme.AuraTier + int64((i-2)%2)*2,
-				Label:    fmt.Sprintf("Aura %d+ unlocks reliable dampener deployment.", theme.AuraTier+int64((i-2)%2)*2),
+				Value:    minAura,
+				Label:    fmt.Sprintf("Aura %d+ unlocks reliable dampener deployment.", minAura),
 			})
 		}
 
@@ -511,7 +512,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 				},
 			)
 		} else {
-			minAura := theme.AuraTier + int64((i-2)%2)*2
+			minAura := hazardAuraThreshold(theme, cluster, i)
 			rules = append(rules,
 				Rule{
 					Match: ActionMatch{Command: "commit", Target: target, Option: "deploy_dampener"},
@@ -582,6 +583,14 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		ResourceTouches: []string{"availability", "aura", "debt"},
 		Beats:           beats,
 	}
+}
+
+func hazardAuraThreshold(theme devTheme, cluster, beat int) int64 {
+	threshold := theme.AuraTier + int64(cluster*18)
+	if beat >= 2 {
+		threshold += int64((beat - 2) % 2 * 2)
+	}
+	return threshold
 }
 
 func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) StoryElement {

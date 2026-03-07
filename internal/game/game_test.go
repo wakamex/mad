@@ -27,8 +27,24 @@ func newTestEngine(t *testing.T) *Engine {
 	return NewEngine(loadedSeason, wal, 8)
 }
 
+func advanceEngineToOpportunity(t *testing.T, engine *Engine, opportunityID string) {
+	t.Helper()
+
+	for i := 0; i < len(engine.season.Ticks); i++ {
+		tick := engine.season.Ticks[engine.currentIndex]
+		for _, opportunity := range tick.Opportunities {
+			if opportunity.OpportunityID == opportunityID {
+				return
+			}
+		}
+		engine.DebugForceClose(engine.currentEndsAt)
+	}
+	t.Fatalf("opportunity %q not found in season", opportunityID)
+}
+
 func TestSubmitAndScoreEpoch(t *testing.T) {
 	engine := newTestEngine(t)
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 	current := engine.Current()
 
 	receipt, err := engine.Submit(engine.DevToken(1), ActionSubmission{
@@ -64,6 +80,7 @@ func TestRevealPublishedAfterLag(t *testing.T) {
 	engine := newTestEngine(t)
 	now := time.Now().UTC()
 
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 	current := engine.Current()
 	_, err := engine.Submit(engine.DevToken(2), ActionSubmission{
 		TickID:     current.TickID,
@@ -124,6 +141,7 @@ func TestWALWritten(t *testing.T) {
 func TestSnapshotRoundTrip(t *testing.T) {
 	engine := newTestEngine(t)
 	now := time.Now().UTC()
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 	current := engine.Current()
 	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:     current.TickID,
@@ -176,6 +194,7 @@ func TestSubmitIdempotentRetry(t *testing.T) {
 func TestSubmitRejectsMutationAfterCommit(t *testing.T) {
 	engine := newTestEngine(t)
 	now := time.Now().UTC()
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 
 	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:       engine.Current().TickID,
@@ -203,6 +222,7 @@ func TestSubmitRejectsMutationAfterCommit(t *testing.T) {
 func TestSubmitRejectsConflictingSubmissionID(t *testing.T) {
 	engine := newTestEngine(t)
 	now := time.Now().UTC()
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 
 	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:       engine.Current().TickID,
@@ -256,8 +276,8 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 	if _, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:     firstTick,
 		Command:    "commit",
-		Target:     "quest.glass_choir.7",
-		Option:     "broker",
+		Target:     "quest.ward_service.1",
+		Option:     "cleanup",
 		Confidence: 0.80,
 	}, firstActionAt); err != nil {
 		t.Fatalf("submit first action: %v", err)
@@ -269,8 +289,8 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 	if _, err := engine.Submit(engine.DevToken(2), ActionSubmission{
 		TickID:     firstTick,
 		Command:    "commit",
-		Target:     "quest.glass_choir.7",
-		Option:     "smuggler",
+		Target:     "quest.ward_service.1",
+		Option:     "cleanup",
 		Confidence: 0.95,
 	}, secondActionAt); err != nil {
 		t.Fatalf("submit second action: %v", err)
@@ -284,9 +304,8 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 	if _, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:     secondTick,
 		Command:    "commit",
-		Target:     "auth.vault.3",
-		Option:     "authorize",
-		Phrase:     "green rain broker",
+		Target:     "quest.glass_choir.7",
+		Option:     "broker",
 		Confidence: 0.90,
 	}, secondTickActionAt); err != nil {
 		t.Fatalf("submit third action: %v", err)
@@ -332,6 +351,7 @@ func TestAbsentPlayerScheduledDebtInterest(t *testing.T) {
 	engine := newTestEngine(t)
 	now := time.Now().UTC()
 
+	advanceEngineToOpportunity(t, engine, "quest.glass_choir.7")
 	_, err := engine.Submit(engine.DevToken(2), ActionSubmission{
 		TickID:     engine.Current().TickID,
 		Command:    "commit",

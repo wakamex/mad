@@ -46,7 +46,7 @@ func AuditIR(ir IRFile) IRAuditReport {
 	for _, element := range ir.Elements {
 		if element.Family == "standing_work_loop" {
 			report.StandingWorkElements++
-			report.WeakStandingWorkElements = append(report.WeakStandingWorkElements, auditStandingWorkElement(element, beatToElement, tagConsumers)...)
+			report.WeakStandingWorkElements = append(report.WeakStandingWorkElements, auditStandingWorkElement(ir, element, beatToElement, tagConsumers)...)
 		}
 		for _, beat := range element.Beats {
 			if len(beat.ConsumesTags) > 0 {
@@ -73,12 +73,12 @@ func AuditIR(ir IRFile) IRAuditReport {
 	return report
 }
 
-func auditStandingWorkElement(element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) []string {
+func auditStandingWorkElement(ir IRFile, element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) []string {
 	var warnings []string
 	if !standingWorkHasMeaningfulCost(element) {
 		warnings = append(warnings, fmt.Sprintf("%s: no meaningful immediate cost, lock, cooldown, or commitment pressure", element.ElementID))
 	}
-	if standingWorkFanoutCount(element, beatToElement, tagConsumers) < 2 {
+	if standingWorkFanoutCount(ir, element, beatToElement, tagConsumers) < 2 {
 		warnings = append(warnings, fmt.Sprintf("%s: produced state fans out to fewer than 2 downstream beats", element.ElementID))
 	}
 	return warnings
@@ -99,7 +99,7 @@ func standingWorkHasMeaningfulCost(element StoryElement) bool {
 	return false
 }
 
-func standingWorkFanoutCount(element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) int {
+func standingWorkFanoutCount(ir IRFile, element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) int {
 	consumerBeats := make(map[string]struct{})
 	for _, beat := range element.Beats {
 		for _, tag := range producedTagsForBeat(beat) {
@@ -107,6 +107,11 @@ func standingWorkFanoutCount(element StoryElement, beatToElement map[string]stri
 				if beatToElement[consumerBeatID] == element.ElementID {
 					continue
 				}
+				consumerBeats[consumerBeatID] = struct{}{}
+			}
+		}
+		for _, faction := range producedReputationScopesForBeat(beat) {
+			for _, consumerBeatID := range consumerBeatsForReputationScope(ir, element.ElementID, faction, beatToElement) {
 				consumerBeats[consumerBeatID] = struct{}{}
 			}
 		}
@@ -130,6 +135,48 @@ func requiredTagsForBeat(beat StoryBeat) []string {
 		tags = append(tags, rule.Requirements.ForbidsTags...)
 	}
 	return tags
+}
+
+func producedReputationScopesForBeat(beat StoryBeat) []string {
+	scopes := make([]string, 0)
+	seen := make(map[string]struct{})
+	for _, rule := range beat.Scoring.Rules {
+		for faction, delta := range rule.Effects.ReputationDelta {
+			if delta <= 0 {
+				continue
+			}
+			if _, ok := seen[faction]; ok {
+				continue
+			}
+			seen[faction] = struct{}{}
+			scopes = append(scopes, faction)
+		}
+	}
+	return scopes
+}
+
+func consumerBeatsForReputationScope(ir IRFile, elementID, faction string, beatToElement map[string]string) []string {
+	beats := make([]string, 0)
+	for _, element := range ir.Elements {
+		for _, beat := range element.Beats {
+			if beatToElement[beat.BeatID] == elementID {
+				continue
+			}
+			if beatConsumesReputationScope(beat, faction) {
+				beats = append(beats, beat.BeatID)
+			}
+		}
+	}
+	return beats
+}
+
+func beatConsumesReputationScope(beat StoryBeat, faction string) bool {
+	for _, rule := range beat.Scoring.Rules {
+		if _, ok := rule.Requirements.MinReputation[faction]; ok {
+			return true
+		}
+	}
+	return false
 }
 
 func hasCrossElementDependency(beat StoryBeat, elementID string, beatToElement map[string]string, guaranteedEarlier map[string]struct{}, producers tagProducerSets) bool {

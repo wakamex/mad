@@ -13,6 +13,56 @@
   },
   "elements": [
     {
+      "element_id": "ward_service",
+      "family": "standing_work_loop",
+      "latent_vars": ["clean_hands_standing"],
+      "resource_touches": ["availability", "reputation", "cooldowns"],
+      "beats": [
+        {
+          "beat_id": "ward_service.shift_1",
+          "clock_class": "standard",
+          "sources": [
+            {
+              "source_id": "ward.notice.14",
+              "source_type": "public_notice",
+              "text": "The southern ward needs cleanup crews. The work is dull, paid poorly, and quietly remembered."
+            }
+          ],
+          "opportunities": [
+            {
+              "opportunity_id": "quest.ward_service.1",
+              "allowed_commands": ["commit", "hold"],
+              "allowed_options": ["cleanup"],
+              "text_slot": false
+            }
+          ],
+          "scoring": {
+            "rules": [
+              {
+                "match": {"command": "commit", "target": "quest.ward_service.1", "option": "cleanup"},
+                "effects": {
+                  "add_tags": ["ward.clean_hands"],
+                  "lock_ticks": 1,
+                  "availability_delta": "on_shift",
+                  "set_cooldowns": {"ward.cleanup": 2},
+                  "reputation_delta": {"glass_choir": 4, "civic": 4}
+                },
+                "delta": {"yield": 0, "insight": 1, "aura": 0, "debt": 2, "miss_penalties": 0},
+                "label": "The cleanup shift bought clean-hands standing and a little faction trust, but cost time and energy.",
+                "classification": "best"
+              },
+              {
+                "match": {"command": "hold"},
+                "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 0, "miss_penalties": 0},
+                "label": "You skipped the shift. Nothing happened immediately.",
+                "classification": "miss"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "element_id": "glass_choir",
       "family": "reputation_ladder",
       "latent_vars": ["choir_phase"],
@@ -89,11 +139,27 @@
               "opportunity_id": "quest.glass_choir.8",
               "allowed_commands": ["inspect", "commit", "hold"],
               "allowed_options": ["broker", "penitent"],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": ">=",
+                  "value": 4,
+                  "label": "Choir standing 4+ unlocks trusted broker tier."
+                }
+              ],
               "text_slot": false
             }
           ],
           "scoring": {
             "rules": [
+              {
+                "match": {"command": "commit", "target": "quest.glass_choir.8", "option": "broker"},
+                "requirements": {"min_reputation": {"glass_choir": 4}},
+                "delta": {"yield": 180, "insight": 65, "aura": 14, "debt": 0, "miss_penalties": 0},
+                "label": "Broker plus clean-hands standing made the Choir trust you with the better shipment tier.",
+                "classification": "best"
+              },
               {
                 "match": {"command": "commit", "target": "quest.glass_choir.8", "option": "broker"},
                 "delta": {"yield": 160, "insight": 60, "aura": 12, "debt": 0, "miss_penalties": 0},
@@ -114,7 +180,7 @@
               }
             ]
           },
-          "precursor_beat_ids": ["glass_choir.offer_1"]
+          "precursor_beat_ids": ["glass_choir.offer_1", "ward_service.shift_1"]
         }
       ]
     },
@@ -191,11 +257,27 @@
               "opportunity_id": "hazard.northern_hub.2",
               "allowed_commands": ["equip", "commit", "hold"],
               "allowed_options": ["evacuate", "deploy_dampener"],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic",
+                  "operator": ">=",
+                  "value": 4,
+                  "label": "Civic standing 4+ unlocks trusted containment handling."
+                }
+              ],
               "text_slot": false
             }
           ],
           "scoring": {
             "rules": [
+              {
+                "match": {"command": "commit", "target": "hazard.northern_hub.2", "option": "deploy_dampener"},
+                "requirements": {"min_reputation": {"civic": 4}},
+                "delta": {"yield": 55, "insight": 35, "aura": 12, "debt": 0, "miss_penalties": 0},
+                "label": "Clean-hands clearance let you deploy the dampener with the higher-trust containment protocol.",
+                "classification": "best"
+              },
               {
                 "match": {"command": "commit", "target": "hazard.northern_hub.2", "option": "deploy_dampener"},
                 "delta": {"yield": 40, "insight": 30, "aura": 10, "debt": 0, "miss_penalties": 0},
@@ -215,7 +297,8 @@
                 "classification": "miss"
               }
             ]
-          }
+          },
+          "precursor_beat_ids": ["ward_service.shift_1"]
         }
       ]
     }

@@ -42,8 +42,14 @@ func TestSimulateDevSeason(t *testing.T) {
 	if len(report.Baselines["always_hold"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected hold baseline trace length")
 	}
+	if len(report.Baselines["visible_greedy"].ScoreTrace) != len(loaded.Ticks) {
+		t.Fatalf("unexpected visible greedy baseline trace length")
+	}
 	if len(report.Baselines["greedy_best"].Breakdown.ByFamily) == 0 {
 		t.Fatalf("expected greedy baseline family breakdown")
+	}
+	if len(report.Baselines["visible_greedy"].Breakdown.ByFamily) == 0 {
+		t.Fatalf("expected visible greedy baseline family breakdown")
 	}
 	if len(report.Baselines["greedy_best"].Breakdown.BySourceType) == 0 {
 		t.Fatalf("expected greedy baseline source breakdown")
@@ -402,6 +408,184 @@ func TestGreedyBaselineRespectsCooldownReadiness(t *testing.T) {
 	}
 	if report.Ticks[2].ResolutionPreview == nil || report.Ticks[2].ResolutionPreview.BestKnownAction.Option != "cash_in" {
 		t.Fatalf("expected cooldown to expire before third tick")
+	}
+}
+
+func TestVisibleGreedyPrefersInspectOverBlindMultiOptionCommit(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "sim-visible-inspect",
+		Title:           "sim visible inspect",
+		ScoreEpochTicks: 1,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "S1-T0001",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Annotations: Annotations{
+					Family: "payoff_gate",
+				},
+				Sources: []Source{
+					{SourceID: "src.1", SourceType: "market_gossip", Text: "Signal quality is unclear."},
+				},
+				Opportunities: []Opportunity{
+					{
+						OpportunityID:   "vault",
+						AllowedCommands: []string{"inspect", "commit", "hold"},
+						AllowedOptions:  []string{"north", "south", "west"},
+					},
+				},
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "inspect", Target: "vault"},
+							Delta:          ScoreDelta{Insight: 2},
+							Label:          "inspect the vault seam",
+							Classification: "miss",
+						},
+						{
+							Match:          ActionMatch{Command: "commit", Target: "vault", Option: "north"},
+							Delta:          ScoreDelta{Yield: 40},
+							Label:          "lucky blind guess",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "commit", Target: "vault", Option: "south"},
+							Delta:          ScoreDelta{Debt: 10},
+							Label:          "bad blind guess",
+							Classification: "bad",
+						},
+						{
+							Match:          ActionMatch{Command: "commit", Target: "vault", Option: "west"},
+							Delta:          ScoreDelta{MissPenalties: 3},
+							Label:          "wasted blind guess",
+							Classification: "miss",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+
+	if report.Baselines["visible_greedy"].Ledger.Score != 2 {
+		t.Fatalf("expected visible greedy to take inspect, got score %d", report.Baselines["visible_greedy"].Ledger.Score)
+	}
+	if report.Baselines["greedy_best"].Ledger.Score != 40 {
+		t.Fatalf("expected greedy best to take hidden best branch, got %d", report.Baselines["greedy_best"].Ledger.Score)
+	}
+}
+
+func TestVisibleGreedyUsesPublicRequirementsAndExplicitState(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "sim-visible-public-state",
+		Title:           "sim visible public state",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "S1-T0001",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Annotations: Annotations{
+					Family: "standing_work_loop",
+				},
+				Sources: []Source{
+					{SourceID: "src.1", SourceType: "faction_notice", Text: "Registry shift available."},
+				},
+				Opportunities: []Opportunity{
+					{
+						OpportunityID:   "registry",
+						AllowedCommands: []string{"commit", "hold"},
+						AllowedOptions:  []string{"shift"},
+					},
+				},
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:   ActionMatch{Command: "commit", Target: "registry", Option: "shift"},
+							Effects: StateEffects{ReputationDelta: map[string]int64{"relay_guild": 5}},
+							Delta:   ScoreDelta{Yield: 3},
+							Label:   "take registry shift",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+			},
+			{
+				TickID:     "S1-T0002",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Annotations: Annotations{
+					Family: "reputation_ladder",
+				},
+				Sources: []Source{
+					{SourceID: "src.2", SourceType: "faction_notice", Text: "Premium audit lane open to trusted runners."},
+				},
+				Opportunities: []Opportunity{
+					{
+						OpportunityID:   "audit",
+						AllowedCommands: []string{"inspect", "commit", "hold"},
+						AllowedOptions:  []string{"premium"},
+						PublicRequirements: []PublicRequirement{
+							{Metric: "reputation", Scope: "relay_guild", Operator: ">=", Value: 5, Label: "relay_guild reputation 5+"},
+						},
+					},
+				},
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:        ActionMatch{Command: "commit", Target: "audit", Option: "premium"},
+							Requirements: RuleRequirements{MinReputation: map[string]int64{"relay_guild": 5}},
+							Delta:        ScoreDelta{Yield: 20},
+							Label:        "take premium audit lane",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "inspect", Target: "audit"},
+							Delta:          ScoreDelta{Insight: 1},
+							Label:          "inspect audit bulletin",
+							Classification: "miss",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+
+	if report.Baselines["visible_greedy"].Ledger.Score != 23 {
+		t.Fatalf("expected visible greedy to use explicit reputation state, got %d", report.Baselines["visible_greedy"].Ledger.Score)
 	}
 }
 

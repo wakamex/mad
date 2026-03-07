@@ -2,6 +2,7 @@ package season
 
 import (
 	"fmt"
+	"hash/fnv"
 	"math/rand"
 	"slices"
 )
@@ -138,10 +139,12 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		TickCount:     len(file.Ticks),
 		Notes: []string{
 			"`greedy_best` is a tick-local baseline derived from rules classified as `best`; it is not a globally optimal season policy once lock-ins, opportunity costs, or stateful commitments exist.",
+			"`visible_greedy` is a constrained non-LLM baseline that only uses the public action surface, clock class, public requirements, and exact player state. It does not parse source text or inspect hidden scoring labels.",
 		},
 		Baselines: map[string]SimulatedBaseline{
-			"greedy_best": {},
-			"always_hold": {},
+			"greedy_best":   {},
+			"always_hold":   {},
+			"visible_greedy": {},
 		},
 		ActionSurface: SimulatedActionSurface{
 			Distribution:  make(map[string]int),
@@ -152,12 +155,15 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 
 	greedyState := newSimulatedPlayerState()
 	holdState := newSimulatedPlayerState()
+	visibleState := newSimulatedPlayerState()
 	greedyBreakdown := NewScoreBreakdownAccumulator()
 	holdBreakdown := NewScoreBreakdownAccumulator()
+	visibleBreakdown := NewScoreBreakdownAccumulator()
 	var nowMS int64
 	for i, tick := range file.Ticks {
 		advanceSimulatedStateToTick(&greedyState, i)
 		advanceSimulatedStateToTick(&holdState, i)
+		advanceSimulatedStateToTick(&visibleState, i)
 		resolution := simulateResolution(tick, greedyState)
 
 		greedyRule := chooseGreedyRule(tick, greedyState)
@@ -171,6 +177,13 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		advanceBaseline(&holdBaseline, &holdState, holdRule)
 		report.Baselines["always_hold"] = holdBaseline
 		holdBreakdown.Add(tick, holdRule)
+
+		visibleAction := chooseVisibleGreedyAction(tick, visibleState)
+		visibleRule, _ := evaluateSimulatedAction(tick.Scoring, visibleAction, visibleState)
+		visibleBaseline := report.Baselines["visible_greedy"]
+		advanceBaseline(&visibleBaseline, &visibleState, visibleRule)
+		report.Baselines["visible_greedy"] = visibleBaseline
+		visibleBreakdown.Add(tick, visibleRule)
 
 		simTick := SimulatedTick{
 			Index:             i,
@@ -206,6 +219,9 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	holdBaseline := report.Baselines["always_hold"]
 	holdBaseline.Breakdown = holdBreakdown.Materialize()
 	report.Baselines["always_hold"] = holdBaseline
+	visibleBaseline := report.Baselines["visible_greedy"]
+	visibleBaseline.Breakdown = visibleBreakdown.Materialize()
+	report.Baselines["visible_greedy"] = visibleBaseline
 	if options.RandomRuns > 0 {
 		report.RandomAudit = simulateRandomAudit(file, options)
 	}
@@ -287,6 +303,145 @@ func chooseHoldRule(tick TickDefinition, state simulatedPlayerState) Rule {
 		Label:          "No eligible hold rule matched.",
 		Classification: "miss",
 	}
+}
+
+func chooseVisibleGreedyAction(tick TickDefinition, state simulatedPlayerState) SimulatedAction {
+	bestAction := SimulatedAction{Command: "hold"}
+	bestScore := visibleActionScore(tick.ClockClass, Opportunity{}, bestAction, state)
+	bestTie := visibleActionTieBreak(bestAction)
+
+	for _, opportunity := range tick.Opportunities {
+		for _, command := range opportunity.AllowedCommands {
+			if command == "hold" {
+				continue
+			}
+			if len(opportunity.AllowedOptions) == 0 {
+				action := SimulatedAction{Command: command, Target: opportunity.OpportunityID}
+				score := visibleActionScore(tick.ClockClass, opportunity, action, state)
+				tie := visibleActionTieBreak(action)
+				if score > bestScore || (score == bestScore && tie < bestTie) {
+					bestAction, bestScore, bestTie = action, score, tie
+				}
+				continue
+			}
+			for _, option := range opportunity.AllowedOptions {
+				action := SimulatedAction{Command: command, Target: opportunity.OpportunityID, Option: option}
+				score := visibleActionScore(tick.ClockClass, opportunity, action, state)
+				tie := visibleActionTieBreak(action)
+				if score > bestScore || (score == bestScore && tie < bestTie) {
+					bestAction, bestScore, bestTie = action, score, tie
+				}
+			}
+		}
+	}
+	return bestAction
+}
+
+func visibleActionScore(clockClass string, opportunity Opportunity, action SimulatedAction, state simulatedPlayerState) int {
+	if action.Command == "hold" {
+		score := 0
+		if clockClass == "interrupt" {
+			score -= 12
+		}
+		return score
+	}
+
+	score := 0
+	switch action.Command {
+	case "inspect":
+		score = 12
+	case "commit":
+		score = 8
+	default:
+		score = 6
+	}
+
+	if clockClass == "interrupt" {
+		if action.Command == "inspect" {
+			score -= 8
+		} else {
+			score += 10
+		}
+	}
+	if clockClass == "dossier" && action.Command == "inspect" {
+		score += 4
+	}
+
+	if state.Availability != defaultAvailability && action.Command != "inspect" {
+		score -= 10
+	}
+
+	satisfied, unmet := visibleRequirementStatus(opportunity.PublicRequirements, state)
+	if len(opportunity.PublicRequirements) > 0 {
+		score += satisfied * 4
+		score -= unmet * 8
+		if action.Command == "inspect" && unmet > 0 {
+			score += 4
+		}
+	}
+
+	optionCount := len(opportunity.AllowedOptions)
+	if optionCount == 1 && action.Command != "inspect" {
+		score += 5
+	}
+	if optionCount > 1 && action.Command != "inspect" {
+		score -= 7
+	}
+
+	if state.Ledger.Debt >= 80 && action.Command == "commit" {
+		score -= 2
+	}
+
+	return score
+}
+
+func visibleRequirementStatus(requirements []PublicRequirement, state simulatedPlayerState) (satisfied int, unmet int) {
+	for _, requirement := range requirements {
+		if publicRequirementSatisfied(requirement, state) {
+			satisfied++
+		} else {
+			unmet++
+		}
+	}
+	return satisfied, unmet
+}
+
+func publicRequirementSatisfied(requirement PublicRequirement, state simulatedPlayerState) bool {
+	var current int64
+	switch requirement.Metric {
+	case "reputation":
+		current = state.Reputation[requirement.Scope]
+	case "debt":
+		current = state.Ledger.Debt
+	case "aura":
+		current = state.Ledger.Aura
+	default:
+		return false
+	}
+	switch requirement.Operator {
+	case ">=":
+		return current >= requirement.Value
+	case "<=":
+		return current <= requirement.Value
+	case ">":
+		return current > requirement.Value
+	case "<":
+		return current < requirement.Value
+	case "==":
+		return current == requirement.Value
+	default:
+		return false
+	}
+}
+
+func visibleActionTieBreak(action SimulatedAction) uint64 {
+	h := fnv.New64a()
+	_, _ = h.Write([]byte(action.Command))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(action.Target))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(action.Option))
+	return h.Sum64()
 }
 
 func advanceBaseline(baseline *SimulatedBaseline, state *simulatedPlayerState, rule Rule) {

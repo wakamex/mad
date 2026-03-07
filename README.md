@@ -41,7 +41,7 @@ Compile that larger dev season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple `greedy_best`-vs-`always_hold` score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, three baseline policies (`greedy_best`, `visible_greedy`, and `always_hold`), and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
 
 ```bash
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
@@ -76,7 +76,7 @@ go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
 For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic authoring and simulation loop, use `seasons/dev1000/`.
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
-The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful.
+The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful. `visible_greedy` is the cheap constrained baseline: it only uses the current public action surface, clock class, public requirements, and explicit player state, with no source-text parsing and no hidden scoring labels.
 
 Run the external-agent harness against a compiled season. The harness keeps a single conversation thread per runner, records every action/response, and saves a per-tick `score_trace` so the result can be plotted like VendingBench:
 

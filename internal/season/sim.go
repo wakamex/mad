@@ -13,8 +13,10 @@ type SimulationReport struct {
 	Title         string                       `json:"title"`
 	TickCount     int                          `json:"tick_count"`
 	TotalDuration int64                        `json:"total_duration_ms"`
+	Notes         []string                     `json:"notes,omitempty"`
 	Baselines     map[string]SimulatedBaseline `json:"baselines"`
 	RandomAudit   *SimulatedRandomAudit        `json:"random_audit,omitempty"`
+	ActionSurface SimulatedActionSurface       `json:"action_surface"`
 	Ticks         []SimulatedTick              `json:"ticks"`
 	Reveals       []SimulatedReveal            `json:"reveals"`
 }
@@ -53,6 +55,12 @@ type SimulatedRandomAudit struct {
 	Warnings        []string `json:"warnings,omitempty"`
 }
 
+type SimulatedActionSurface struct {
+	PhraseVariantCount int            `json:"phrase_variant_count"`
+	Distribution       map[string]int `json:"distribution"`
+	PerTickCounts      map[string]int `json:"per_tick_counts"`
+}
+
 type SimulatedTick struct {
 	Index                 int                  `json:"index"`
 	TickID                string               `json:"tick_id"`
@@ -60,6 +68,7 @@ type SimulatedTick struct {
 	DurationMS            int64                `json:"duration_ms"`
 	StartsAtMS            int64                `json:"starts_at_ms"`
 	EndsAtMS              int64                `json:"ends_at_ms"`
+	RandomActionCount     int                  `json:"random_action_count"`
 	RevealPublishesAtTick string               `json:"reveal_publishes_at_tick,omitempty"`
 	Annotations           Annotations          `json:"annotations,omitempty"`
 	ResolutionPreview     *SimulatedResolution `json:"resolution_preview,omitempty"`
@@ -107,18 +116,26 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		SeasonID:      file.SeasonID,
 		Title:         file.Title,
 		TickCount:     len(file.Ticks),
+		Notes: []string{
+			"`greedy_best` is a tick-local baseline derived from rules classified as `best`; it is not a globally optimal season policy once lock-ins, opportunity costs, or stateful commitments exist.",
+		},
 		Baselines: map[string]SimulatedBaseline{
-			"perfect_best": {},
-			"always_hold":  {},
+			"greedy_best": {},
+			"always_hold": {},
+		},
+		ActionSurface: SimulatedActionSurface{
+			PhraseVariantCount: randomPhraseVariantCount,
+			Distribution:       make(map[string]int),
+			PerTickCounts:      make(map[string]int, len(file.Ticks)),
 		},
 		Ticks: make([]SimulatedTick, 0, len(file.Ticks)),
 	}
 
 	var nowMS int64
 	for i, tick := range file.Ticks {
-		bestBaseline := report.Baselines["perfect_best"]
+		bestBaseline := report.Baselines["greedy_best"]
 		updateBaseline(&bestBaseline, bestDeltaForTick(tick))
-		report.Baselines["perfect_best"] = bestBaseline
+		report.Baselines["greedy_best"] = bestBaseline
 
 		holdBaseline := report.Baselines["always_hold"]
 		updateBaseline(&holdBaseline, holdDeltaForTick(tick))
@@ -132,9 +149,12 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 			DurationMS:        tick.DurationMS,
 			StartsAtMS:        nowMS,
 			EndsAtMS:          nowMS + tick.DurationMS,
+			RandomActionCount: randomActionCountForTick(tick),
 			Annotations:       tick.Annotations,
 			ResolutionPreview: resolution,
 		}
+		report.ActionSurface.PerTickCounts[tick.TickID] = simTick.RandomActionCount
+		report.ActionSurface.Distribution[fmt.Sprintf("%d", simTick.RandomActionCount)]++
 		publishIndex := i + file.RevealLagTicks - 1
 		if file.RevealLagTicks > 0 && publishIndex >= 0 && publishIndex < len(file.Ticks) {
 			simTick.RevealPublishesAtTick = file.Ticks[publishIndex].TickID
@@ -155,6 +175,8 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	}
 	return report, nil
 }
+
+const randomPhraseVariantCount = 8 * 8 * 8
 
 func simulateResolution(tick TickDefinition) *SimulatedResolution {
 	bestRule, ok := bestRuleForTick(tick)
@@ -319,6 +341,31 @@ func randomPhrase(rng *rand.Rand) string {
 		words[rng.Intn(len(words))],
 		words[rng.Intn(len(words))],
 	}, " ")
+}
+
+func randomActionCountForTick(tick TickDefinition) int {
+	if len(tick.Opportunities) == 0 {
+		return 1
+	}
+
+	total := 0
+	for _, opportunity := range tick.Opportunities {
+		for _, command := range opportunity.AllowedCommands {
+			if command == "hold" {
+				total++
+				continue
+			}
+			count := 1
+			if len(opportunity.AllowedOptions) > 0 {
+				count *= len(opportunity.AllowedOptions)
+			}
+			if opportunity.TextSlot {
+				count *= randomPhraseVariantCount
+			}
+			total += count
+		}
+	}
+	return total
 }
 
 func evaluateSimulatedAction(plan ScoringPlan, action SimulatedAction) (ScoreDelta, bool) {

@@ -963,7 +963,7 @@ Exit criteria:
 
 - produce a coherent 100-tick test season
 - interleave multi-tick story elements without hand-authoring final tick spacing
-- emit an offline report for tick order, reveal timing, precursor-distance diagnostics, simple score baselines, and random-play audits (`mean`, `p90`, `p99`, positive-rate)
+- emit an offline report for tick order, reveal timing, precursor-distance diagnostics, simple `greedy_best`/`always_hold` baselines, and random-play audits (`mean`, `p90`, `p99`, positive-rate)
 - generate lawful answer keys and reveals automatically where possible
 - support repeatable content iteration without hand-editing raw tick JSON
 

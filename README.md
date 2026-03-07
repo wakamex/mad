@@ -24,7 +24,7 @@ Weave the sample story-element IR into a compiled season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple best-vs-hold score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate):
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple `greedy_best`-vs-`always_hold` score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate):
 
 ```bash
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
@@ -50,6 +50,7 @@ go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
 4. Compile immutable public tick artifacts from that compiled season.
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
+The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful.
 
 Run the dev server:
 

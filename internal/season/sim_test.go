@@ -28,14 +28,26 @@ func TestSimulateDevSeason(t *testing.T) {
 	if report.TotalDuration <= 0 {
 		t.Fatalf("expected positive total duration")
 	}
-	if len(report.Baselines["perfect_best"].ScoreTrace) != len(loaded.Ticks) {
+	if report.ActionSurface.PhraseVariantCount != 512 {
+		t.Fatalf("unexpected phrase variant count: got %d want 512", report.ActionSurface.PhraseVariantCount)
+	}
+	if report.ActionSurface.PerTickCounts["S1-T0004"] != 513 {
+		t.Fatalf("unexpected random action count on phrase tick: got %d want 513", report.ActionSurface.PerTickCounts["S1-T0004"])
+	}
+	if report.ActionSurface.Distribution["5"] != 2 || report.ActionSurface.Distribution["7"] != 1 || report.ActionSurface.Distribution["513"] != 1 {
+		t.Fatalf("unexpected action-surface distribution: %#v", report.ActionSurface.Distribution)
+	}
+	if len(report.Baselines["greedy_best"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected best baseline trace length")
 	}
 	if len(report.Baselines["always_hold"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected hold baseline trace length")
 	}
-	if report.Baselines["perfect_best"].Ledger.Score <= report.Baselines["always_hold"].Ledger.Score {
-		t.Fatalf("expected perfect_best baseline to outperform always_hold")
+	if report.Baselines["greedy_best"].Ledger.Score <= report.Baselines["always_hold"].Ledger.Score {
+		t.Fatalf("expected greedy_best baseline to outperform always_hold")
+	}
+	if len(report.Notes) == 0 {
+		t.Fatalf("expected simulation notes")
 	}
 	if report.RandomAudit == nil {
 		t.Fatalf("expected random audit")
@@ -46,8 +58,8 @@ func TestSimulateDevSeason(t *testing.T) {
 	if report.RandomAudit.MeanScore >= 0 {
 		t.Fatalf("expected random audit mean score to be negative, got %.2f", report.RandomAudit.MeanScore)
 	}
-	if report.RandomAudit.P99Score > report.Baselines["perfect_best"].Ledger.Score {
-		t.Fatalf("expected random audit p99 not to exceed perfect baseline")
+	if report.RandomAudit.P99Score > report.Baselines["greedy_best"].Ledger.Score {
+		t.Fatalf("expected random audit p99 not to exceed greedy baseline")
 	}
 
 	first := report.Ticks[0]

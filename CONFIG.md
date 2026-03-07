@@ -155,25 +155,40 @@ If `memory=off`:
 
 ### Claude: Current Harness Semantics
 
-Claude does not expose the same clean split between session continuity and a
-separate native memory system.
+Claude now has a real four-mode matrix in the harness.
 
 Current mapping:
 
-- `memory=on` and `context=persistent`:
-  persisted `claude -p` session continuity
-- `memory=off`:
-  `--no-session-persistence`
-- `context=ephemeral`:
-  also `--no-session-persistence`
+- every Claude run gets an isolated home under the run directory
+- the harness disables `CLAUDE.md` loading for benchmark cleanliness
+- `memory=on` means Claude auto-memory is enabled
+- `memory=off` means `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`
+- `context=persistent` means an explicit UUID-backed `claude -p --session-id`
+  session is reused across ticks
+- `context=ephemeral` means each tick uses `claude -p --no-session-persistence`
 
-So in the current harness:
+This gives four distinct harness modes:
 
+- `claude + memory=on + context=persistent`
+  - persisted JSONL session continuity
+  - auto-memory read/write enabled
 - `claude + memory=off + context=persistent`
-  collapses to the same practical behavior as
+  - persisted JSONL session continuity
+  - auto-memory disabled
+- `claude + memory=on + context=ephemeral`
+  - no persisted JSONL session continuity
+  - auto-memory read/write enabled
 - `claude + memory=off + context=ephemeral`
+  - no persisted JSONL session continuity
+  - auto-memory disabled
 
-That is a real limitation of the current Claude mode taxonomy.
+Important:
+
+- `memory=on` does not guarantee that Claude will write a `MEMORY.md` file on
+  every short run; it means the mechanism is available
+- because the harness isolates Claude home per run, `MEMORY.md` and JSONL
+  transcripts do not leak across benchmark runs unless we explicitly choose to
+  reuse the same run directory
 
 ## Canonical Named Modes
 
@@ -289,42 +304,63 @@ memory value without waiting 6 real hours.
 
 ### Claude Modes
 
-#### 1. `claude_persistent`
+#### 1. `claude_persistent_memory`
 
 Exact meaning:
 
 - `provider=claude`
 - `context=persistent`
 - `memory=on`
+- isolated Claude home per run
+- auto-memory enabled
 
 Use case:
 
 - strongest current Claude mode
 
-#### 2. `claude_ephemeral`
-
-Exact meaning:
-
-- `provider=claude`
-- `context=ephemeral`
-- `memory=off`
-
-Use case:
-
-- clean no-context/no-memory Claude baseline
-
-#### 3. `claude_memory_off_persistent_requested`
+#### 2. `claude_persistent_nomemory`
 
 Exact meaning:
 
 - `provider=claude`
 - `context=persistent`
 - `memory=off`
+- isolated Claude home per run
+- `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`
 
-Status:
+Use case:
 
-- currently collapses to no session persistence in the harness
-- do not treat as a distinct benchmark mode today
+- isolate the value of persisted session continuity without Claude auto-memory
+
+#### 3. `claude_ephemeral_memory`
+
+Exact meaning:
+
+- `provider=claude`
+- `context=ephemeral`
+- `memory=on`
+- isolated Claude home per run
+- `--no-session-persistence`
+- auto-memory enabled
+
+Use case:
+
+- fresh-session benchmark with Claude auto-memory still available
+
+#### 4. `claude_ephemeral_nomemory`
+
+Exact meaning:
+
+- `provider=claude`
+- `context=ephemeral`
+- `memory=off`
+- isolated Claude home per run
+- `--no-session-persistence`
+- `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`
+
+Use case:
+
+- clean no-context/no-memory Claude baseline
 
 ## Recommended Benchmark Labels
 
@@ -336,15 +372,16 @@ These are the labels we should prefer in plots, tables, and filenames.
 - `codex_persistent_mem_default`
 - `codex_persistent_mem_zeroidle` if we explicitly enable it
 - `codex_ephemeral_nomem`
-- `claude_persistent`
-- `claude_ephemeral`
+- `claude_persistent_memory`
+- `claude_persistent_nomemory`
+- `claude_ephemeral_memory`
+- `claude_ephemeral_nomemory`
 
 ### Experimental / Not Yet Real
 
 - `codex_ephemeral_mem_requested`
 - `codex_fresh_session_mem_default`
 - `codex_fresh_session_mem_zeroidle`
-- `claude_memory_off_persistent_requested`
 
 ## Recommended Interpretation Rules
 
@@ -363,6 +400,10 @@ These are the labels we should prefer in plots, tables, and filenames.
 4. Do not compare `service_tier=fast` versus `flex` as a capability result.
    Use it to change turnaround time, not to claim quality differences.
 
+5. For Claude, always report both `context` and `memory`.
+   `--no-session-persistence` and `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` are
+   separate controls, so all four Claude modes are meaningful.
+
 ## Minimal Reporting Template
 
 Every experiment report should include at least:
@@ -376,6 +417,32 @@ memory=on
 codex_native_ephemeral=false
 codex_min_rollout_idle_hours=6
 service_tier=fast
+```
+
+Or, for a persistent Claude run with auto-memory disabled:
+
+```text
+provider=claude
+model=haiku
+effort=low
+context=persistent
+memory=off
+claude_session_persistence=on
+claude_auto_memory=off
+claude_md_loading=off
+```
+
+Or, for a fresh-session Claude run with auto-memory still available:
+
+```text
+provider=claude
+model=haiku
+effort=low
+context=ephemeral
+memory=on
+claude_session_persistence=off
+claude_auto_memory=on
+claude_md_loading=off
 ```
 
 Or, for a strict Codex baseline:

@@ -17,20 +17,21 @@ type CLIRunner struct {
 	spec              RunnerSpec
 	workdir           string
 	tempDir           string
+	cleanup           bool
 	actionSchemaJSON  string
 	probeSchemaJSON   string
 	actionSchemaPath  string
 	probeSchemaPath   string
 	codexThreadID     string
 	claudeSessionID   string
+	nativeHomeDir     string
 	nativeProjectDir  string
 	nativeSessionPath string
+	nativeMemoryPath  string
+	claudeHome        string
 }
 
 func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner, error) {
-	if tempRoot == "" {
-		tempRoot = os.TempDir()
-	}
 	if workdir == "" {
 		workdir = "."
 	}
@@ -38,9 +39,18 @@ func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner,
 	if err != nil {
 		return nil, err
 	}
-	tempDir, err := os.MkdirTemp(tempRoot, "mad-harness-*")
-	if err != nil {
-		return nil, err
+	cleanup := false
+	tempDir := tempRoot
+	if tempDir == "" {
+		tempDir, err = os.MkdirTemp(os.TempDir(), "mad-harness-*")
+		if err != nil {
+			return nil, err
+		}
+		cleanup = true
+	} else {
+		if err := os.MkdirAll(tempDir, 0o755); err != nil {
+			return nil, err
+		}
 	}
 
 	actionSchemaJSON, err := actionSchema()
@@ -64,21 +74,29 @@ func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner,
 		spec:             spec,
 		workdir:          absWorkdir,
 		tempDir:          tempDir,
+		cleanup:          cleanup,
 		actionSchemaJSON: actionSchemaJSON,
 		probeSchemaJSON:  probeSchemaJSON,
 		actionSchemaPath: actionSchemaPath,
 		probeSchemaPath:  probeSchemaPath,
 	}
 	if spec.Provider == "claude" {
-		if spec.MemoryMode != MemoryModeOff && spec.ContextMode != ContextModeEphemeral {
+		runner.claudeHome = filepath.Join(tempDir, "claude-home")
+		if err := prepareClaudeHome(runner.claudeHome); err != nil {
+			return nil, err
+		}
+		runner.nativeHomeDir = filepath.Join(runner.claudeHome, ".claude")
+		runner.nativeProjectDir = claudeProjectDir(runner.claudeHome, absWorkdir)
+		runner.nativeMemoryPath = filepath.Join(runner.nativeProjectDir, "memory", "MEMORY.md")
+		if spec.ContextMode != ContextModeEphemeral {
 			sessionID, err := newSessionID()
 			if err != nil {
 				return nil, err
 			}
 			runner.claudeSessionID = sessionID
 		}
-		runner.nativeProjectDir = claudeProjectDir(absWorkdir)
 	} else if spec.Provider == "codex" {
+		runner.nativeHomeDir = resolveCodexHome()
 		runner.nativeProjectDir = filepath.Join(resolveCodexHome(), "sessions")
 	}
 	return runner, nil
@@ -89,7 +107,7 @@ func (r *CLIRunner) Spec() RunnerSpec {
 }
 
 func (r *CLIRunner) Close() error {
-	if r.tempDir == "" {
+	if r.tempDir == "" || !r.cleanup {
 		return nil
 	}
 	return os.RemoveAll(r.tempDir)
@@ -106,8 +124,10 @@ func (r *CLIRunner) SessionInfo() SessionInfo {
 	return SessionInfo{
 		Workdir:           r.workdir,
 		ProviderSessionID: sessionID,
+		NativeHomeDir:     r.nativeHomeDir,
 		NativeProjectDir:  r.nativeProjectDir,
 		NativeSessionPath: r.nativeSessionPath,
+		NativeMemoryPath:  r.nativeMemoryPath,
 	}
 }
 
@@ -183,6 +203,34 @@ func (r *CLIRunner) runCodex(ctx context.Context, prompt string, schemaPath stri
 }
 
 func (r *CLIRunner) runClaude(ctx context.Context, prompt string, schemaJSON string, ephemeral bool) ([]byte, error) {
+	args := r.claudeArgs(prompt, schemaJSON, ephemeral)
+	cmd := exec.CommandContext(ctx, "claude", args...)
+	cmd.Dir = r.workdir
+	cmd.Env = r.claudeEnv()
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		if recovered, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes()); ok {
+			if !ephemeral || r.claudeSessionID != "" {
+				r.captureClaudeSession()
+			}
+			return recovered, nil
+		}
+		return nil, fmt.Errorf("claude %s failed: %w stderr=%s", r.spec.Label(), err, strings.TrimSpace(stderr.String()))
+	}
+	if !ephemeral || r.claudeSessionID != "" {
+		r.captureClaudeSession()
+	}
+	content, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes())
+	if !ok {
+		return nil, fmt.Errorf("claude %s produced empty structured output stdout=%q stderr=%q", r.spec.Label(), strings.TrimSpace(stdout.String()), strings.TrimSpace(stderr.String()))
+	}
+	return content, nil
+}
+
+func (r *CLIRunner) claudeArgs(prompt string, schemaJSON string, ephemeral bool) []string {
 	args := []string{
 		"-p",
 		"--model", r.spec.Model,
@@ -193,37 +241,27 @@ func (r *CLIRunner) runClaude(ctx context.Context, prompt string, schemaJSON str
 	if r.spec.Effort != "" {
 		args = append(args, "--effort", r.spec.Effort)
 	}
-	if ephemeral || r.spec.MemoryMode == MemoryModeOff || r.spec.ContextMode == ContextModeEphemeral {
+	if ephemeral || r.spec.ContextMode == ContextModeEphemeral {
 		args = append(args, "--no-session-persistence")
 	} else if r.claudeSessionID != "" {
 		args = append(args, "--session-id", r.claudeSessionID)
 	}
 	args = append(args, prompt)
+	return args
+}
 
-	cmd := exec.CommandContext(ctx, "claude", args...)
-	cmd.Dir = r.workdir
-	cmd.Env = filteredEnv("CLAUDECODE")
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		if recovered, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes()); ok {
-			if !ephemeral {
-				r.captureClaudeSession()
-			}
-			return recovered, nil
-		}
-		return nil, fmt.Errorf("claude %s failed: %w stderr=%s", r.spec.Label(), err, strings.TrimSpace(stderr.String()))
+func (r *CLIRunner) claudeEnv() []string {
+	env := filteredEnv("CLAUDECODE", "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "CLAUDE_CODE_DISABLE_CLAUDE_MDS")
+	if r.claudeHome != "" {
+		env = append(env, "HOME="+r.claudeHome)
 	}
-	if !ephemeral {
-		r.captureClaudeSession()
+	if r.spec.MemoryMode == MemoryModeOff {
+		env = append(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY=1")
+	} else {
+		env = append(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY=0")
 	}
-	content, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes())
-	if !ok {
-		return nil, fmt.Errorf("claude %s produced empty structured output stdout=%q stderr=%q", r.spec.Label(), strings.TrimSpace(stdout.String()), strings.TrimSpace(stderr.String()))
-	}
-	return content, nil
+	env = append(env, "CLAUDE_CODE_DISABLE_CLAUDE_MDS=1")
+	return env
 }
 
 func (r *CLIRunner) codexArgs(prompt string, schemaPath string, outputPath string, ephemeral bool) []string {
@@ -437,7 +475,7 @@ func (r *CLIRunner) captureCodexSession(stdout []byte) {
 
 func (r *CLIRunner) captureClaudeSession() {
 	if r.nativeProjectDir == "" {
-		r.nativeProjectDir = claudeProjectDir(r.workdir)
+		r.nativeProjectDir = claudeProjectDir(r.claudeHome, r.workdir)
 	}
 	if r.nativeSessionPath == "" && r.claudeSessionID != "" {
 		path := filepath.Join(r.nativeProjectDir, r.claudeSessionID+".jsonl")
@@ -494,8 +532,35 @@ func findCodexSessionPath(threadID string) string {
 	return best
 }
 
-func claudeProjectDir(cwd string) string {
-	return filepath.Join(userHomeDir(), ".claude", "projects", strings.ReplaceAll(cwd, "/", "-"))
+func prepareClaudeHome(homeRoot string) error {
+	configDir := filepath.Join(homeRoot, ".claude")
+	if err := os.MkdirAll(configDir, 0o755); err != nil {
+		return err
+	}
+	srcCreds := filepath.Join(userHomeDir(), ".claude", ".credentials.json")
+	dstCreds := filepath.Join(configDir, ".credentials.json")
+	if err := copyFileIfExists(srcCreds, dstCreds, 0o600); err != nil {
+		return err
+	}
+	return nil
+}
+
+func copyFileIfExists(src string, dst string, mode os.FileMode) error {
+	content, err := os.ReadFile(src)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(dst, content, mode)
+}
+
+func claudeProjectDir(homeRoot string, cwd string) string {
+	return filepath.Join(homeRoot, ".claude", "projects", strings.ReplaceAll(cwd, "/", "-"))
 }
 
 func resolveCodexHome() string {

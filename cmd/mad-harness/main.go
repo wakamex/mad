@@ -87,7 +87,7 @@ func main() {
 
 	if *probeOnly {
 		for _, spec := range specs {
-			runner, err := harness.NewCLIRunner(spec, *workdir, "")
+			runner, err := harness.NewCLIRunner(spec, *workdir, runnerRoot(*outPath, spec, 0))
 			if err != nil {
 				log.Fatalf("create runner %s: %v", spec.Label(), err)
 			}
@@ -127,7 +127,7 @@ func main() {
 	}
 	for _, spec := range specs {
 		for runNumber := 1; runNumber <= *runCount; runNumber++ {
-			runner, err := harness.NewCLIRunner(spec, *workdir, "")
+			runner, err := harness.NewCLIRunner(spec, *workdir, runnerRoot(*outPath, spec, runNumber))
 			if err != nil {
 				log.Fatalf("create runner %s: %v", spec.Label(), err)
 			}
@@ -244,6 +244,35 @@ func summarizeRun(result harness.RunResult) string {
 		lastTick,
 		len(result.Errors),
 	)
+}
+
+func runnerRoot(outPath string, spec harness.RunnerSpec, runNumber int) string {
+	root := filepath.Join(filepath.Dir(outPath), "runner-state", slugify(spec.Label()))
+	if runNumber <= 0 {
+		return filepath.Join(root, "probe")
+	}
+	return filepath.Join(root, fmt.Sprintf("run-%03d", runNumber))
+}
+
+func slugify(raw string) string {
+	raw = strings.ToLower(strings.TrimSpace(raw))
+	replacer := strings.NewReplacer(
+		"/", "-",
+		":", "-",
+		"@", "-",
+		"+", "-",
+		".", "-",
+		" ", "-",
+	)
+	slug := replacer.Replace(raw)
+	for strings.Contains(slug, "--") {
+		slug = strings.ReplaceAll(slug, "--", "-")
+	}
+	slug = strings.Trim(slug, "-")
+	if slug == "" {
+		return "runner"
+	}
+	return slug
 }
 
 func summarizeRunGroups(runs []harness.RunResult) []harness.RunGroup {

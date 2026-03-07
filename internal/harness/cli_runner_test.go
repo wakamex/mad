@@ -176,7 +176,7 @@ func TestCodexArgsEphemeralContextUsesEphemeralExec(t *testing.T) {
 	}
 }
 
-func TestClaudeMemoryOffDoesNotCreateSessionID(t *testing.T) {
+func TestClaudeMemoryOffPersistentCreatesSessionID(t *testing.T) {
 	t.Parallel()
 
 	runner, err := NewCLIRunner(RunnerSpec{
@@ -192,8 +192,8 @@ func TestClaudeMemoryOffDoesNotCreateSessionID(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	if runner.claudeSessionID != "" {
-		t.Fatalf("expected no session id for memory-off Claude run, got %q", runner.claudeSessionID)
+	if runner.claudeSessionID == "" {
+		t.Fatalf("expected session id for persistent memory-off Claude run")
 	}
 }
 
@@ -215,6 +215,87 @@ func TestClaudeEphemeralContextDoesNotCreateSessionID(t *testing.T) {
 
 	if runner.claudeSessionID != "" {
 		t.Fatalf("expected no session id for ephemeral context, got %q", runner.claudeSessionID)
+	}
+}
+
+func TestClaudeArgsEphemeralMemoryOnUsesNoSessionPersistence(t *testing.T) {
+	t.Parallel()
+
+	runner, err := NewCLIRunner(RunnerSpec{
+		Provider:    "claude",
+		Model:       "haiku",
+		Effort:      "low",
+		MemoryMode:  MemoryModeOn,
+		ContextMode: ContextModeEphemeral,
+	}, ".", "")
+	if err != nil {
+		t.Fatalf("NewCLIRunner: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = runner.Close()
+	})
+
+	args := runner.claudeArgs("prompt", `{"type":"object"}`, true)
+	if !slices.Contains(args, "--no-session-persistence") {
+		t.Fatalf("claudeArgs missing --no-session-persistence: %v", args)
+	}
+	env := runner.claudeEnv()
+	if hasEnvKeyValue(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "1") {
+		t.Fatalf("claudeEnv disabled auto memory unexpectedly: %v", env)
+	}
+}
+
+func TestClaudeArgsPersistentMemoryOffKeepsSessionPersistence(t *testing.T) {
+	t.Parallel()
+
+	runner, err := NewCLIRunner(RunnerSpec{
+		Provider:   "claude",
+		Model:      "haiku",
+		Effort:     "low",
+		MemoryMode: MemoryModeOff,
+	}, ".", "")
+	if err != nil {
+		t.Fatalf("NewCLIRunner: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = runner.Close()
+	})
+
+	args := runner.claudeArgs("prompt", `{"type":"object"}`, false)
+	if slices.Contains(args, "--no-session-persistence") {
+		t.Fatalf("claudeArgs unexpectedly disabled session persistence: %v", args)
+	}
+	if !slices.Contains(args, "--session-id") {
+		t.Fatalf("claudeArgs missing --session-id: %v", args)
+	}
+	env := runner.claudeEnv()
+	if !hasEnvKeyValue(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "1") {
+		t.Fatalf("claudeEnv missing auto-memory disable: %v", env)
+	}
+}
+
+func TestClaudeRunnerUsesIsolatedHomeAndMemoryPath(t *testing.T) {
+	t.Parallel()
+
+	runner, err := NewCLIRunner(RunnerSpec{
+		Provider:  "claude",
+		Model:     "haiku",
+		Effort:    "low",
+		MemoryMode: MemoryModeOn,
+	}, ".", "")
+	if err != nil {
+		t.Fatalf("NewCLIRunner: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = runner.Close()
+	})
+
+	info := runner.SessionInfo()
+	if !strings.Contains(info.NativeHomeDir, runner.tempDir) {
+		t.Fatalf("NativeHomeDir = %q, want isolated temp root %q", info.NativeHomeDir, runner.tempDir)
+	}
+	if !strings.Contains(info.NativeMemoryPath, filepath.Join("memory", "MEMORY.md")) {
+		t.Fatalf("NativeMemoryPath = %q, want memory/MEMORY.md suffix", info.NativeMemoryPath)
 	}
 }
 
@@ -243,4 +324,15 @@ func TestRunnerLabelIncludesMemoryMode(t *testing.T) {
 	if got := spec.Label(); !strings.Contains(got, "+mem-off") {
 		t.Fatalf("Label() = %q, want memory suffix", got)
 	}
+}
+
+func hasEnvKeyValue(env []string, key string, want string) bool {
+	prefix := key + "="
+	for _, entry := range env {
+		if !strings.HasPrefix(entry, prefix) {
+			continue
+		}
+		return strings.TrimPrefix(entry, prefix) == want
+	}
+	return false
 }

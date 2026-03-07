@@ -151,8 +151,10 @@ type ScorePoint struct {
 type SessionInfo struct {
 	Workdir           string `json:"workdir,omitempty"`
 	ProviderSessionID string `json:"provider_session_id,omitempty"`
+	NativeHomeDir     string `json:"native_home_dir,omitempty"`
 	NativeProjectDir  string `json:"native_project_dir,omitempty"`
 	NativeSessionPath string `json:"native_session_path,omitempty"`
+	NativeMemoryPath  string `json:"native_memory_path,omitempty"`
 }
 
 type StepTrace struct {

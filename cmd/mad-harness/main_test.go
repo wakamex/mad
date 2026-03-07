@@ -108,3 +108,25 @@ func TestSummarizeRunGroups(t *testing.T) {
 		t.Fatalf("groups[0].P90Score = %v, want 30", groups[0].P90Score)
 	}
 }
+
+func TestRunnerRootIncludesRunnerLabelAndRunNumber(t *testing.T) {
+	t.Parallel()
+
+	spec := harness.RunnerSpec{
+		Provider:    "claude",
+		Model:       "haiku",
+		Effort:      "low",
+		MemoryMode:  harness.MemoryModeOff,
+		ContextMode: harness.ContextModeEphemeral,
+	}
+	got := runnerRoot("/tmp/mad/harness.json", spec, 3)
+	for _, fragment := range []string{
+		"/tmp/mad/runner-state/",
+		"claude-haiku-low-mem-off-ctx-ephemeral",
+		"run-003",
+	} {
+		if !strings.Contains(got, fragment) {
+			t.Fatalf("runnerRoot() = %q, missing %q", got, fragment)
+		}
+	}
+}

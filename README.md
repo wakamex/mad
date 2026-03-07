@@ -113,16 +113,17 @@ Memory and context semantics are explicit:
 - `codex --memory off`: use the same isolated writable `CODEX_HOME`, but explicitly disable Codex memory features while keeping normal session continuity.
 - `codex --service-tier fast`: request Codex fast mode (`service_tier=fast`). This is the quickest way to get a Codex no-context baseline, especially when combined with `--context ephemeral`.
 - `codex --service-tier flex`: request the normal flex tier explicitly.
-- `claude --memory on`: keep normal persisted `claude -p` session continuity.
-- `claude --memory off`: use `--no-session-persistence`, so provider-native continuity is disabled for that run.
+- `claude --memory on`: use an isolated Claude home inside the run directory. With `--context persistent`, the harness keeps a persisted `claude -p` session. With `--context ephemeral`, it uses `--no-session-persistence` but still leaves Claude auto-memory enabled.
+- `claude --memory off`: use the same isolated Claude home, but explicitly set `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`. Session persistence still follows `--context`; memory-off no longer implies ephemeral.
 - `--context persistent`: keep thread/session continuity and let the harness carry forward the model's own `notes` field across ticks.
 - `--context ephemeral`: run each tick as a one-shot baseline. Provider-native session continuity is disabled, and the harness does not carry prior `notes` into later prompts.
 
 Continuity is provider-native:
 
 - Codex starts a persisted `codex exec` session in the real project cwd, captures the provider `thread_id`, and resumes that exact thread on later ticks.
-- Claude starts a persisted `claude -p` session in the real project cwd with an explicit UUID `--session-id`, so later ticks continue the same native transcript without relying on `--continue`.
-- Each harness run records `session.workdir`, `session.provider_session_id`, `session.native_project_dir`, and `session.native_session_path` when the provider-native memory file is discoverable.
+- Claude starts each run with an isolated Claude home rooted under `build/runs/.../runner-state/.../claude-home`. Persistent mode uses an explicit UUID `--session-id`; ephemeral mode uses `--no-session-persistence`. The harness disables `CLAUDE.md` loading for benchmark cleanliness.
+- Each harness run records `session.workdir`, `session.provider_session_id`, `session.native_home_dir`, `session.native_project_dir`, `session.native_session_path`, and `session.native_memory_path`.
+- A Claude `native_memory_path` may still be absent on disk after a short run; memory-on means Claude can read/write `MEMORY.md`, not that it is guaranteed to write one every turn.
 
 Probe runner/model availability without playing a season:
 

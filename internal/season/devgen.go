@@ -10,8 +10,12 @@ const (
 )
 
 type devFaction struct {
-	ID   string
-	Name string
+	ID                  string
+	Name                string
+	Protocol            string
+	StabilizeBonus      int64
+	ExploitBonus        int64
+	StabilizeDebtRelief int64
 }
 
 type devRegime struct {
@@ -24,12 +28,12 @@ type devRegime struct {
 }
 
 var devFactions = []devFaction{
-	{ID: "glass_choir", Name: "Glass Choir"},
-	{ID: "civic_ward", Name: "Civic Ward"},
-	{ID: "harbor_union", Name: "Harbor Union"},
-	{ID: "archive_office", Name: "Archive Office"},
-	{ID: "silt_exchange", Name: "Silt Exchange"},
-	{ID: "relay_guild", Name: "Relay Guild"},
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 14, ExploitBonus: 0, StabilizeDebtRelief: 10},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 10, ExploitBonus: 2, StabilizeDebtRelief: 12},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 6, ExploitBonus: 10, StabilizeDebtRelief: 6},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 8, ExploitBonus: 6, StabilizeDebtRelief: 8},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 4, ExploitBonus: 14, StabilizeDebtRelief: 4},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 12, ExploitBonus: 4, StabilizeDebtRelief: 9},
 }
 
 var devRegimes = []devRegime{
@@ -212,8 +216,8 @@ func buildStandingWorkElement(cluster int, theme devTheme, plan devClusterPlan) 
 			MissPenalties: 0,
 		}
 		beats = append(beats, StoryBeat{
-			BeatID:         fmt.Sprintf("cluster_%03d.standing.%d", cluster+1, i),
-			ClockClass:     "standard",
+			BeatID:          fmt.Sprintf("cluster_%03d.standing.%d", cluster+1, i),
+			ClockClass:      "standard",
 			ResourceTouches: []string{"reputation", "availability", "debt", "cooldowns"},
 			Sources: []Source{
 				{
@@ -463,99 +467,106 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 
 	for i := 1; i <= plan.Hazard; i++ {
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
-		clockClass := "interrupt"
-		options := []string{"evacuate", "deploy_dampener"}
-		sourceText := fmt.Sprintf("%s triggered at the %s. Unprepared carriers can only evacuate or take the hit.", theme.Hazard, theme.District)
-		if i == 1 || i%2 == 1 {
-			clockClass = "standard"
-			options = []string{"cache_dampener"}
-			sourceText = fmt.Sprintf("Advisory: %s may flare near the %s. Quiet operators are pre-positioning dampeners before the panic is official.", theme.Hazard, theme.District)
-		}
+		stabilizeTarget := target + ".stabilize"
+		exploitTarget := target + ".exploit"
+		stabilizeRep := hazardStabilizeReputationThreshold(theme, cluster, i)
+		stabilizeDebtCap := theme.DebtCap + theme.Faction.StabilizeDebtRelief/2 - int64((i-1)%2)*2
+		exploitAura := hazardAuraThreshold(theme, cluster, i)
+		exploitDebtCap := theme.DebtCap - 4 - int64((i-1)%2)*2
+		sourceText := fmt.Sprintf(
+			"%s struck the %s. %s is offering %s to trusted operators, while risk-takers can still try to exploit the surge if their aura and debt stay within public limits.",
+			theme.Hazard,
+			theme.District,
+			theme.Faction.Name,
+			theme.Faction.Protocol,
+		)
 
 		precursors := []string{fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))}
 		if i > 1 {
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
 
-		publicReqs := []PublicRequirement(nil)
-		if i >= 2 {
-			minAura := hazardAuraThreshold(theme, cluster, i)
-			publicReqs = append(publicReqs, PublicRequirement{
-				Metric:   "aura",
-				Operator: ">=",
-				Value:    minAura,
-				Label:    fmt.Sprintf("Aura %d+ unlocks reliable dampener deployment.", minAura),
-			})
-		}
-
-		rules := []Rule(nil)
-		if i == 1 || i%2 == 1 {
-			rules = append(rules,
-				Rule{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "cache_dampener"},
-					Requirements: RuleRequirements{
-						RequiresAvailability: []string{defaultAvailability},
-					},
-					Effects: StateEffects{
-						LockTicks:         1,
-						AvailabilityDelta: "preparing",
-					},
-					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 5 + int64(i/2), Debt: 4 + int64(i/2), MissPenalties: 0},
-					Label:          "You spent time and debt to pre-stage a dampener cache.",
-					Classification: "best",
+		rules := []Rule{
+			{
+				Match: ActionMatch{Command: "commit", Target: stabilizeTarget, Option: "stabilize"},
+				Requirements: RuleRequirements{
+					RequiresAvailability: []string{defaultAvailability},
+					MinReputation:        map[string]int64{theme.Faction.ID: stabilizeRep},
+					MaxDebt:              stabilizeDebtCap,
 				},
-				Rule{
-					Match:          ActionMatch{Command: "hold"},
-					Delta:          ScoreDelta{},
-					Label:          "You waited and kept your options open.",
-					Classification: "miss",
+				Effects: StateEffects{
+					ReputationDelta: map[string]int64{theme.Faction.ID: 1},
 				},
-			)
-		} else {
-			minAura := hazardAuraThreshold(theme, cluster, i)
-			rules = append(rules,
-				Rule{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "deploy_dampener"},
-					Requirements: RuleRequirements{
-						RequiresAvailability: []string{defaultAvailability},
-						MinAura:              minAura,
-					},
-					Delta:          ScoreDelta{Yield: 90 + int64(i*12), Insight: 18 + int64(i*3), Aura: 4, Debt: 0, MissPenalties: 0},
-					Label:          "Preparedness converted directly into a clean interrupt resolution.",
-					Classification: "best",
+				Delta: ScoreDelta{
+					Yield:         24 + int64(i*4) + theme.Faction.StabilizeBonus,
+					Insight:       10 + int64(i*2),
+					Aura:          0,
+					Debt:          -(6 + theme.Faction.StabilizeDebtRelief/2),
+					MissPenalties: 0,
 				},
-				Rule{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "evacuate"},
-					Requirements: RuleRequirements{
-						RequiresAvailability: []string{defaultAvailability},
-					},
-					Delta:          ScoreDelta{Yield: 18 + int64(i*2), Insight: 3, Aura: 0, Debt: 0, MissPenalties: 0},
-					Label:          "Evacuation was safe but low yield.",
-					Classification: "miss",
+				Label:          fmt.Sprintf("%s trusted you to run the %s protocol and contain the spill cleanly.", theme.Faction.Name, theme.Faction.Protocol),
+				Classification: "best",
+			},
+			{
+				Match: ActionMatch{Command: "commit", Target: stabilizeTarget, Option: "stabilize"},
+				Requirements: RuleRequirements{
+					RequiresAvailability: []string{defaultAvailability},
 				},
-				Rule{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "deploy_dampener"},
-					Requirements: RuleRequirements{
-						RequiresAvailability: []string{defaultAvailability},
-					},
-					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 34 + int64(i*4), MissPenalties: 12 + int64(i)},
-					Label:          "The dampener attempt failed because you had not banked enough readiness.",
-					Classification: "bad",
+				Delta: ScoreDelta{
+					Yield:         0,
+					Insight:       0,
+					Aura:          0,
+					Debt:          14 + int64(i*2),
+					MissPenalties: 9 + int64(i),
 				},
-				Rule{
-					Match:          ActionMatch{Command: "hold"},
-					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 18 + int64(i*2), MissPenalties: 14 + int64(i)},
-					Label:          "The interrupt hit while you stalled.",
-					Classification: "bad",
+				Label:          "You reached for faction cover without enough standing to clear the lane.",
+				Classification: "bad",
+			},
+			{
+				Match: ActionMatch{Command: "commit", Target: exploitTarget, Option: "exploit"},
+				Requirements: RuleRequirements{
+					RequiresAvailability: []string{defaultAvailability},
+					MinAura:              exploitAura,
+					MaxDebt:              exploitDebtCap,
 				},
-			)
+				Delta: ScoreDelta{
+					Yield:         82 + int64(i*10) + theme.Faction.ExploitBonus,
+					Insight:       8 + int64(i*2),
+					Aura:          -(4 + int64(i/2)),
+					Debt:          8 + int64(i),
+					MissPenalties: 0,
+				},
+				Label:          "You exploited the disruption for value, burning readiness to do it.",
+				Classification: "best",
+			},
+			{
+				Match: ActionMatch{Command: "commit", Target: exploitTarget, Option: "exploit"},
+				Requirements: RuleRequirements{
+					RequiresAvailability: []string{defaultAvailability},
+				},
+				Delta: ScoreDelta{
+					Yield:         0,
+					Insight:       0,
+					Aura:          0,
+					Debt:          28 + int64(i*4),
+					MissPenalties: 12 + int64(i),
+				},
+				Label:          "You lunged for upside without enough visible margin to survive the blast.",
+				Classification: "bad",
+			},
+			{
+				Match:          ActionMatch{Command: "hold"},
+				Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 10 + int64(i), MissPenalties: 10 + int64(i)},
+				Label:          "The interrupt rolled through while you hesitated.",
+				Classification: "bad",
+			},
 		}
 
 		beats = append(beats, StoryBeat{
 			BeatID:           fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i),
-			ClockClass:       clockClass,
+			ClockClass:       "interrupt",
 			ConsumesTags:     []string{clueTag(cluster, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))},
-			ResourceTouches:  []string{"availability", "aura", "debt"},
+			ResourceTouches:  []string{"availability", "aura", "debt", "reputation"},
 			PrecursorBeatIDs: precursors,
 			Sources: []Source{
 				{
@@ -566,10 +577,43 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			},
 			Opportunities: []Opportunity{
 				{
-					OpportunityID:      target,
-					AllowedCommands:    []string{"commit", "hold"},
-					AllowedOptions:     options,
-					PublicRequirements: publicReqs,
+					OpportunityID:   stabilizeTarget,
+					AllowedCommands: []string{"commit", "hold"},
+					AllowedOptions:  []string{"stabilize"},
+					PublicRequirements: []PublicRequirement{
+						{
+							Metric:   "reputation",
+							Scope:    theme.Faction.ID,
+							Operator: ">=",
+							Value:    stabilizeRep,
+							Label:    fmt.Sprintf("%s standing %d+ unlocks %s.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol),
+						},
+						{
+							Metric:   "debt",
+							Operator: "<=",
+							Value:    stabilizeDebtCap,
+							Label:    fmt.Sprintf("Debt %d or lower preserves trusted response access.", stabilizeDebtCap),
+						},
+					},
+				},
+				{
+					OpportunityID:   exploitTarget,
+					AllowedCommands: []string{"commit"},
+					AllowedOptions:  []string{"exploit"},
+					PublicRequirements: []PublicRequirement{
+						{
+							Metric:   "aura",
+							Operator: ">=",
+							Value:    exploitAura,
+							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation.", exploitAura),
+						},
+						{
+							Metric:   "debt",
+							Operator: "<=",
+							Value:    exploitDebtCap,
+							Label:    fmt.Sprintf("Debt %d or lower keeps the exploit lane viable.", exploitDebtCap),
+						},
+					},
 				},
 			},
 			Scoring: ScoringPlan{Rules: rules},
@@ -578,9 +622,9 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_hazard", cluster+1),
-		Family:          "preparedness_hazard",
+		Family:          "hazard_interrupt",
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_hazard_bias", cluster+1)},
-		ResourceTouches: []string{"availability", "aura", "debt"},
+		ResourceTouches: []string{"availability", "aura", "debt", "reputation"},
 		Beats:           beats,
 	}
 }
@@ -591,6 +635,10 @@ func hazardAuraThreshold(theme devTheme, cluster, beat int) int64 {
 		threshold += int64((beat - 2) % 2 * 2)
 	}
 	return threshold
+}
+
+func hazardStabilizeReputationThreshold(theme devTheme, cluster, beat int) int64 {
+	return theme.RepTier + int64(cluster/5) + int64((beat-1)%2)*2
 }
 
 func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) StoryElement {

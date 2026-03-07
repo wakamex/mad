@@ -51,7 +51,7 @@ The generated `seasons/dev1000` fixture is the current long-form dev season. At 
 
 - `1000` ticks
 - about `14.3` hours total runtime
-- `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, preparedness hazards, and payoff gates
+- `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, hazard interrupts, and payoff gates
 - baseline snapshot around `greedy_best=77628`, `visible_greedy=2047`, `always_hold=-8772`
 - random-play audit around `mean=-1760`, `p90=299`, `p99=1925`, `positive_rate≈14.2%` using `1000` runs and seed `11`
 

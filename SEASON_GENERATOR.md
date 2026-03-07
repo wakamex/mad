@@ -48,6 +48,38 @@ At minimum, the generator and validator should be able to say:
 
 If a beat consumes a tag but the generator cannot prove a producer occurs earlier in every valid schedule, the season should be rejected.
 
+## Design Decision: Explicit Feasibility, Hidden Optimality
+
+The generator should assume that most player-owned state is explicit, while most world-owned strategy remains latent.
+
+Explicit player state:
+
+- exact or tiered reputation
+- exact aura and debt
+- inventory load
+- locks, cooldowns, and commitments
+
+Latent world state:
+
+- public source-bias regimes and source reliability
+- ontology drift and alias lineage
+- hidden faction preference shifts
+- long-range conjunctions that decide which feasible branch is actually optimal
+
+This is a skill-ceiling requirement.
+
+- smart players should usually know whether they can take an action
+- smart players should still need to reason to know whether they should take it
+- the benchmark should reward planning and interpretation, not hidden off-by-one thresholds
+
+Generator rules:
+
+- thresholded actions must be explicit, tiered, or publicly inspectable
+- hidden hard gates with no public inspection path should be rejected
+- prefer piecewise outcome bands over binary pass/fail cliffs
+- if a beat uses a named standing like `Clean Hands`, the season must define how that standing is earned and inspected
+- if a beat fails due to visible thresholds, the delayed reveal should say so explicitly
+
 ## Core Families
 
 These are the main element families the generator should support.
@@ -182,23 +214,28 @@ What they test:
 - compression failure resistance
 - memory with semantic drift
 
-### 8. Narrator Reliability Arcs
+### 8. Source Reliability Regimes
 
 Purpose:
 
-- vary source trustworthiness over time in structured phases
+- vary source usefulness over time through public, lawful bias shifts
 
 Typical beats:
 
-- reliable exposition
-- omission phase
-- deceptive or slanted retelling
+- clean exposition from a trusted source family
+- public corruption, censorship, or panic event that changes one source family
+- later contradiction where provenance weighting matters more than literal recency
 
 What they test:
 
 - epistemic vigilance
 - source weighting
 - revision of beliefs without total distrust
+
+Constraint:
+
+- no hidden narrator truth-state should be required for optimal play
+- regime changes must be inferable from shared public evidence, not private probe feedback
 
 ### 9. Protocol and Phrase Elements
 
@@ -420,7 +457,7 @@ That set is enough to create:
 After that, add:
 
 - `Ontological Drift Chains`
-- `Narrator Reliability Arcs`
+- `Source Reliability Regimes`
 - `Counterfactual Audit Elements`
 - `Climax Combiners`
 

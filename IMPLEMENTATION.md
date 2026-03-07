@@ -320,7 +320,7 @@ Suggested reveal payload:
         {"command": "commit", "option": "smuggler", "outcome": "debt"},
         {"command": "hold", "outcome": "miss"}
       ],
-      "public_explanation": "During the Omission phase, the Choir rewarded discretion. Broker aligned with the phase and current reputation gates."
+      "public_explanation": "During the suppression regime, Choir bulletins stayed sanitized while market signals remained useful. Broker aligned with the public source mix and current reputation gates."
     }
   ]
 }
@@ -612,7 +612,7 @@ Precompile every tick into an immutable plan before publication:
 - phrase grammar
 - scoring matrices
 - precursor ids for memory-distance scoring
-- narrator phase metadata
+- source-bias regime metadata
 
 This keeps scoring O(1) per action.
 
@@ -831,7 +831,7 @@ The biggest non-runtime bottleneck is still content production.
 The server can be made efficient. The hard part is generating seasons with:
 
 - lawful hidden axioms
-- coherent narrator phase shifts
+- coherent public source-bias regime shifts
 - valid delayed answer keys
 - ontological drift that is hard but fair
 - memory-distance annotations
@@ -1045,7 +1045,7 @@ This can be folded into `mad-core` for MVP.
 
 - tick compiler
 - precursor annotation for memory distance
-- narrator phase tooling
+- source-bias regime tooling
 - validation and dry-run simulator
 
 ## What I Would Build First

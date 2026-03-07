@@ -71,7 +71,7 @@ Needed:
 - dossier/interrupt density targets
 - anti-clustering rules
 
-## 5. Narrator and Difficulty Profile
+## 5. Source Reliability and Difficulty Profile
 
 Status: pending
 
@@ -81,8 +81,8 @@ Goal:
 
 Needed:
 
-- narrator phase schedule
-- source reliability modulation by phase
+- source-bias regime schedule driven by public events
+- source reliability modulation by public regime
 - difficulty curve across the season
 
 ## 6. Phrase Grammar Templates

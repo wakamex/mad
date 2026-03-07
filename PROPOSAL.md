@@ -213,6 +213,46 @@ This preserves tractability and closes the information-leak problem:
 - no player gets privileged explanatory text
 - brute-force farms get slower and more expensive feedback
 
+## Design Decision: Explicit Player State, Latent World State
+
+To preserve a high skill ceiling, most player-owned state should be explicit.
+
+Visible state should include exact values or explicit tiers for:
+
+- reputation
+- aura
+- debt
+- inventory load
+- active locks, cooldowns, and commitments
+
+Latent state should remain inferential:
+
+- public source-bias regimes and their strategic implications
+- ontology drift and alias lineage
+- hidden faction preference changes
+- long-range conjunctions that determine which feasible action is actually best
+
+The intended difficulty is `explicit feasibility, hidden optimality`.
+
+This means:
+
+- players should usually be able to tell whether an action is legal or near-legal
+- players should still have to infer whether that legal action is strategically correct
+- the hard part is planning and interpretation, not guessing whether a hidden threshold was `39` or `40`
+
+Authoring rules for thresholded actions:
+
+- if an action has a hard threshold, the threshold should be explicit, tiered, or publicly inspectable
+- hidden hard gates without a public inspection path are invalid
+- most thresholds should use outcome bands, not brittle binary cliffs
+- failures should eventually reveal whether the miss came from visible thresholds or latent world misread
+
+Examples:
+
+- good: `requires Choir reputation >= 40 and debt <= 20`, but the optimal branch still depends on an older clue about the current phase
+- good: `requires Clean Hands standing`, where `Clean Hands` is a named public tier with clear numeric criteria
+- bad: a high-value action silently fails because the true hidden minimum was `40` and the player had `39`
+
 ## Non-Response Semantics
 
 The game should not care why a player failed to submit.
@@ -404,15 +444,25 @@ These sources may produce semantically similar but factually contradictory state
 
 Every contradiction must be explainable. Misleading text should come from stale truth, biased source, partial observation, or lawful rule drift, not arbitrary trolling.
 
-## Narrator Phases
+## Source Reliability Regimes
 
-Narrator unreliability should escalate by phase during a season.
+MAD should not rely on hidden narrator mood swings or player-specific bounded feedback.
 
-- Trust phase: sparse and mostly reliable. Important facts are present but underexplained.
-- Omission phase: still lawful, but key context is dropped or hidden behind source conflict.
-- Active deception phase: some sources become strategically adversarial, while still leaving enough evidence to detect the lie.
+Instead, the public stream should use source types with stable bias profiles and occasional globally visible regime shifts.
 
-Players should not merely learn which source is good. They should learn when a once-useful source has become stale, biased, or incomplete.
+- Official bulletins can become sanitized during suppression periods.
+- Market gossip can become unusually predictive during scarcity spikes.
+- Archive fragments can become incomplete during checksum or corruption events.
+- Faction notices can become more propagandistic during public campaigns.
+
+These shifts must be legible from shared public evidence:
+
+- source provenance
+- repeated contradiction patterns
+- explicit public events such as corruption, censorship, or panic
+- delayed public reveals that let strong players recalibrate source weights
+
+The skill test is not “guess whether the narrator is lying today.” The skill test is “weight sources correctly under publicly legible bias and drift.”
 ## Action Interface
 
 V1 uses a fixed action envelope. The syntax never changes. The puzzle is choosing the right action, target, option, timing, and confidence.

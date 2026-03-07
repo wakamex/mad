@@ -171,6 +171,8 @@ type StepTrace struct {
 
 type RunResult struct {
 	Runner         RunnerSpec                  `json:"runner"`
+	RunNumber      int                         `json:"run_number,omitempty"`
+	RunCount       int                         `json:"run_count,omitempty"`
 	Session        SessionInfo                 `json:"session,omitempty"`
 	SeasonID       string                      `json:"season_id"`
 	SeasonTitle    string                      `json:"season_title"`
@@ -203,7 +205,20 @@ type SuiteReport struct {
 	SeasonID    string        `json:"season_id,omitempty"`
 	SeasonTitle string        `json:"season_title,omitempty"`
 	Runs        []RunResult   `json:"runs,omitempty"`
+	RunGroups   []RunGroup    `json:"run_groups,omitempty"`
 	Probes      []ProbeResult `json:"probes,omitempty"`
+}
+
+type RunGroup struct {
+	Runner          RunnerSpec `json:"runner"`
+	RunCount        int        `json:"run_count"`
+	MeanScore       float64    `json:"mean_score"`
+	MedianScore     float64    `json:"median_score"`
+	P90Score        float64    `json:"p90_score"`
+	MinScore        int64      `json:"min_score"`
+	MaxScore        int64      `json:"max_score"`
+	MeanWallMS      int64      `json:"mean_wall_ms"`
+	MeanTicksPerMin float64    `json:"mean_ticks_per_min"`
 }
 
 func ParseRunnerSpec(raw string) (RunnerSpec, error) {

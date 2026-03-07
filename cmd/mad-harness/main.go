@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/mihai/mad/internal/harness"
@@ -35,6 +37,7 @@ func main() {
 	recentReveals := flag.Int("recent-reveals", 6, "Number of recent public reveals to include in prompts")
 	maxNotesChars := flag.Int("max-notes-chars", 1600, "Maximum persisted notes length")
 	decisionTimeout := flag.Duration("decision-timeout", 90*time.Second, "Timeout per model decision")
+	runCount := flag.Int("runs", 1, "Number of independent runs per runner")
 	memoryModeRaw := flag.String("memory", string(harness.MemoryModeInherit), "Native memory mode for runners: inherit, on, or off")
 	contextModeRaw := flag.String("context", string(harness.ContextModePersistent), "Context continuity mode for runners: persistent or ephemeral")
 	serviceTierRaw := flag.String("service-tier", string(harness.ServiceTierInherit), "Codex service tier for runners: inherit, fast, or flex")
@@ -55,6 +58,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("parse service tier: %v", err)
 	}
+	if *runCount <= 0 {
+		log.Fatalf("parse runs: must be >= 1")
+	}
 
 	specs := make([]harness.RunnerSpec, 0, len(runnerSpecs))
 	if len(runnerSpecs) == 0 {
@@ -74,24 +80,19 @@ func main() {
 		specs[i].ServiceTier = serviceTier
 	}
 
-	runners := make([]harness.Runner, 0, len(specs))
-	for _, spec := range specs {
-		runner, err := harness.NewCLIRunner(spec, *workdir, "")
-		if err != nil {
-			log.Fatalf("create runner %s: %v", spec.Label(), err)
-		}
-		runners = append(runners, runner)
-		defer runner.Close()
-	}
-
 	report := harness.SuiteReport{
 		GeneratedAt: time.Now().UTC(),
 	}
 	ctx := context.Background()
 
 	if *probeOnly {
-		for _, runner := range runners {
+		for _, spec := range specs {
+			runner, err := harness.NewCLIRunner(spec, *workdir, "")
+			if err != nil {
+				log.Fatalf("create runner %s: %v", spec.Label(), err)
+			}
 			probe := harness.RunProbe(ctx, runner)
+			_ = runner.Close()
 			report.Probes = append(report.Probes, probe)
 			log.Printf("probe_summary runner=%s ok=%t duration=%s error=%q", probe.Runner.Label(), probe.OK, formatDurationMS(probe.DurationMS), probe.Error)
 		}
@@ -124,34 +125,97 @@ func main() {
 		MaxNotesChars:     *maxNotesChars,
 		DecisionTimeout:   *decisionTimeout,
 	}
-	for _, runner := range runners {
-		runIndex := len(report.Runs)
-		report.Runs = append(report.Runs, harness.RunResult{
-			Runner:      runner.Spec(),
-			Session:     runner.SessionInfo(),
-			SeasonID:    file.SeasonID,
-			SeasonTitle: file.Title,
-		})
-		runOptions.StepCallback = func(partial harness.RunResult) error {
+	for _, spec := range specs {
+		for runNumber := 1; runNumber <= *runCount; runNumber++ {
+			runner, err := harness.NewCLIRunner(spec, *workdir, "")
+			if err != nil {
+				log.Fatalf("create runner %s: %v", spec.Label(), err)
+			}
+
+			progress := &progressPrinter{}
+			totalTicks := plannedTickCount(runOptions, len(file.Ticks))
+			runIndex := len(report.Runs)
+			report.Runs = append(report.Runs, harness.RunResult{
+				Runner:      spec,
+				RunNumber:   runNumber,
+				RunCount:    *runCount,
+				Session:     runner.SessionInfo(),
+				SeasonID:    file.SeasonID,
+				SeasonTitle: file.Title,
+			})
+			progress.Start(report.Runs[runIndex], totalTicks)
+			runOptions.StepCallback = func(partial harness.RunResult) error {
+				partial.RunNumber = runNumber
+				partial.RunCount = *runCount
+				report.GeneratedAt = time.Now().UTC()
+				report.Runs[runIndex] = partial
+				if err := storage.SaveJSON(*outPath, report); err != nil {
+					return err
+				}
+				progress.Update(partial)
+				return nil
+			}
+
+			result, err := harness.RunSeason(ctx, file, simReport, runner, runOptions)
+			progress.Finish()
+			_ = runner.Close()
+			if err != nil {
+				log.Fatalf("run %s: %v", spec.Label(), err)
+			}
+
+			result.RunNumber = runNumber
+			result.RunCount = *runCount
 			report.GeneratedAt = time.Now().UTC()
-			report.Runs[runIndex] = partial
-			return storage.SaveJSON(*outPath, report)
+			report.Runs[runIndex] = result
+			report.RunGroups = summarizeRunGroups(report.Runs)
+			if err := storage.SaveJSON(*outPath, report); err != nil {
+				log.Fatalf("write harness report: %v", err)
+			}
+			log.Printf("run_summary %s", summarizeRun(result))
 		}
-		result, err := harness.RunSeason(ctx, file, simReport, runner, runOptions)
-		if err != nil {
-			log.Fatalf("run %s: %v", runner.Spec().Label(), err)
-		}
-		report.GeneratedAt = time.Now().UTC()
-		report.Runs[runIndex] = result
-		if err := storage.SaveJSON(*outPath, report); err != nil {
-			log.Fatalf("write harness report: %v", err)
-		}
-		log.Printf("run_summary %s", summarizeRun(result))
 	}
 	for _, run := range report.Runs {
 		log.Printf("final_summary %s", summarizeRun(run))
 	}
+	for _, group := range report.RunGroups {
+		log.Printf("multi_run_summary %s", summarizeRunGroup(group))
+	}
 	log.Printf("run_report runners=%d out=%s", len(report.Runs), *outPath)
+}
+
+type progressPrinter struct {
+	lastWidth int
+}
+
+func (p *progressPrinter) Start(result harness.RunResult, total int) {
+	fmt.Fprintf(
+		os.Stderr,
+		"run_start runner=%s run=%d/%d season=%s ticks=%d\n",
+		result.Runner.Label(),
+		max(result.RunNumber, 1),
+		max(result.RunCount, 1),
+		result.SeasonID,
+		total,
+	)
+}
+
+func (p *progressPrinter) Update(result harness.RunResult) {
+	line := formatProgressLine(result)
+	if len(line) < p.lastWidth {
+		line += strings.Repeat(" ", p.lastWidth-len(line))
+	}
+	if len(line) > p.lastWidth {
+		p.lastWidth = len(line)
+	}
+	fmt.Fprintf(os.Stderr, "\r%s", line)
+}
+
+func (p *progressPrinter) Finish() {
+	if p.lastWidth == 0 {
+		return
+	}
+	fmt.Fprintln(os.Stderr)
+	p.lastWidth = 0
 }
 
 func summarizeRun(result harness.RunResult) string {
@@ -166,8 +230,10 @@ func summarizeRun(result harness.RunResult) string {
 		lastTick = result.ScoreTrace[len(result.ScoreTrace)-1].TickID
 	}
 	return fmt.Sprintf(
-		"runner=%s score=%d steps=%d wall=%s avg_step=%s p50=%s p95=%s ticks_per_min=%.2f last_tick=%s errors=%d",
+		"runner=%s run=%d/%d score=%d steps=%d wall=%s avg_step=%s p50=%s p95=%s ticks_per_min=%.2f last_tick=%s errors=%d",
 		result.Runner.Label(),
+		max(result.RunNumber, 1),
+		max(result.RunCount, 1),
 		result.FinalScore.Score,
 		result.StepCount,
 		result.CompletedAt.Sub(result.StartedAt).Round(time.Millisecond),
@@ -178,6 +244,177 @@ func summarizeRun(result harness.RunResult) string {
 		lastTick,
 		len(result.Errors),
 	)
+}
+
+func summarizeRunGroups(runs []harness.RunResult) []harness.RunGroup {
+	if len(runs) == 0 {
+		return nil
+	}
+	grouped := make(map[string][]harness.RunResult)
+	order := make([]string, 0, len(runs))
+	for _, run := range runs {
+		key := run.Runner.Label()
+		if _, ok := grouped[key]; !ok {
+			order = append(order, key)
+		}
+		grouped[key] = append(grouped[key], run)
+	}
+
+	groups := make([]harness.RunGroup, 0, len(grouped))
+	for _, key := range order {
+		groupRuns := grouped[key]
+		scores := make([]int64, 0, len(groupRuns))
+		var wallTotal int64
+		var tpmTotal float64
+		minScore := int64(0)
+		maxScore := int64(0)
+		for i, run := range groupRuns {
+			score := run.FinalScore.Score
+			if i == 0 || score < minScore {
+				minScore = score
+			}
+			if i == 0 || score > maxScore {
+				maxScore = score
+			}
+			scores = append(scores, score)
+			wallTotal += run.CompletedAt.Sub(run.StartedAt).Milliseconds()
+			tpmTotal += ticksPerMinute(run)
+		}
+		groups = append(groups, harness.RunGroup{
+			Runner:          groupRuns[0].Runner,
+			RunCount:        len(groupRuns),
+			MeanScore:       meanInt64(scores),
+			MedianScore:     percentileInt64(scores, 0.50),
+			P90Score:        percentileInt64(scores, 0.90),
+			MinScore:        minScore,
+			MaxScore:        maxScore,
+			MeanWallMS:      wallTotal / int64(len(groupRuns)),
+			MeanTicksPerMin: tpmTotal / float64(len(groupRuns)),
+		})
+	}
+	return groups
+}
+
+func summarizeRunGroup(group harness.RunGroup) string {
+	return fmt.Sprintf(
+		"runner=%s runs=%d mean_score=%.2f median_score=%.2f p90_score=%.2f min_score=%d max_score=%d mean_wall=%s mean_ticks_per_min=%.2f",
+		group.Runner.Label(),
+		group.RunCount,
+		group.MeanScore,
+		group.MedianScore,
+		group.P90Score,
+		group.MinScore,
+		group.MaxScore,
+		time.Duration(group.MeanWallMS)*time.Millisecond,
+		group.MeanTicksPerMin,
+	)
+}
+
+func formatProgressLine(result harness.RunResult) string {
+	total := result.EndTick - result.StartTick
+	done := result.StepCount
+	if total < 0 {
+		total = 0
+	}
+	progressPct := 100.0
+	if total > 0 {
+		progressPct = 100 * float64(done) / float64(total)
+	}
+	elapsed := result.CompletedAt.Sub(result.StartedAt)
+	if elapsed < 0 {
+		elapsed = 0
+	}
+	avgStep := time.Duration(0)
+	if done > 0 {
+		avgStep = elapsed / time.Duration(done)
+	}
+	remaining := total - done
+	if remaining < 0 {
+		remaining = 0
+	}
+	eta := time.Duration(0)
+	if done > 0 && remaining > 0 {
+		eta = time.Duration(float64(elapsed) * (float64(remaining) / float64(done)))
+	}
+	lastDelta := int64(0)
+	if len(result.Steps) > 0 {
+		lastDelta = result.Steps[len(result.Steps)-1].Outcome.ScoreDelta
+	}
+	lastTick := ""
+	if len(result.ScoreTrace) > 0 {
+		lastTick = result.ScoreTrace[len(result.ScoreTrace)-1].TickID
+	}
+	return fmt.Sprintf(
+		"%d/%d %5.1f%% score=%d d=%+d avg=%s eta=%s err=%d last=%s",
+		done,
+		total,
+		progressPct,
+		result.FinalScore.Score,
+		lastDelta,
+		avgStep.Round(time.Millisecond),
+		eta.Round(time.Second),
+		len(result.Errors),
+		lastTick,
+	)
+}
+
+func plannedTickCount(options harness.RunOptions, tickCount int) int {
+	startTick := options.StartTick
+	if startTick < 0 {
+		startTick = 0
+	}
+	if startTick > tickCount {
+		startTick = tickCount
+	}
+	endTick := tickCount
+	if options.MaxTicks > 0 && startTick+options.MaxTicks < endTick {
+		endTick = startTick + options.MaxTicks
+	}
+	if endTick < startTick {
+		endTick = startTick
+	}
+	return endTick - startTick
+}
+
+func ticksPerMinute(result harness.RunResult) float64 {
+	wallMS := result.CompletedAt.Sub(result.StartedAt).Milliseconds()
+	if wallMS <= 0 || result.StepCount <= 0 {
+		return 0
+	}
+	return float64(result.StepCount) / (float64(wallMS) / float64(time.Minute/time.Millisecond))
+}
+
+func percentileInt64(values []int64, q float64) float64 {
+	if len(values) == 0 {
+		return 0
+	}
+	sorted := append([]int64(nil), values...)
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i] < sorted[j] })
+	if q <= 0 {
+		return float64(sorted[0])
+	}
+	if q >= 1 {
+		return float64(sorted[len(sorted)-1])
+	}
+	index := int(math.Ceil(q*float64(len(sorted)))) - 1
+	if index < 0 {
+		index = 0
+	}
+	if index >= len(sorted) {
+		index = len(sorted) - 1
+	}
+	return float64(sorted[index])
+}
+
+func meanInt64(values []int64) float64 {
+	if len(values) == 0 {
+		return 0
+	}
+	var total int64
+	for _, value := range values {
+		total += value
+	}
+	return float64(total) / float64(len(values))
 }
 
 func stepDurationStats(steps []harness.StepTrace) (time.Duration, time.Duration, time.Duration) {

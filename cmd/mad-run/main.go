@@ -26,6 +26,7 @@ type config struct {
 	workdir         string
 	startTick       int
 	maxTicks        int
+	runs            int
 	recentReveals   int
 	maxNotesChars   int
 	decisionTimeout time.Duration
@@ -78,6 +79,7 @@ func main() {
 		SeasonPath:  cfg.seasonPath,
 		Workdir:     cfg.workdir,
 		OutPath:     cfg.outPath,
+		Runs:        cfg.runs,
 		ProbeOnly:   cfg.probeOnly,
 		Detached:    cfg.detach,
 		CodexHome:   codexHome,
@@ -136,7 +138,7 @@ func parseConfig() (config, error) {
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Examples:")
 		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100")
-		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --season ./seasons/dev/season.json")
+		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json")
 		fmt.Fprintln(out, "  mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Flags:")
@@ -153,6 +155,7 @@ func parseConfig() (config, error) {
 	flag.StringVar(&cfg.workdir, "workdir", ".", "Working directory passed to provider CLIs")
 	flag.IntVar(&cfg.startTick, "start-tick", 0, "Tick index to start from")
 	flag.IntVar(&cfg.maxTicks, "max-ticks", 25, "Maximum ticks to play; 0 means entire season")
+	flag.IntVar(&cfg.runs, "runs", 1, "Number of independent runs per runner")
 	flag.IntVar(&cfg.recentReveals, "recent-reveals", 6, "Number of recent public reveals in prompts")
 	flag.IntVar(&cfg.maxNotesChars, "max-notes-chars", 1600, "Maximum persisted notes length")
 	flag.DurationVar(&cfg.decisionTimeout, "decision-timeout", 90*time.Second, "Timeout per model decision")
@@ -168,6 +171,9 @@ func parseConfig() (config, error) {
 	}
 	if strings.TrimSpace(cfg.model) == "" {
 		return cfg, fmt.Errorf("--model is required")
+	}
+	if cfg.runs <= 0 {
+		return cfg, fmt.Errorf("--runs must be >= 1")
 	}
 	memoryMode, err := harness.ParseMemoryMode(memoryRaw)
 	if err != nil {
@@ -236,6 +242,7 @@ type runMetadata struct {
 	SeasonPath  string
 	Workdir     string
 	OutPath     string
+	Runs        int
 	ProbeOnly   bool
 	Detached    bool
 	CodexHome   string
@@ -253,6 +260,7 @@ func (m runMetadata) render() string {
 		"MAD_RUN_SEASON=" + m.SeasonPath,
 		"MAD_RUN_WORKDIR=" + m.Workdir,
 		"MAD_RUN_OUT=" + m.OutPath,
+		"MAD_RUN_RUNS=" + strconv.Itoa(m.Runs),
 		"MAD_RUN_PROBE=" + strconv.FormatBool(m.ProbeOnly),
 		"MAD_RUN_DETACH=" + strconv.FormatBool(m.Detached),
 	}
@@ -275,6 +283,7 @@ func buildHarnessCommand(repoRoot string, cfg config, codexHome string) (*exec.C
 		"-workdir", cfg.workdir,
 		"-start-tick", strconv.Itoa(cfg.startTick),
 		"-max-ticks", strconv.Itoa(cfg.maxTicks),
+		"-runs", strconv.Itoa(cfg.runs),
 		"-recent-reveals", strconv.Itoa(cfg.recentReveals),
 		"-max-notes-chars", strconv.Itoa(cfg.maxNotesChars),
 		"-decision-timeout", cfg.decisionTimeout.String(),

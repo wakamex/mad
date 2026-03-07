@@ -84,6 +84,7 @@ Run the external-agent harness against a compiled season. The harness keeps a si
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness \
   -season ./seasons/dev1000/season.json \
   -out ./build/harness.json \
+  -runs 3 \
   -max-ticks 25 \
   -runner codex:gpt-5.2-codex@high \
   -runner codex:gpt-5.1-codex-mini@medium \
@@ -92,13 +93,13 @@ env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness \
 ```
 
 `mad-harness` checkpoints the JSON report after every tick, so long runs leave a live-updating `score_trace` on disk instead of only writing at the very end. That makes overnight runs inspectable and plot-friendly even before they finish.
-At the end of each run, `mad-harness` also prints a concise summary to stdout: final score, step count, wall time, average step latency, `p50`/`p95` decision latency, ticks per minute, and the last completed tick.
+During each run, `mad-harness` prints one static `run_start` header and then keeps a single live progress line updated in place with terse stats like tick progress, score, last score delta, average step time, ETA, errors, and last completed tick. At the end of each run it prints a concise summary with final score, step count, wall time, average step latency, `p50`/`p95` decision latency, ticks per minute, and the last completed tick. If `-runs N` is greater than `1`, it also prints multi-run aggregates at the very end.
 
 For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-run), a thin shim over `cmd/mad-run`:
 
 ```bash
   ./scripts/mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100
-  ./scripts/mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --season ./seasons/dev/season.json
+  ./scripts/mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json
   ./scripts/mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe
 ```
 

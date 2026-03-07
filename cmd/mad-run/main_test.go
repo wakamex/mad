@@ -34,6 +34,7 @@ func TestBuildHarnessCommandIncludesCodexHomeAndFlags(t *testing.T) {
 		workdir:         tmp,
 		startTick:       1,
 		maxTicks:        2,
+		runs:            3,
 		recentReveals:   3,
 		maxNotesChars:   400,
 		outPath:         filepath.Join(tmp, "out.json"),
@@ -53,6 +54,9 @@ func TestBuildHarnessCommandIncludesCodexHomeAndFlags(t *testing.T) {
 	}
 	if !strings.Contains(strings.Join(cmd.Args, " "), "-service-tier fast") {
 		t.Fatalf("args missing service tier: %v", cmd.Args)
+	}
+	if !strings.Contains(strings.Join(cmd.Args, " "), "-runs 3") {
+		t.Fatalf("args missing runs: %v", cmd.Args)
 	}
 }
 

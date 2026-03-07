@@ -24,6 +24,12 @@ Weave the sample story-element IR into a compiled season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
 ```
 
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, and simple best-vs-hold score baselines:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json
+```
+
 Compile public tick artifacts from the compiled season:
 
 ```bash
@@ -34,7 +40,8 @@ go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
 
 1. Define ordered multi-beat story elements in `season_ir.json`.
 2. Deterministically interleave those elements into a compiled `season.json`.
-3. Compile immutable public tick artifacts from that compiled season.
+3. Dry-run the compiled season and inspect the generated schedule/reveal report.
+4. Compile immutable public tick artifacts from that compiled season.
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
 
@@ -76,7 +83,7 @@ As detailed in [IMPLEMENTATION.md](./IMPLEMENTATION.md), the work should proceed
 3. **Prove Batch Scoring:** Implement immutable tick plans, due-state handling, and score-epoch generation.
 4. **Ship Public Feedback:** Publish score snapshots, leaderboards, delayed reveals, and shard checkpoints.
 5. **Harden Abuse Controls:** Add rate limits, body caps, and account-friction as needed.
-6. **Build Season Tooling:** Extend the existing story-element IR, weave compiler, validator, and annotation helpers with a dry-run simulator and richer authoring ergonomics for lawful content at scale.
+6. **Build Season Tooling:** Extend the existing story-element IR, weave compiler, validator, simulation report, and annotation helpers with richer authoring ergonomics and deeper season simulation for lawful content at scale.
 
 ---
 *Authored by the MAD Design Team (Clod, Dex, Gem).*

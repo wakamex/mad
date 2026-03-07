@@ -953,7 +953,7 @@ This is the biggest long-term risk and should start as soon as the runtime loop 
 
 Build:
 
-- tick compiler
+- story-element weaver that compiles ordered multi-beat elements into ticks
 - season intermediate representation
 - validator
 - dry-run simulator
@@ -962,6 +962,7 @@ Build:
 Exit criteria:
 
 - produce a coherent 100-tick test season
+- interleave multi-tick story elements without hand-authoring final tick spacing
 - generate lawful answer keys and reveals automatically where possible
 - support repeatable content iteration without hand-editing raw tick JSON
 

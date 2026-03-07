@@ -19,6 +19,7 @@ type TickDefinition struct {
 	Sources       []Source      `json:"sources"`
 	Opportunities []Opportunity `json:"opportunities"`
 	Scoring       ScoringPlan   `json:"scoring"`
+	Annotations   Annotations   `json:"annotations,omitempty"`
 }
 
 type Source struct {
@@ -59,6 +60,14 @@ type ScoreDelta struct {
 	Aura          int64 `json:"aura"`
 	Debt          int64 `json:"debt"`
 	MissPenalties int64 `json:"miss_penalties"`
+}
+
+type Annotations struct {
+	ElementID         string   `json:"element_id,omitempty"`
+	BeatID            string   `json:"beat_id,omitempty"`
+	PrecursorBeatIDs  []string `json:"precursor_beat_ids,omitempty"`
+	PrecursorTickIDs  []string `json:"precursor_tick_ids,omitempty"`
+	MemoryDistanceMin int      `json:"memory_distance_min,omitempty"`
 }
 
 type PublicTick struct {

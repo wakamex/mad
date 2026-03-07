@@ -7,12 +7,7 @@ import (
 
 func LoadFile(path string) (File, error) {
 	var loaded File
-
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return loaded, err
-	}
-	if err := json.Unmarshal(raw, &loaded); err != nil {
+	if err := loadJSONFile(path, &loaded); err != nil {
 		return loaded, err
 	}
 	if loaded.ScoreEpochTicks <= 0 {
@@ -28,4 +23,26 @@ func LoadFile(path string) (File, error) {
 		return loaded, err
 	}
 	return loaded, nil
+}
+
+func LoadIRFile(path string) (IRFile, error) {
+	var loaded IRFile
+	if err := loadJSONFile(path, &loaded); err != nil {
+		return loaded, err
+	}
+	if loaded.SchemaVersion == "" {
+		loaded.SchemaVersion = "v1alpha1"
+	}
+	if err := ValidateIR(loaded); err != nil {
+		return loaded, err
+	}
+	return loaded, nil
+}
+
+func loadJSONFile(path string, value any) error {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(raw, value)
 }

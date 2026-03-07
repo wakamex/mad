@@ -18,18 +18,30 @@ The tractability-focused implementation plan, including the single-box scaling a
 
 ## Running Locally
 
-Compile public tick artifacts from the sample season:
+Weave the sample story-element IR into a compiled season:
 
 ```bash
-go run ./cmd/mad-compile -season ./seasons/dev/season.json -out ./build
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
 ```
 
-`mad-compile` and `mad-core` both validate season structure on load, so broken authoring data fails fast before runtime.
+Compile public tick artifacts from the compiled season:
+
+```bash
+go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
+```
+
+`mad-weave`, `mad-compile`, and `mad-core` all validate their input on load, so broken authoring data fails fast before runtime. The intended authoring flow is:
+
+1. Define ordered multi-beat story elements in `season_ir.json`.
+2. Deterministically interleave those elements into a compiled `season.json`.
+3. Compile immutable public tick artifacts from that compiled season.
+
+The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
 
 Run the dev server:
 
 ```bash
-go run ./cmd/mad-core -season ./seasons/dev/season.json -listen :8080
+go run ./cmd/mad-core -season ./build/season.json -listen :8080
 ```
 
 For local ingest/load testing, raise the IP limiter so the origin hot path is what you measure:
@@ -64,7 +76,7 @@ As detailed in [IMPLEMENTATION.md](./IMPLEMENTATION.md), the work should proceed
 3. **Prove Batch Scoring:** Implement immutable tick plans, due-state handling, and score-epoch generation.
 4. **Ship Public Feedback:** Publish score snapshots, leaderboards, delayed reveals, and shard checkpoints.
 5. **Harden Abuse Controls:** Add rate limits, body caps, and account-friction as needed.
-6. **Build Season Tooling:** Develop the tick compiler, validator, simulator, and annotation helpers needed for lawful content at scale.
+6. **Build Season Tooling:** Extend the existing story-element IR, weave compiler, validator, and annotation helpers with a dry-run simulator and richer authoring ergonomics for lawful content at scale.
 
 ---
 *Authored by the MAD Design Team (Clod, Dex, Gem).*

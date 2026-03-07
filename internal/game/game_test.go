@@ -349,12 +349,17 @@ func TestAbsentPlayerScheduledDebtInterest(t *testing.T) {
 	if player.Debt != 50 {
 		t.Fatalf("unexpected debt after bad action: got %d want 50", player.Debt)
 	}
-	if player.DebtDueTick != 1 {
-		t.Fatalf("unexpected debt due tick: got %d want 1", player.DebtDueTick)
+	nextDossierTick, ok := engine.nextTickSeqMatchingClassAfter(0, "dossier")
+	if !ok {
+		t.Fatalf("expected a future dossier tick")
+	}
+	if player.DebtDueTick != nextDossierTick {
+		t.Fatalf("unexpected debt due tick: got %d want %d", player.DebtDueTick, nextDossierTick)
 	}
 
-	dossierClose := now.Add(engine.season.DurationForTick(1))
-	engine.CloseCurrentTick(dossierClose)
+	for engine.currentTickSeq <= player.DebtDueTick {
+		engine.CloseCurrentTick(engine.currentEndsAt)
+	}
 
 	player = engine.players[1]
 	if player.Debt != 55 {
@@ -363,11 +368,16 @@ func TestAbsentPlayerScheduledDebtInterest(t *testing.T) {
 	if player.Score != -65 {
 		t.Fatalf("unexpected score after scheduled interest: got %d want -65", player.Score)
 	}
-	if player.LastTickID != "S1-T0002" {
-		t.Fatalf("unexpected last tick after scheduled interest: got %s", player.LastTickID)
+	expectedLastTickID := engine.season.Ticks[int(nextDossierTick)%len(engine.season.Ticks)].TickID
+	if player.LastTickID != expectedLastTickID {
+		t.Fatalf("unexpected last tick after scheduled interest: got %s want %s", player.LastTickID, expectedLastTickID)
 	}
-	if player.DebtDueTick != 5 {
-		t.Fatalf("unexpected rescheduled debt due tick: got %d want 5", player.DebtDueTick)
+	nextDueAfterInterest, ok := engine.nextTickSeqMatchingClassAfter(nextDossierTick, "dossier")
+	if !ok {
+		t.Fatalf("expected a later dossier tick")
+	}
+	if player.DebtDueTick != nextDueAfterInterest {
+		t.Fatalf("unexpected rescheduled debt due tick: got %d want %d", player.DebtDueTick, nextDueAfterInterest)
 	}
 }
 

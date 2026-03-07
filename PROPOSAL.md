@@ -557,7 +557,8 @@ Negative compounding:
 
 Long-range retrieval should be measured directly, not assumed from score.
 
-- Season authors annotate some opportunities with their earliest materially relevant precursor events
+- Season authors should define precursor relationships at the story-element or beat level, not by hard-coding final tick gaps
+- The season compiler should interleave those ordered beats into final ticks, then derive the precursor tick links and retrieval distance automatically
 - When a player succeeds on such an opportunity, the evaluator records the tick gap from precursor to exploitation
 - Larger lawful gaps earn higher `Memory Distance` credit, capped to prevent one ancient clue from dominating the benchmark
 

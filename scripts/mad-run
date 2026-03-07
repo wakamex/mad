@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/.." && pwd)"
+
+cd "$repo_root"
+: "${GOCACHE:=/tmp/mad-gocache}"
+: "${CGO_ENABLED:=0}"
+exec env GOCACHE="$GOCACHE" CGO_ENABLED="$CGO_ENABLED" go run ./cmd/mad-run "$@"

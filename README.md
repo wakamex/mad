@@ -78,6 +78,64 @@ For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic a
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
 The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful.
 
+Run the external-agent harness against a compiled season. The harness keeps a single conversation thread per runner, records every action/response, and saves a per-tick `score_trace` so the result can be plotted like VendingBench:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness \
+  -season ./seasons/dev1000/season.json \
+  -out ./build/harness.json \
+  -max-ticks 25 \
+  -runner codex:gpt-5.2-codex@high \
+  -runner codex:gpt-5.1-codex-mini@medium \
+  -runner claude:haiku@low \
+  -runner claude:sonnet@medium
+```
+
+`mad-harness` checkpoints the JSON report after every tick, so long runs leave a live-updating `score_trace` on disk instead of only writing at the very end. That makes overnight runs inspectable and plot-friendly even before they finish.
+At the end of each run, `mad-harness` also prints a concise summary to stdout: final score, step count, wall time, average step latency, `p50`/`p95` decision latency, ticks per minute, and the last completed tick.
+
+For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-run), a thin shim over `cmd/mad-run`:
+
+```bash
+  ./scripts/mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100
+  ./scripts/mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --season ./seasons/dev/season.json
+  ./scripts/mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe
+```
+
+`scripts/mad-run` creates a timestamped run directory under `build/runs/`, stores the exact command it launched, and writes a live-updating `harness.json` plus `launcher.log`.
+
+Memory and context semantics are explicit:
+
+- `codex --memory on`: create an isolated writable `CODEX_HOME` inside the run directory, preserve provider-native session continuity there, and explicitly enable Codex memory features.
+- `codex --memory off`: use the same isolated writable `CODEX_HOME`, but explicitly disable Codex memory features while keeping normal session continuity.
+- `codex --service-tier fast`: request Codex fast mode (`service_tier=fast`). This is the quickest way to get a Codex no-context baseline, especially when combined with `--context ephemeral`.
+- `codex --service-tier flex`: request the normal flex tier explicitly.
+- `claude --memory on`: keep normal persisted `claude -p` session continuity.
+- `claude --memory off`: use `--no-session-persistence`, so provider-native continuity is disabled for that run.
+- `--context persistent`: keep thread/session continuity and let the harness carry forward the model's own `notes` field across ticks.
+- `--context ephemeral`: run each tick as a one-shot baseline. Provider-native session continuity is disabled, and the harness does not carry prior `notes` into later prompts.
+
+Continuity is provider-native:
+
+- Codex starts a persisted `codex exec` session in the real project cwd, captures the provider `thread_id`, and resumes that exact thread on later ticks.
+- Claude starts a persisted `claude -p` session in the real project cwd with an explicit UUID `--session-id`, so later ticks continue the same native transcript without relying on `--continue`.
+- Each harness run records `session.workdir`, `session.provider_session_id`, `session.native_project_dir`, and `session.native_session_path` when the provider-native memory file is discoverable.
+
+Probe runner/model availability without playing a season:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness -probe -out ./build/harness-probe.json
+```
+
+If no `-runner` flags are provided, `mad-harness` uses the current default matrix:
+
+- `codex:gpt-5.1-codex-mini@medium`
+- `codex:gpt-5.2-codex@high`
+- `codex:gpt-5.4@medium`
+- `claude:haiku@low`
+- `claude:sonnet@medium`
+- `claude:opus@high`
+
 Run the dev server:
 
 ```bash

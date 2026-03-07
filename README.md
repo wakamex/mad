@@ -24,10 +24,16 @@ Weave the sample story-element IR into a compiled season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, and simple best-vs-hold score baselines:
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple best-vs-hold score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate):
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
+```
+
+For CI or release gating, fail the run if the random-play audit says the season is too easy to luck through:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1 -fail-on-random-warnings
 ```
 
 Compile public tick artifacts from the compiled season:

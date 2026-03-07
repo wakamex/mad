@@ -1,6 +1,11 @@
 package season
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"slices"
+	"strings"
+)
 
 type SimulationReport struct {
 	SchemaVersion string                       `json:"schema_version"`
@@ -9,8 +14,14 @@ type SimulationReport struct {
 	TickCount     int                          `json:"tick_count"`
 	TotalDuration int64                        `json:"total_duration_ms"`
 	Baselines     map[string]SimulatedBaseline `json:"baselines"`
+	RandomAudit   *SimulatedRandomAudit        `json:"random_audit,omitempty"`
 	Ticks         []SimulatedTick              `json:"ticks"`
 	Reveals       []SimulatedReveal            `json:"reveals"`
+}
+
+type SimulationOptions struct {
+	RandomRuns int   `json:"random_runs,omitempty"`
+	RandomSeed int64 `json:"random_seed,omitempty"`
 }
 
 type SimulatedBaseline struct {
@@ -25,6 +36,21 @@ type SimulatedLedger struct {
 	Aura          int64 `json:"aura"`
 	Debt          int64 `json:"debt"`
 	MissPenalties int64 `json:"miss_penalties"`
+}
+
+type SimulatedRandomAudit struct {
+	Runs            int      `json:"runs"`
+	Seed            int64    `json:"seed"`
+	MeanScore       float64  `json:"mean_score"`
+	MedianScore     int64    `json:"median_score"`
+	P90Score        int64    `json:"p90_score"`
+	P99Score        int64    `json:"p99_score"`
+	MinScore        int64    `json:"min_score"`
+	MaxScore        int64    `json:"max_score"`
+	PositiveRate    float64  `json:"positive_rate"`
+	NonNegativeRate float64  `json:"non_negative_rate"`
+	BeatBestRate    float64  `json:"beat_best_rate"`
+	Warnings        []string `json:"warnings,omitempty"`
 }
 
 type SimulatedTick struct {
@@ -68,6 +94,10 @@ type SimulatedBadAction struct {
 }
 
 func Simulate(file File) (SimulationReport, error) {
+	return SimulateWithOptions(file, SimulationOptions{})
+}
+
+func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport, error) {
 	if err := Validate(file); err != nil {
 		return SimulationReport{}, err
 	}
@@ -120,6 +150,9 @@ func Simulate(file File) (SimulationReport, error) {
 		nowMS += tick.DurationMS
 	}
 	report.TotalDuration = nowMS
+	if options.RandomRuns > 0 {
+		report.RandomAudit = simulateRandomAudit(file, options)
+	}
 	return report, nil
 }
 
@@ -192,4 +225,151 @@ func updateBaseline(baseline *SimulatedBaseline, delta ScoreDelta) {
 	baseline.Ledger.MissPenalties += delta.MissPenalties
 	baseline.Ledger.Score = baseline.Ledger.Yield + baseline.Ledger.Insight + baseline.Ledger.Aura - baseline.Ledger.Debt - baseline.Ledger.MissPenalties
 	baseline.ScoreTrace = append(baseline.ScoreTrace, baseline.Ledger.Score)
+}
+
+func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomAudit {
+	rng := rand.New(rand.NewSource(options.RandomSeed))
+	scores := make([]int64, 0, options.RandomRuns)
+	positive := 0
+	nonNegative := 0
+	totalBeatBest := 0
+	totalChoices := 0
+
+	for i := 0; i < options.RandomRuns; i++ {
+		var ledger SimulatedLedger
+		beatBestHits := 0
+		for _, tick := range file.Ticks {
+			action := randomActionForTick(tick, rng)
+			delta, isBest := evaluateSimulatedAction(tick.Scoring, action)
+			applyLedgerDelta(&ledger, delta)
+			if isBest {
+				beatBestHits++
+			}
+		}
+		scores = append(scores, ledger.Score)
+		totalBeatBest += beatBestHits
+		totalChoices += len(file.Ticks)
+		if ledger.Score > 0 {
+			positive++
+		}
+		if ledger.Score >= 0 {
+			nonNegative++
+		}
+	}
+	slices.Sort(scores)
+
+	mean := 0.0
+	for _, score := range scores {
+		mean += float64(score)
+	}
+	mean /= float64(len(scores))
+
+	audit := &SimulatedRandomAudit{
+		Runs:            options.RandomRuns,
+		Seed:            options.RandomSeed,
+		MeanScore:       mean,
+		MedianScore:     quantileScore(scores, 0.50),
+		P90Score:        quantileScore(scores, 0.90),
+		P99Score:        quantileScore(scores, 0.99),
+		MinScore:        scores[0],
+		MaxScore:        scores[len(scores)-1],
+		PositiveRate:    float64(positive) / float64(len(scores)),
+		NonNegativeRate: float64(nonNegative) / float64(len(scores)),
+		BeatBestRate:    float64(totalBeatBest) / float64(totalChoices),
+	}
+	switch {
+	case audit.MeanScore >= 0:
+		audit.Warnings = append(audit.Warnings, "random mean score is non-negative")
+	case audit.MeanScore > -25:
+		audit.Warnings = append(audit.Warnings, "random mean score is only mildly negative")
+	}
+	if audit.PositiveRate > 0.10 {
+		audit.Warnings = append(audit.Warnings, "more than 10% of random legal runs finish positive")
+	}
+	if audit.P90Score > 0 {
+		audit.Warnings = append(audit.Warnings, "p90 random legal run finishes above zero")
+	}
+	return audit
+}
+
+func randomActionForTick(tick TickDefinition, rng *rand.Rand) SimulatedAction {
+	if len(tick.Opportunities) == 0 {
+		return SimulatedAction{Command: "hold"}
+	}
+
+	opportunity := tick.Opportunities[rng.Intn(len(tick.Opportunities))]
+	command := opportunity.AllowedCommands[rng.Intn(len(opportunity.AllowedCommands))]
+	action := SimulatedAction{
+		Command: command,
+		Target:  opportunity.OpportunityID,
+	}
+	if len(opportunity.AllowedOptions) > 0 && command != "hold" {
+		action.Option = opportunity.AllowedOptions[rng.Intn(len(opportunity.AllowedOptions))]
+	}
+	if opportunity.TextSlot && command != "hold" {
+		action.Phrase = randomPhrase(rng)
+	}
+	return action
+}
+
+func randomPhrase(rng *rand.Rand) string {
+	words := []string{"amber", "static", "mirror", "ledger", "signal", "dust", "chorus", "gamma"}
+	return strings.Join([]string{
+		words[rng.Intn(len(words))],
+		words[rng.Intn(len(words))],
+		words[rng.Intn(len(words))],
+	}, " ")
+}
+
+func evaluateSimulatedAction(plan ScoringPlan, action SimulatedAction) (ScoreDelta, bool) {
+	for _, rule := range plan.Rules {
+		if matchesSimulatedAction(rule.Match, action) {
+			return rule.Delta, rule.Classification == "best"
+		}
+	}
+	for _, rule := range plan.Rules {
+		if rule.Match.Command == "hold" {
+			return rule.Delta, rule.Classification == "best"
+		}
+	}
+	return ScoreDelta{}, false
+}
+
+func matchesSimulatedAction(match ActionMatch, action SimulatedAction) bool {
+	if match.Command != "" && match.Command != action.Command {
+		return false
+	}
+	if match.Target != "" && match.Target != action.Target {
+		return false
+	}
+	if match.Option != "" && match.Option != action.Option {
+		return false
+	}
+	if match.Phrase != "" && strings.TrimSpace(strings.ToLower(match.Phrase)) != strings.TrimSpace(strings.ToLower(action.Phrase)) {
+		return false
+	}
+	return true
+}
+
+func applyLedgerDelta(ledger *SimulatedLedger, delta ScoreDelta) {
+	ledger.Yield += delta.Yield
+	ledger.Insight += delta.Insight
+	ledger.Aura += delta.Aura
+	ledger.Debt += delta.Debt
+	ledger.MissPenalties += delta.MissPenalties
+	ledger.Score = ledger.Yield + ledger.Insight + ledger.Aura - ledger.Debt - ledger.MissPenalties
+}
+
+func quantileScore(sortedScores []int64, q float64) int64 {
+	if len(sortedScores) == 0 {
+		return 0
+	}
+	if q <= 0 {
+		return sortedScores[0]
+	}
+	if q >= 1 {
+		return sortedScores[len(sortedScores)-1]
+	}
+	index := int(float64(len(sortedScores)-1) * q)
+	return sortedScores[index]
 }

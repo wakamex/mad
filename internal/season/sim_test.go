@@ -11,7 +11,10 @@ func TestSimulateDevSeason(t *testing.T) {
 		t.Fatalf("load dev season: %v", err)
 	}
 
-	report, err := Simulate(loaded)
+	report, err := SimulateWithOptions(loaded, SimulationOptions{
+		RandomRuns: 2000,
+		RandomSeed: 7,
+	})
 	if err != nil {
 		t.Fatalf("simulate season: %v", err)
 	}
@@ -33,6 +36,18 @@ func TestSimulateDevSeason(t *testing.T) {
 	}
 	if report.Baselines["perfect_best"].Ledger.Score <= report.Baselines["always_hold"].Ledger.Score {
 		t.Fatalf("expected perfect_best baseline to outperform always_hold")
+	}
+	if report.RandomAudit == nil {
+		t.Fatalf("expected random audit")
+	}
+	if report.RandomAudit.Runs != 2000 {
+		t.Fatalf("unexpected random runs: got %d want %d", report.RandomAudit.Runs, 2000)
+	}
+	if report.RandomAudit.MeanScore >= 0 {
+		t.Fatalf("expected random audit mean score to be negative, got %.2f", report.RandomAudit.MeanScore)
+	}
+	if report.RandomAudit.P99Score > report.Baselines["perfect_best"].Ledger.Score {
+		t.Fatalf("expected random audit p99 not to exceed perfect baseline")
 	}
 
 	first := report.Ticks[0]

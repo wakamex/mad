@@ -620,6 +620,7 @@ Good play looks like:
 
 - Waiting when the obvious quest is a trap
 - Taking a short-term hit to preserve future flexibility
+- Doing low-signal standing work when it buys broad future optionality, but not grinding it past the point of diminishing value
 - Correctly reinterpreting old evidence after a new anomaly
 - Maintaining enough liquidity, inventory space, and reputation to exploit sudden openings
 - Acting quickly on interrupt ticks without abandoning the right long-horizon model
@@ -631,6 +632,7 @@ Bad play looks like:
 - Collapsing old clues into useless summaries
 - Overcommitting to one faction without noticing a drift
 - Chasing aura with no theory
+- Grinding ambient work forever because it feels productive
 - Treating contradictions as noise instead of evidence
 
 ## Spectator Design

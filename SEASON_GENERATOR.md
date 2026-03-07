@@ -143,7 +143,34 @@ What they test:
 - opportunity cost
 - strategic specialization versus overcommitment
 
-### 4. Commitment Arcs
+### 4. Standing Work Loops
+
+Purpose:
+
+- provide low-signal work that improves broad future optionality without naming a single payoff
+
+Typical beats:
+
+- routine courier, repair, escort, cleanup, or clerk work
+- small visible gain in reputation, aura, or access tags
+- small immediate cost in time, debt risk, or commitment capacity
+- later branches that become better or merely possible if enough standing work was banked
+
+What they test:
+
+- investing under uncertainty
+- patience and restraint
+- ability to value optionality rather than only immediate EV
+- avoiding over-grinding when the work stops being worth it
+
+Hard constraints:
+
+- immediate EV should be neutral to mildly negative
+- future payoff should be diffuse across multiple later branches, not one hidden mandatory reward
+- diminishing returns, cooldowns, or rotating availability should prevent trivial farming
+- standing work should usually compete with more obviously lucrative short-term actions
+
+### 5. Commitment Arcs
 
 Purpose:
 
@@ -161,7 +188,7 @@ What they test:
 - timing
 - willingness to skip locally attractive opportunities
 
-### 5. Preparedness Hazards
+### 6. Preparedness Hazards
 
 Purpose:
 
@@ -178,7 +205,7 @@ What they test:
 - interruption handling
 - causal foresight
 
-### 6. Market and Scarcity Loops
+### 7. Market and Scarcity Loops
 
 Purpose:
 
@@ -196,7 +223,7 @@ What they test:
 - economic opportunity cost
 - ability to ignore noisy market chatter until a real conjunction appears
 
-### 7. Ontological Drift Chains
+### 8. Ontological Drift Chains
 
 Purpose:
 
@@ -214,7 +241,7 @@ What they test:
 - compression failure resistance
 - memory with semantic drift
 
-### 8. Source Reliability Regimes
+### 9. Source Reliability Regimes
 
 Purpose:
 
@@ -237,7 +264,7 @@ Constraint:
 - no hidden narrator truth-state should be required for optimal play
 - regime changes must be inferable from shared public evidence, not private probe feedback
 
-### 9. Protocol and Phrase Elements
+### 10. Protocol and Phrase Elements
 
 Purpose:
 
@@ -254,7 +281,7 @@ What they test:
 - action formatting under pressure
 - distinction between gist memory and exact memory
 
-### 10. Decoy Sink Elements
+### 11. Decoy Sink Elements
 
 Purpose:
 
@@ -271,7 +298,7 @@ What they test:
 - willingness to ignore immediate reward
 - resistance to farming the wrong objective
 
-### 11. Counterfactual Audit Elements
+### 12. Counterfactual Audit Elements
 
 Purpose:
 
@@ -288,7 +315,7 @@ What they test:
 - theory quality
 - calibration
 
-### 12. Climax Combiners
+### 13. Climax Combiners
 
 Purpose:
 
@@ -321,8 +348,9 @@ The generator should not place these families independently. It should wire them
 - Most high-value `Payoff Gates` should consume two precursor families, not one.
 - Every `Preparedness Hazard` should point back to an earlier `Commitment Arc`, inventory decision, or market acquisition.
 - Every `Reputation Ladder` should be modulated by at least one non-faction signal such as scarcity, source reliability, or latent physics.
+- Every `Standing Work Loop` should fan out into at least two later branches or standing bands; otherwise it is just disguised mandatory homework.
 - Every `Ontological Drift Chain` should affect at least two downstream elements, otherwise the rename is cosmetic.
-- Every `Narrator Reliability Arc` should overlap with clue-bearing beats so provenance matters.
+- Every `Source Reliability Regime` should overlap with clue-bearing beats so provenance matters.
 - Every `Climax Combiner` should consume outputs from at least three different families.
 
 ### Soft Coupling Rules
@@ -331,6 +359,7 @@ The generator should not place these families independently. It should wire them
 - No major late-game payoff should be solvable from a single immediately preceding beat.
 - Valuable beats should often require players to combine one old stable clue with one newer destabilizing clue.
 - At least some elements should compete for the same limited resource so “correct” local play can still be globally wrong.
+- Some `Standing Work Loops` should be worthwhile only because they preserve broad future optionality, not because they point at a single visible jackpot.
 
 ## Skill-Ceiling Levers
 
@@ -359,6 +388,7 @@ Elements should consume:
 - inventory slots
 - debt headroom
 - faction reputation
+- cooldown budget
 
 If all choices are stateless, greedy local play will look too good.
 
@@ -442,6 +472,7 @@ The first useful milestone should support:
 - `Seed Clue Chains`
 - `Payoff Gates`
 - `Reputation Ladders`
+- `Standing Work Loops`
 - `Commitment Arcs`
 - `Preparedness Hazards`
 - `Decoy Sink Elements`
@@ -449,6 +480,7 @@ The first useful milestone should support:
 That set is enough to create:
 
 - long-range memory
+- broad optionality under uncertainty
 - delayed payoff
 - faction lock-in
 - interrupt preparedness
@@ -464,6 +496,9 @@ After that, add:
 ## What To Avoid
 
 - independent positive-EV ticks
+- fake filler that never changes later branch quality
+- infinite monotone standing grind
+- one hidden mandatory chore disguised as “ambient work”
 - clues that have only one shallow use
 - arbitrary narrator lies that cannot be resolved lawfully
 - ontological drift with no downstream consequences

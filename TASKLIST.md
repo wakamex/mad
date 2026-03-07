@@ -122,3 +122,24 @@ Status: pending
 Goal:
 
 - instantiate a real 1000-tick dev season from reusable element templates instead of the current synthetic tooling fixture
+
+Needed:
+
+- add at least one `Standing Work Loop` template with diminishing returns or cooldowns
+- make that work feed multiple later branches rather than one hidden payoff
+- verify the random audit still stays deeply negative once ambient work exists
+
+## 9. Standing Work Loop Audits
+
+Status: pending
+
+Goal:
+
+- make low-signal ambient work increase skill ceiling instead of degenerating into filler or grind
+
+Needed:
+
+- detect standing work that is always correct or always wrong
+- reject standing work that feeds only one hidden mandatory outcome
+- enforce diminishing returns, cooldowns, or rotation on grindable work
+- ensure at least some standing work competes with obviously better short-term actions

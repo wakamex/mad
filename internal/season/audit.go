@@ -87,7 +87,19 @@ func isFlatGreedyBeat(beat StoryBeat) bool {
 	bestScore, ok := int64(0), false
 	bestCount := 0
 	for _, rule := range beat.Scoring.Rules {
-		if len(rule.Requirements.RequiresAllTags) > 0 || len(rule.Requirements.RequiresAnyTags) > 0 || len(rule.Requirements.ForbidsTags) > 0 || len(rule.Effects.AddTags) > 0 || len(rule.Effects.RemoveTags) > 0 || rule.Effects.LockTicks > 0 || rule.Effects.InventoryDelta != 0 || len(rule.Effects.ReputationDelta) > 0 || rule.Effects.AvailabilityDelta != "" {
+		if len(rule.Requirements.RequiresAllTags) > 0 ||
+			len(rule.Requirements.RequiresAnyTags) > 0 ||
+			len(rule.Requirements.ForbidsTags) > 0 ||
+			len(rule.Requirements.RequiresAvailability) > 0 ||
+			len(rule.Requirements.ForbidsAvailability) > 0 ||
+			len(rule.Requirements.RequiresCooldownReady) > 0 ||
+			len(rule.Effects.AddTags) > 0 ||
+			len(rule.Effects.RemoveTags) > 0 ||
+			rule.Effects.LockTicks > 0 ||
+			rule.Effects.InventoryDelta != 0 ||
+			len(rule.Effects.ReputationDelta) > 0 ||
+			rule.Effects.AvailabilityDelta != "" ||
+			len(rule.Effects.SetCooldowns) > 0 {
 			return false
 		}
 		if rule.Classification == "best" {

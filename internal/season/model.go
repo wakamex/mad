@@ -78,12 +78,15 @@ type ActionMatch struct {
 }
 
 type RuleRequirements struct {
-	RequiresAllTags []string         `json:"requires_all_tags,omitempty"`
-	RequiresAnyTags []string         `json:"requires_any_tags,omitempty"`
-	ForbidsTags     []string         `json:"forbids_tags,omitempty"`
-	MaxDebt         int64            `json:"max_debt,omitempty"`
-	MinAura         int64            `json:"min_aura,omitempty"`
-	MinReputation   map[string]int64 `json:"min_reputation,omitempty"`
+	RequiresAllTags       []string         `json:"requires_all_tags,omitempty"`
+	RequiresAnyTags       []string         `json:"requires_any_tags,omitempty"`
+	ForbidsTags           []string         `json:"forbids_tags,omitempty"`
+	RequiresAvailability  []string         `json:"requires_availability,omitempty"`
+	ForbidsAvailability   []string         `json:"forbids_availability,omitempty"`
+	RequiresCooldownReady []string         `json:"requires_cooldown_ready,omitempty"`
+	MaxDebt               int64            `json:"max_debt,omitempty"`
+	MinAura               int64            `json:"min_aura,omitempty"`
+	MinReputation         map[string]int64 `json:"min_reputation,omitempty"`
 }
 
 type StateEffects struct {
@@ -91,6 +94,7 @@ type StateEffects struct {
 	RemoveTags        []string         `json:"remove_tags,omitempty"`
 	LockTicks         int              `json:"lock_ticks,omitempty"`
 	AvailabilityDelta string           `json:"availability_delta,omitempty"`
+	SetCooldowns      map[string]int   `json:"set_cooldowns,omitempty"`
 	InventoryDelta    int              `json:"inventory_delta,omitempty"`
 	ReputationDelta   map[string]int64 `json:"reputation_delta,omitempty"`
 }
@@ -99,6 +103,9 @@ func (r RuleRequirements) IsZero() bool {
 	return len(r.RequiresAllTags) == 0 &&
 		len(r.RequiresAnyTags) == 0 &&
 		len(r.ForbidsTags) == 0 &&
+		len(r.RequiresAvailability) == 0 &&
+		len(r.ForbidsAvailability) == 0 &&
+		len(r.RequiresCooldownReady) == 0 &&
 		r.MaxDebt == 0 &&
 		r.MinAura == 0 &&
 		len(r.MinReputation) == 0
@@ -109,6 +116,7 @@ func (s StateEffects) IsZero() bool {
 		len(s.RemoveTags) == 0 &&
 		s.LockTicks == 0 &&
 		s.AvailabilityDelta == "" &&
+		len(s.SetCooldowns) == 0 &&
 		s.InventoryDelta == 0 &&
 		len(s.ReputationDelta) == 0
 }

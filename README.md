@@ -16,6 +16,11 @@ The complete architectural blueprint, including the `Relentless Tick` cadence, t
 The tractability-focused implementation plan, including the single-box scaling analysis, stack recommendation, polling API, and batch-scoring architecture, can be found here:
 **[IMPLEMENTATION.md](./IMPLEMENTATION.md)**
 
+## The Season Generator Map
+
+The content-architecture map for story-element families, dependency rules, and skill-ceiling levers can be found here:
+**[SEASON_GENERATOR.md](./SEASON_GENERATOR.md)**
+
 ## Running Locally
 
 Weave the sample story-element IR into a compiled season:

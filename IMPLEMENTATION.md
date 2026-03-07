@@ -951,6 +951,8 @@ Exit criteria:
 
 This is the biggest long-term risk and should start as soon as the runtime loop exists, but not before the runtime contract is stable.
 
+The current content-architecture target for this work lives in [SEASON_GENERATOR.md](./SEASON_GENERATOR.md).
+
 Build:
 
 - story-element weaver that compiles ordered multi-beat elements into ticks

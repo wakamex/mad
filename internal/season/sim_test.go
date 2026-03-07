@@ -86,3 +86,111 @@ func TestSimulateDevSeason(t *testing.T) {
 		t.Fatalf("expected reveal resolution preview")
 	}
 }
+
+func TestEvaluateSimulatedActionSkipsIneligibleBestRule(t *testing.T) {
+	plan := ScoringPlan{
+		Rules: []Rule{
+			{
+				Match:          ActionMatch{Command: "commit", Target: "vault", Option: "open"},
+				Requirements:   RuleRequirements{RequiresAllTags: []string{"vault.key"}},
+				Delta:          ScoreDelta{Yield: 100},
+				Label:          "gated best",
+				Classification: "best",
+			},
+			{
+				Match:          ActionMatch{Command: "commit", Target: "vault", Option: "open"},
+				Delta:          ScoreDelta{Debt: 10},
+				Label:          "fallback bad",
+				Classification: "bad",
+			},
+			{
+				Match:          ActionMatch{Command: "hold"},
+				Delta:          ScoreDelta{MissPenalties: 1},
+				Label:          "hold",
+				Classification: "miss",
+			},
+		},
+	}
+
+	rule, isBest := evaluateSimulatedAction(plan, SimulatedAction{Command: "commit", Target: "vault", Option: "open"}, newSimulatedPlayerState())
+	if isBest {
+		t.Fatalf("expected ineligible best rule to be skipped")
+	}
+	if rule.Label != "fallback bad" {
+		t.Fatalf("unexpected fallback rule: got %q", rule.Label)
+	}
+}
+
+func TestGreedyBaselineRespectsRequirementsAndEffects(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "sim-reqs",
+		Title:           "sim reqs",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "S1-T0001",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "seed", Option: "prepare"},
+							Effects:        StateEffects{AddTags: []string{"vault.key"}},
+							Delta:          ScoreDelta{Insight: 5},
+							Label:          "prepare",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 1},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "seed", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"prepare"}}},
+			},
+			{
+				TickID:     "S1-T0002",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{
+					Rules: []Rule{
+						{
+							Match:          ActionMatch{Command: "commit", Target: "vault", Option: "open"},
+							Requirements:   RuleRequirements{RequiresAllTags: []string{"vault.key"}},
+							Delta:          ScoreDelta{Yield: 100},
+							Label:          "open vault",
+							Classification: "best",
+						},
+						{
+							Match:          ActionMatch{Command: "hold"},
+							Delta:          ScoreDelta{MissPenalties: 2},
+							Label:          "hold",
+							Classification: "miss",
+						},
+					},
+				},
+				Opportunities: []Opportunity{{OpportunityID: "vault", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"open"}}},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+
+	if report.Baselines["greedy_best"].Ledger.Score != 105 {
+		t.Fatalf("unexpected greedy score: got %d want 105", report.Baselines["greedy_best"].Ledger.Score)
+	}
+	if report.Baselines["always_hold"].Ledger.Score != -3 {
+		t.Fatalf("unexpected hold score: got %d want -3", report.Baselines["always_hold"].Ledger.Score)
+	}
+	if report.Ticks[1].ResolutionPreview == nil || report.Ticks[1].ResolutionPreview.BestKnownAction.Option != "open" {
+		t.Fatalf("expected requirement-aware resolution preview on second tick")
+	}
+}

@@ -18,8 +18,11 @@ type IRFile struct {
 }
 
 type StoryElement struct {
-	ElementID string      `json:"element_id"`
-	Beats     []StoryBeat `json:"beats"`
+	ElementID       string      `json:"element_id"`
+	Family          string      `json:"family"`
+	LatentVars      []string    `json:"latent_vars,omitempty"`
+	ResourceTouches []string    `json:"resource_touches,omitempty"`
+	Beats           []StoryBeat `json:"beats"`
 }
 
 type StoryBeat struct {
@@ -28,6 +31,9 @@ type StoryBeat struct {
 	Sources          []Source      `json:"sources"`
 	Opportunities    []Opportunity `json:"opportunities"`
 	Scoring          ScoringPlan   `json:"scoring"`
+	ProducesTags     []string      `json:"produces_tags,omitempty"`
+	ConsumesTags     []string      `json:"consumes_tags,omitempty"`
+	ResourceTouches  []string      `json:"resource_touches,omitempty"`
 	PrecursorBeatIDs []string      `json:"precursor_beat_ids,omitempty"`
 }
 
@@ -95,6 +101,7 @@ func CompileIR(ir IRFile) (File, error) {
 			Opportunities: beat.Opportunities,
 			Scoring:       beat.Scoring,
 			Annotations: Annotations{
+				Family:           element.Family,
 				ElementID:        element.ElementID,
 				BeatID:           beat.BeatID,
 				PrecursorBeatIDs: append([]string(nil), beat.PrecursorBeatIDs...),
@@ -149,6 +156,9 @@ func ValidateIR(ir IRFile) error {
 		if element.ElementID == "" {
 			return fmt.Errorf("element[%d]: element_id is required", elementIndex)
 		}
+		if element.Family == "" {
+			return fmt.Errorf("element[%d]: family is required", elementIndex)
+		}
 		if _, exists := seenElements[element.ElementID]; exists {
 			return fmt.Errorf("element[%d]: duplicate element_id %q", elementIndex, element.ElementID)
 		}
@@ -193,12 +203,20 @@ func ValidateIR(ir IRFile) error {
 	if err := validateBeatGraph(ir); err != nil {
 		return err
 	}
+	if err := validateTagReachability(ir, beatLocations); err != nil {
+		return err
+	}
 	return nil
 }
 
 type beatLocation struct {
 	elementIndex int
 	beatIndex    int
+}
+
+type tagProducerSets struct {
+	Guaranteed map[string][]string
+	Possible   map[string][]string
 }
 
 func validateBeatGraph(ir IRFile) error {
@@ -245,6 +263,133 @@ func precursorsSatisfied(precursorBeatIDs []string, beatToTick map[string]string
 		}
 	}
 	return true
+}
+
+func validateTagReachability(ir IRFile, beatLocations map[string]beatLocation) error {
+	guaranteedEarlier := make(map[string]map[string]struct{}, totalBeatCount(ir.Elements))
+	producers := collectTagProducerSets(ir)
+
+	for _, element := range ir.Elements {
+		for _, beat := range element.Beats {
+			guaranteedEarlier[beat.BeatID] = guaranteedEarlierBeats(ir, beatLocations, beat.BeatID)
+		}
+	}
+
+	for elementIndex, element := range ir.Elements {
+		for beatIndex, beat := range element.Beats {
+			for _, tag := range beat.ConsumesTags {
+				tagProducers := producers.Guaranteed[tag]
+				if len(tagProducers) == 0 {
+					if len(producers.Possible[tag]) > 0 {
+						return fmt.Errorf("element[%d] beat[%d]: consumes tag %q without a guaranteed earlier producer; add an unconditional producer, precursor, or move the producer earlier", elementIndex, beatIndex, tag)
+					}
+					return fmt.Errorf("element[%d] beat[%d]: consumes tag %q but no beat produces it", elementIndex, beatIndex, tag)
+				}
+				if !hasGuaranteedProducer(guaranteedEarlier[beat.BeatID], tagProducers) {
+					return fmt.Errorf("element[%d] beat[%d]: consumes tag %q without a guaranteed earlier producer; add a precursor or move the producer earlier", elementIndex, beatIndex, tag)
+				}
+			}
+			for ruleIndex, rule := range beat.Scoring.Rules {
+				for _, tag := range rule.Requirements.RequiresAllTags {
+					tagProducers := producers.Guaranteed[tag]
+					if len(tagProducers) == 0 {
+						if len(producers.Possible[tag]) > 0 {
+							return fmt.Errorf("element[%d] beat[%d] rule[%d]: requires tag %q without a guaranteed earlier producer; add an unconditional producer, precursor, or move the producer earlier", elementIndex, beatIndex, ruleIndex, tag)
+						}
+						return fmt.Errorf("element[%d] beat[%d] rule[%d]: requires tag %q but no beat produces it", elementIndex, beatIndex, ruleIndex, tag)
+					}
+					if !hasGuaranteedProducer(guaranteedEarlier[beat.BeatID], tagProducers) {
+						return fmt.Errorf("element[%d] beat[%d] rule[%d]: requires tag %q without a guaranteed earlier producer; add a precursor or move the producer earlier", elementIndex, beatIndex, ruleIndex, tag)
+					}
+				}
+				if len(rule.Requirements.RequiresAnyTags) > 0 {
+					guaranteed := false
+					for _, tag := range rule.Requirements.RequiresAnyTags {
+						tagProducers := producers.Guaranteed[tag]
+						if len(tagProducers) == 0 {
+							if len(producers.Possible[tag]) > 0 {
+								continue
+							}
+							return fmt.Errorf("element[%d] beat[%d] rule[%d]: requires_any tag %q but no beat produces it", elementIndex, beatIndex, ruleIndex, tag)
+						}
+						if hasGuaranteedProducer(guaranteedEarlier[beat.BeatID], tagProducers) {
+							guaranteed = true
+						}
+					}
+					if !guaranteed {
+						return fmt.Errorf("element[%d] beat[%d] rule[%d]: requires_any tags %#v without any guaranteed earlier producer; add a precursor or move at least one producer earlier", elementIndex, beatIndex, ruleIndex, rule.Requirements.RequiresAnyTags)
+					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func collectTagProducerSets(ir IRFile) tagProducerSets {
+	producers := tagProducerSets{
+		Guaranteed: make(map[string][]string),
+		Possible:   make(map[string][]string),
+	}
+	for _, element := range ir.Elements {
+		for _, beat := range element.Beats {
+			for _, tag := range beat.ProducesTags {
+				producers.Guaranteed[tag] = append(producers.Guaranteed[tag], beat.BeatID)
+				producers.Possible[tag] = append(producers.Possible[tag], beat.BeatID)
+			}
+			for _, rule := range beat.Scoring.Rules {
+				for _, tag := range rule.Effects.AddTags {
+					producers.Possible[tag] = append(producers.Possible[tag], beat.BeatID)
+				}
+			}
+		}
+	}
+	return producers
+}
+
+func guaranteedEarlierBeats(ir IRFile, beatLocations map[string]beatLocation, beatID string) map[string]struct{} {
+	closure := make(map[string]struct{})
+	visited := make(map[string]struct{})
+
+	var visit func(string)
+	visit = func(currentBeatID string) {
+		if _, ok := visited[currentBeatID]; ok {
+			return
+		}
+		visited[currentBeatID] = struct{}{}
+		location, ok := beatLocations[currentBeatID]
+		if !ok {
+			return
+		}
+
+		element := ir.Elements[location.elementIndex]
+		for i := 0; i < location.beatIndex; i++ {
+			earlierBeatID := element.Beats[i].BeatID
+			if _, ok := closure[earlierBeatID]; !ok {
+				closure[earlierBeatID] = struct{}{}
+				visit(earlierBeatID)
+			}
+		}
+		for _, precursorBeatID := range element.Beats[location.beatIndex].PrecursorBeatIDs {
+			if _, ok := closure[precursorBeatID]; !ok {
+				closure[precursorBeatID] = struct{}{}
+				visit(precursorBeatID)
+			}
+		}
+	}
+
+	visit(beatID)
+	delete(closure, beatID)
+	return closure
+}
+
+func hasGuaranteedProducer(guaranteedEarlier map[string]struct{}, producerBeatIDs []string) bool {
+	for _, producerBeatID := range producerBeatIDs {
+		if _, ok := guaranteedEarlier[producerBeatID]; ok {
+			return true
+		}
+	}
+	return false
 }
 
 func totalBeatCount(elements []StoryElement) int {

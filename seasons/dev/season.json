@@ -89,6 +89,7 @@
         ]
       },
       "annotations": {
+        "family": "reputation_ladder",
         "element_id": "glass_choir",
         "beat_id": "glass_choir.offer_1"
       }
@@ -170,6 +171,7 @@
         ]
       },
       "annotations": {
+        "family": "reputation_ladder",
         "element_id": "glass_choir",
         "beat_id": "glass_choir.offer_2",
         "precursor_beat_ids": [
@@ -258,6 +260,7 @@
         ]
       },
       "annotations": {
+        "family": "preparedness_hazard",
         "element_id": "northern_hub",
         "beat_id": "northern_hub.interrupt_1"
       }
@@ -339,6 +342,7 @@
         ]
       },
       "annotations": {
+        "family": "protocol_phrase",
         "element_id": "vault_authorization",
         "beat_id": "vault_authorization.phrase_1",
         "precursor_beat_ids": [

@@ -102,6 +102,14 @@ type SimulatedBadAction struct {
 	Outcome string `json:"outcome"`
 }
 
+type simulatedPlayerState struct {
+	Ledger       SimulatedLedger
+	Tags         map[string]struct{}
+	Reputation   map[string]int64
+	Availability string
+	Inventory    int
+}
+
 func Simulate(file File) (SimulationReport, error) {
 	return SimulateWithOptions(file, SimulationOptions{})
 }
@@ -131,17 +139,20 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		Ticks: make([]SimulatedTick, 0, len(file.Ticks)),
 	}
 
+	greedyState := newSimulatedPlayerState()
+	holdState := newSimulatedPlayerState()
 	var nowMS int64
 	for i, tick := range file.Ticks {
+		resolution := simulateResolution(tick, greedyState)
+
 		bestBaseline := report.Baselines["greedy_best"]
-		updateBaseline(&bestBaseline, bestDeltaForTick(tick))
+		advanceBaseline(&bestBaseline, &greedyState, chooseGreedyRule(tick, greedyState))
 		report.Baselines["greedy_best"] = bestBaseline
 
 		holdBaseline := report.Baselines["always_hold"]
-		updateBaseline(&holdBaseline, holdDeltaForTick(tick))
+		advanceBaseline(&holdBaseline, &holdState, chooseHoldRule(tick, holdState))
 		report.Baselines["always_hold"] = holdBaseline
 
-		resolution := simulateResolution(tick)
 		simTick := SimulatedTick{
 			Index:             i,
 			TickID:            tick.TickID,
@@ -178,8 +189,8 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 
 const randomPhraseVariantCount = 8 * 8 * 8
 
-func simulateResolution(tick TickDefinition) *SimulatedResolution {
-	bestRule, ok := bestRuleForTick(tick)
+func simulateResolution(tick TickDefinition, state simulatedPlayerState) *SimulatedResolution {
+	bestRule, ok := bestRuleForTick(tick, state)
 	if !ok {
 		return nil
 	}
@@ -198,6 +209,9 @@ func simulateResolution(tick TickDefinition) *SimulatedResolution {
 	}
 
 	for _, rule := range tick.Scoring.Rules {
+		if !requirementsMet(rule.Requirements, state) {
+			continue
+		}
 		switch rule.Classification {
 		case "bad", "miss":
 			resolution.BadActionClasses = append(resolution.BadActionClasses, SimulatedBadAction{
@@ -210,42 +224,52 @@ func simulateResolution(tick TickDefinition) *SimulatedResolution {
 	return resolution
 }
 
-func bestRuleForTick(tick TickDefinition) (Rule, bool) {
+func bestRuleForTick(tick TickDefinition, state simulatedPlayerState) (Rule, bool) {
+	var bestRule Rule
+	var bestScore int64
+	found := false
 	for _, rule := range tick.Scoring.Rules {
-		if rule.Classification == "best" {
-			return rule, true
+		if rule.Classification != "best" || !requirementsMet(rule.Requirements, state) {
+			continue
+		}
+		score := scalarScore(rule.Delta)
+		if !found || score > bestScore {
+			bestRule = rule
+			bestScore = score
+			found = true
 		}
 	}
-	return Rule{}, false
+	return bestRule, found
 }
 
 func (r SimulationReport) Summary() string {
 	return fmt.Sprintf("%s: %d ticks, %d reveals, %dms total duration", r.SeasonID, r.TickCount, len(r.Reveals), r.TotalDuration)
 }
 
-func bestDeltaForTick(tick TickDefinition) ScoreDelta {
-	if bestRule, ok := bestRuleForTick(tick); ok {
-		return bestRule.Delta
+func chooseGreedyRule(tick TickDefinition, state simulatedPlayerState) Rule {
+	if bestRule, ok := bestRuleForTick(tick, state); ok {
+		return bestRule
 	}
-	return holdDeltaForTick(tick)
+	return chooseHoldRule(tick, state)
 }
 
-func holdDeltaForTick(tick TickDefinition) ScoreDelta {
+func chooseHoldRule(tick TickDefinition, state simulatedPlayerState) Rule {
 	for _, rule := range tick.Scoring.Rules {
-		if rule.Match.Command == "hold" {
-			return rule.Delta
+		if rule.Match.Command == "hold" && requirementsMet(rule.Requirements, state) {
+			return rule
 		}
 	}
-	return ScoreDelta{}
+	return Rule{
+		Match:          ActionMatch{Command: "hold"},
+		Delta:          ScoreDelta{},
+		Label:          "No eligible hold rule matched.",
+		Classification: "miss",
+	}
 }
 
-func updateBaseline(baseline *SimulatedBaseline, delta ScoreDelta) {
-	baseline.Ledger.Yield += delta.Yield
-	baseline.Ledger.Insight += delta.Insight
-	baseline.Ledger.Aura += delta.Aura
-	baseline.Ledger.Debt += delta.Debt
-	baseline.Ledger.MissPenalties += delta.MissPenalties
-	baseline.Ledger.Score = baseline.Ledger.Yield + baseline.Ledger.Insight + baseline.Ledger.Aura - baseline.Ledger.Debt - baseline.Ledger.MissPenalties
+func advanceBaseline(baseline *SimulatedBaseline, state *simulatedPlayerState, rule Rule) {
+	applyRuleToSimulatedState(state, rule)
+	baseline.Ledger = state.Ledger
 	baseline.ScoreTrace = append(baseline.ScoreTrace, baseline.Ledger.Score)
 }
 
@@ -258,23 +282,23 @@ func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomA
 	totalChoices := 0
 
 	for i := 0; i < options.RandomRuns; i++ {
-		var ledger SimulatedLedger
+		state := newSimulatedPlayerState()
 		beatBestHits := 0
 		for _, tick := range file.Ticks {
 			action := randomActionForTick(tick, rng)
-			delta, isBest := evaluateSimulatedAction(tick.Scoring, action)
-			applyLedgerDelta(&ledger, delta)
+			rule, isBest := evaluateSimulatedAction(tick.Scoring, action, state)
+			applyRuleToSimulatedState(&state, rule)
 			if isBest {
 				beatBestHits++
 			}
 		}
-		scores = append(scores, ledger.Score)
+		scores = append(scores, state.Ledger.Score)
 		totalBeatBest += beatBestHits
 		totalChoices += len(file.Ticks)
-		if ledger.Score > 0 {
+		if state.Ledger.Score > 0 {
 			positive++
 		}
-		if ledger.Score >= 0 {
+		if state.Ledger.Score >= 0 {
 			nonNegative++
 		}
 	}
@@ -368,18 +392,23 @@ func randomActionCountForTick(tick TickDefinition) int {
 	return total
 }
 
-func evaluateSimulatedAction(plan ScoringPlan, action SimulatedAction) (ScoreDelta, bool) {
+func evaluateSimulatedAction(plan ScoringPlan, action SimulatedAction, state simulatedPlayerState) (Rule, bool) {
 	for _, rule := range plan.Rules {
-		if matchesSimulatedAction(rule.Match, action) {
-			return rule.Delta, rule.Classification == "best"
+		if matchesSimulatedAction(rule.Match, action) && requirementsMet(rule.Requirements, state) {
+			return rule, rule.Classification == "best"
 		}
 	}
 	for _, rule := range plan.Rules {
-		if rule.Match.Command == "hold" {
-			return rule.Delta, rule.Classification == "best"
+		if rule.Match.Command == "hold" && requirementsMet(rule.Requirements, state) {
+			return rule, rule.Classification == "best"
 		}
 	}
-	return ScoreDelta{}, false
+	return Rule{
+		Match:          ActionMatch{Command: "hold"},
+		Delta:          ScoreDelta{},
+		Label:          "No eligible fallback rule matched.",
+		Classification: "miss",
+	}, false
 }
 
 func matchesSimulatedAction(match ActionMatch, action SimulatedAction) bool {
@@ -405,6 +434,67 @@ func applyLedgerDelta(ledger *SimulatedLedger, delta ScoreDelta) {
 	ledger.Debt += delta.Debt
 	ledger.MissPenalties += delta.MissPenalties
 	ledger.Score = ledger.Yield + ledger.Insight + ledger.Aura - ledger.Debt - ledger.MissPenalties
+}
+
+func newSimulatedPlayerState() simulatedPlayerState {
+	return simulatedPlayerState{
+		Tags:       make(map[string]struct{}),
+		Reputation: make(map[string]int64),
+	}
+}
+
+func requirementsMet(requirements RuleRequirements, state simulatedPlayerState) bool {
+	for _, tag := range requirements.RequiresAllTags {
+		if _, ok := state.Tags[tag]; !ok {
+			return false
+		}
+	}
+	if len(requirements.RequiresAnyTags) > 0 {
+		any := false
+		for _, tag := range requirements.RequiresAnyTags {
+			if _, ok := state.Tags[tag]; ok {
+				any = true
+				break
+			}
+		}
+		if !any {
+			return false
+		}
+	}
+	for _, tag := range requirements.ForbidsTags {
+		if _, ok := state.Tags[tag]; ok {
+			return false
+		}
+	}
+	if requirements.MaxDebt != 0 && state.Ledger.Debt > requirements.MaxDebt {
+		return false
+	}
+	if requirements.MinAura != 0 && state.Ledger.Aura < requirements.MinAura {
+		return false
+	}
+	for faction, minimum := range requirements.MinReputation {
+		if state.Reputation[faction] < minimum {
+			return false
+		}
+	}
+	return true
+}
+
+func applyRuleToSimulatedState(state *simulatedPlayerState, rule Rule) {
+	applyLedgerDelta(&state.Ledger, rule.Delta)
+	for _, tag := range rule.Effects.AddTags {
+		state.Tags[tag] = struct{}{}
+	}
+	for _, tag := range rule.Effects.RemoveTags {
+		delete(state.Tags, tag)
+	}
+	if rule.Effects.AvailabilityDelta != "" {
+		state.Availability = rule.Effects.AvailabilityDelta
+	}
+	state.Inventory += rule.Effects.InventoryDelta
+	for faction, delta := range rule.Effects.ReputationDelta {
+		state.Reputation[faction] += delta
+	}
 }
 
 func quantileScore(sortedScores []int64, q float64) int64 {

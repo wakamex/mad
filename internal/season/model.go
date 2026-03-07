@@ -1,6 +1,9 @@
 package season
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type File struct {
 	SchemaVersion   string           `json:"schema_version"`
@@ -41,10 +44,12 @@ type ScoringPlan struct {
 }
 
 type Rule struct {
-	Match          ActionMatch `json:"match"`
-	Delta          ScoreDelta  `json:"delta"`
-	Label          string      `json:"label"`
-	Classification string      `json:"classification"`
+	Match          ActionMatch      `json:"match"`
+	Requirements   RuleRequirements `json:"requirements,omitempty"`
+	Effects        StateEffects     `json:"effects,omitempty"`
+	Delta          ScoreDelta       `json:"delta"`
+	Label          string           `json:"label"`
+	Classification string           `json:"classification"`
 }
 
 type ActionMatch struct {
@@ -52,6 +57,69 @@ type ActionMatch struct {
 	Target  string `json:"target,omitempty"`
 	Option  string `json:"option,omitempty"`
 	Phrase  string `json:"phrase,omitempty"`
+}
+
+type RuleRequirements struct {
+	RequiresAllTags []string         `json:"requires_all_tags,omitempty"`
+	RequiresAnyTags []string         `json:"requires_any_tags,omitempty"`
+	ForbidsTags     []string         `json:"forbids_tags,omitempty"`
+	MaxDebt         int64            `json:"max_debt,omitempty"`
+	MinAura         int64            `json:"min_aura,omitempty"`
+	MinReputation   map[string]int64 `json:"min_reputation,omitempty"`
+}
+
+type StateEffects struct {
+	AddTags           []string         `json:"add_tags,omitempty"`
+	RemoveTags        []string         `json:"remove_tags,omitempty"`
+	LockTicks         int              `json:"lock_ticks,omitempty"`
+	AvailabilityDelta string           `json:"availability_delta,omitempty"`
+	InventoryDelta    int              `json:"inventory_delta,omitempty"`
+	ReputationDelta   map[string]int64 `json:"reputation_delta,omitempty"`
+}
+
+func (r RuleRequirements) IsZero() bool {
+	return len(r.RequiresAllTags) == 0 &&
+		len(r.RequiresAnyTags) == 0 &&
+		len(r.ForbidsTags) == 0 &&
+		r.MaxDebt == 0 &&
+		r.MinAura == 0 &&
+		len(r.MinReputation) == 0
+}
+
+func (s StateEffects) IsZero() bool {
+	return len(s.AddTags) == 0 &&
+		len(s.RemoveTags) == 0 &&
+		s.LockTicks == 0 &&
+		s.AvailabilityDelta == "" &&
+		s.InventoryDelta == 0 &&
+		len(s.ReputationDelta) == 0
+}
+
+func (r Rule) MarshalJSON() ([]byte, error) {
+	type ruleJSON struct {
+		Match          ActionMatch       `json:"match"`
+		Requirements   *RuleRequirements `json:"requirements,omitempty"`
+		Effects        *StateEffects     `json:"effects,omitempty"`
+		Delta          ScoreDelta        `json:"delta"`
+		Label          string            `json:"label"`
+		Classification string            `json:"classification"`
+	}
+
+	value := ruleJSON{
+		Match:          r.Match,
+		Delta:          r.Delta,
+		Label:          r.Label,
+		Classification: r.Classification,
+	}
+	if !r.Requirements.IsZero() {
+		req := r.Requirements
+		value.Requirements = &req
+	}
+	if !r.Effects.IsZero() {
+		effects := r.Effects
+		value.Effects = &effects
+	}
+	return json.Marshal(value)
 }
 
 type ScoreDelta struct {
@@ -63,6 +131,7 @@ type ScoreDelta struct {
 }
 
 type Annotations struct {
+	Family            string   `json:"family,omitempty"`
 	ElementID         string   `json:"element_id,omitempty"`
 	BeatID            string   `json:"beat_id,omitempty"`
 	PrecursorBeatIDs  []string `json:"precursor_beat_ids,omitempty"`

@@ -15,6 +15,7 @@ func TestCompileIRDeterministicAndPreservesElementOrder(t *testing.T) {
 		Elements: []StoryElement{
 			{
 				ElementID: "glass",
+				Family:    "seed_clue_chain",
 				Beats: []StoryBeat{
 					testStoryBeat("glass.1", "glass.op.1"),
 					testStoryBeat("glass.2", "glass.op.2"),
@@ -22,12 +23,14 @@ func TestCompileIRDeterministicAndPreservesElementOrder(t *testing.T) {
 			},
 			{
 				ElementID: "vault",
+				Family:    "payoff_gate",
 				Beats: []StoryBeat{
 					testStoryBeat("vault.1", "vault.op.1"),
 				},
 			},
 			{
 				ElementID: "hazard",
+				Family:    "preparedness_hazard",
 				Beats: []StoryBeat{
 					testStoryBeat("hazard.1", "hazard.op.1"),
 					testStoryBeat("hazard.2", "hazard.op.2"),
@@ -63,18 +66,21 @@ func TestCompileIRDerivesPrecursorAnnotations(t *testing.T) {
 		Elements: []StoryElement{
 			{
 				ElementID: "glass",
+				Family:    "seed_clue_chain",
 				Beats: []StoryBeat{
 					testStoryBeat("glass.clue", "glass.clue.op"),
 				},
 			},
 			{
 				ElementID: "vault",
+				Family:    "payoff_gate",
 				Beats: []StoryBeat{
-					testStoryBeat("vault.challenge", "vault.challenge.op", "glass.clue"),
+					testStoryBeatWithTags("vault.challenge", "vault.challenge.op", []string{"glass.signal"}, nil, "glass.clue"),
 				},
 			},
 		},
 	}
+	ir.Elements[0].Beats[0].ProducesTags = []string{"glass.signal"}
 
 	compiled, err := CompileIR(ir)
 	if err != nil {
@@ -104,6 +110,7 @@ func TestValidateIRRejectsUnknownPrecursor(t *testing.T) {
 		Elements: []StoryElement{
 			{
 				ElementID: "glass",
+				Family:    "seed_clue_chain",
 				Beats: []StoryBeat{
 					testStoryBeat("glass.1", "glass.op.1", "missing"),
 				},
@@ -124,6 +131,7 @@ func TestValidateIRRejectsImpossibleElementOrder(t *testing.T) {
 		Elements: []StoryElement{
 			{
 				ElementID: "glass",
+				Family:    "seed_clue_chain",
 				Beats: []StoryBeat{
 					testStoryBeat("glass.1", "glass.op.1", "glass.2"),
 					testStoryBeat("glass.2", "glass.op.2"),
@@ -145,12 +153,14 @@ func TestValidateIRRejectsCycles(t *testing.T) {
 		Elements: []StoryElement{
 			{
 				ElementID: "glass",
+				Family:    "seed_clue_chain",
 				Beats: []StoryBeat{
 					testStoryBeat("glass.1", "glass.op.1", "vault.1"),
 				},
 			},
 			{
 				ElementID: "vault",
+				Family:    "payoff_gate",
 				Beats: []StoryBeat{
 					testStoryBeat("vault.1", "vault.op.1", "glass.1"),
 				},
@@ -178,12 +188,142 @@ func TestLoadIRFileValidatesDevSeasonIR(t *testing.T) {
 	}
 }
 
+func TestValidateIRRejectsConsumedTagWithoutProducer(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "broken-tags",
+		Elements: []StoryElement{
+			{
+				ElementID: "vault",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("vault.1", "vault.op.1", []string{"missing.tag"}, nil),
+				},
+			},
+		},
+	})
+	if err == nil {
+		t.Fatalf("expected validation error")
+	}
+	if !strings.Contains(err.Error(), `consumes tag "missing.tag" but no beat produces it`) {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestValidateIRRejectsConsumedTagWithoutGuaranteedProducer(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "broken-reachability",
+		Elements: []StoryElement{
+			{
+				ElementID: "seed",
+				Family:    "seed_clue_chain",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("seed.1", "seed.op.1", nil, []string{"shared.tag"}),
+				},
+			},
+			{
+				ElementID: "gate",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("gate.1", "gate.op.1", []string{"shared.tag"}, nil),
+				},
+			},
+		},
+	})
+	if err == nil {
+		t.Fatalf("expected validation error")
+	}
+	if !strings.Contains(err.Error(), `without a guaranteed earlier producer`) {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestValidateIRAllowsConsumedTagWithGuaranteedProducer(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "valid-reachability",
+		Elements: []StoryElement{
+			{
+				ElementID: "seed",
+				Family:    "seed_clue_chain",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("seed.1", "seed.op.1", nil, []string{"shared.tag"}),
+				},
+			},
+			{
+				ElementID: "gate",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("gate.1", "gate.op.1", []string{"shared.tag"}, nil, "seed.1"),
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected valid ir, got %v", err)
+	}
+}
+
+func TestValidateIRRejectsConditionalTagProducerAsGuaranteed(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "conditional-producer",
+		Elements: []StoryElement{
+			{
+				ElementID: "seed",
+				Family:    "seed_clue_chain",
+				Beats: []StoryBeat{
+					{
+						BeatID:        "seed.1",
+						ClockClass:    "standard",
+						Sources:       []Source{{SourceID: "seed.1.source", SourceType: "test", Text: "seed"}},
+						Opportunities: []Opportunity{{OpportunityID: "seed.op.1", AllowedCommands: []string{"commit", "hold"}}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "seed.op.1"},
+									Effects:        StateEffects{AddTags: []string{"shared.tag"}},
+									Delta:          ScoreDelta{Yield: 1},
+									Label:          "conditional producer",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "pass",
+									Classification: "miss",
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				ElementID: "gate",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("gate.1", "gate.op.1", []string{"shared.tag"}, nil, "seed.1"),
+				},
+			},
+		},
+	})
+	if err == nil {
+		t.Fatalf("expected validation error")
+	}
+	if !strings.Contains(err.Error(), `without a guaranteed earlier producer`) {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 func testStoryBeat(beatID, opportunityID string, precursors ...string) StoryBeat {
+	return testStoryBeatWithTags(beatID, opportunityID, nil, nil, precursors...)
+}
+
+func testStoryBeatWithTags(beatID, opportunityID string, consumesTags, producesTags []string, precursors ...string) StoryBeat {
 	return StoryBeat{
 		BeatID:        beatID,
 		ClockClass:    "standard",
 		Sources:       []Source{{SourceID: beatID + ".source", SourceType: "test", Text: beatID + " source"}},
 		Opportunities: []Opportunity{{OpportunityID: opportunityID, AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"good"}, TextSlot: false}},
+		ProducesTags:  producesTags,
+		ConsumesTags:  consumesTags,
 		Scoring: ScoringPlan{
 			Rules: []Rule{
 				{

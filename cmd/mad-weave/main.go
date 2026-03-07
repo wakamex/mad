@@ -19,6 +19,8 @@ func main() {
 		log.Fatalf("load season ir: %v", err)
 	}
 
+	audit := season.AuditIR(loadedIR)
+
 	compiled, err := season.CompileIR(loadedIR)
 	if err != nil {
 		log.Fatalf("compile season ir: %v", err)
@@ -28,5 +30,13 @@ func main() {
 		log.Fatalf("write compiled season: %v", err)
 	}
 
-	log.Printf("compiled %d beats from %d story elements into %s", len(compiled.Ticks), len(loadedIR.Elements), *outPath)
+	log.Printf(
+		"compiled %d beats from %d story elements into %s (cross_element_dependencies=%d flat_greedy_beats=%d warnings=%d)",
+		len(compiled.Ticks),
+		len(loadedIR.Elements),
+		*outPath,
+		audit.CrossElementDependencyBeats,
+		len(audit.FlatGreedyBeats),
+		len(audit.Warnings),
+	)
 }

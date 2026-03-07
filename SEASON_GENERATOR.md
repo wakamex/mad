@@ -21,8 +21,8 @@ Every story element template should declare at least:
 
 - `family`: which element family it belongs to
 - `beats`: ordered beats that must preserve local order
-- `produces_tags`: facts, aliases, resources, or states introduced by the element
-- `consumes_tags`: facts or states required for its payoffs
+- `produces_tags`: beat-level facts, aliases, resources, or states introduced by the element
+- `consumes_tags`: beat-level facts or states required for its payoffs
 - `latent_vars`: hidden world variables it depends on or modifies
 - `resource_touches`: inventory, debt, aura, reputation, availability, cooldowns
 - `source_profiles`: which narrator/source classes are used and how reliable they are
@@ -32,6 +32,21 @@ Every story element template should declare at least:
 - `random_ev_target`: how punishing this element should be under random legal play
 
 This gives the compiler enough structure to interleave beats while preserving semantics and enough metadata to audit whether the season is actually testing the intended skills.
+
+The minimum explicit state contract should include:
+
+- beat-level `produces_tags`
+- beat-level `consumes_tags`
+- rule-level `requirements`
+- rule-level `effects`
+
+At minimum, the generator and validator should be able to say:
+
+- what state a player must already have for a rule to be valid
+- what tags or availability changes the rule can introduce
+- whether a beat consumes a tag that is guaranteed to be available before it
+
+If a beat consumes a tag but the generator cannot prove a producer occurs earlier in every valid schedule, the season should be rejected.
 
 ## Core Families
 

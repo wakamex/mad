@@ -44,3 +44,46 @@ func TestScoreBreakdownAccumulatorAttributesFamilyElementAndSourceTypes(t *testi
 		}
 	}
 }
+
+func TestDeriveScoreDecomposition(t *testing.T) {
+	greedy := ScoreBreakdown{
+		ByFamily: []ScoreBreakdownEntry{
+			{Key: "hazard", Score: 100},
+			{Key: "clue", Score: 20},
+		},
+		BySourceType: []ScoreBreakdownEntry{
+			{Key: "critical_broadcast", Score: 100},
+			{Key: "archive_fragment", Score: 20},
+		},
+	}
+	visible := ScoreBreakdown{
+		ByFamily: []ScoreBreakdownEntry{
+			{Key: "hazard", Score: 30},
+			{Key: "clue", Score: 20},
+		},
+		BySourceType: []ScoreBreakdownEntry{
+			{Key: "critical_broadcast", Score: 30},
+			{Key: "archive_fragment", Score: 20},
+		},
+	}
+
+	decomposition := DeriveScoreDecomposition(greedy, visible, 120, 50)
+	if decomposition.ExplicitVisibleTotal != 50 {
+		t.Fatalf("unexpected explicit total: got %f want 50", decomposition.ExplicitVisibleTotal)
+	}
+	if decomposition.HiddenOrNonlocalTotal != 70 {
+		t.Fatalf("unexpected hidden/nonlocal total: got %f want 70", decomposition.HiddenOrNonlocalTotal)
+	}
+	if decomposition.ExplicitVisibleShare != 50.0/120.0 {
+		t.Fatalf("unexpected explicit share: got %f", decomposition.ExplicitVisibleShare)
+	}
+	if len(decomposition.ByFamily) != 2 {
+		t.Fatalf("unexpected family decomposition: %#v", decomposition.ByFamily)
+	}
+	if decomposition.ByFamily[0].Key != "hazard" || decomposition.ByFamily[0].HiddenOrNonlocal != 70 {
+		t.Fatalf("unexpected top family decomposition: %#v", decomposition.ByFamily[0])
+	}
+	if decomposition.BySourceType[0].Key != "critical_broadcast" || decomposition.BySourceType[0].ExplicitVisible != 30 {
+		t.Fatalf("unexpected source decomposition: %#v", decomposition.BySourceType[0])
+	}
+}

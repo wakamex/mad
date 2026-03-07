@@ -41,7 +41,7 @@ Compile that larger dev season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, three baseline policies (`greedy_best`, `visible_greedy`, and `always_hold`), and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, three baseline policies (`greedy_best`, `visible_greedy`, and `always_hold`), an explicit-vs-hidden decomposition (`visible_greedy` versus `greedy_best - visible_greedy`), and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
 
 ```bash
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
@@ -52,7 +52,8 @@ The generated `seasons/dev1000` fixture is the current long-form dev season. At 
 - `1000` ticks
 - about `14.3` hours total runtime
 - `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, preparedness hazards, and payoff gates
-- random-play audit around `mean=-1601`, `p90=-146`, `positive_rate≈8.1%` using `5000` runs and seed `11`
+- baseline snapshot around `greedy_best=77628`, `visible_greedy=2047`, `always_hold=-8772`
+- random-play audit around `mean=-1760`, `p90=299`, `p99=1925`, `positive_rate≈14.2%` using `1000` runs and seed `11`
 
 For CI or release gating, fail the run if the random-play audit says the season is too easy to luck through:
 
@@ -76,7 +77,7 @@ go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
 For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic authoring and simulation loop, use `seasons/dev1000/`.
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
-The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful. `visible_greedy` is the cheap constrained baseline: it only uses the current public action surface, clock class, public requirements, and explicit player state, with no source-text parsing and no hidden scoring labels.
+The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful. `visible_greedy` is the cheap constrained baseline: it only uses the current public action surface, clock class, public requirements, and explicit player state, with no source-text parsing and no hidden scoring labels. The report's `decomposition` section is an approximation: `explicit_visible` comes from `visible_greedy`, while `hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes real cross-beat value with any hidden-label advantage still present in `greedy_best`.
 
 Run the external-agent harness against a compiled season. The harness keeps a single conversation thread per runner, records every action/response, and saves a per-tick `score_trace` so the result can be plotted like VendingBench:
 

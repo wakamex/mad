@@ -11,6 +11,22 @@ type ScoreBreakdown struct {
 	BySourceType []ScoreBreakdownEntry `json:"by_source_type,omitempty"`
 }
 
+type ScoreDecomposition struct {
+	ExplicitVisibleTotal      float64                   `json:"explicit_visible_total"`
+	HiddenOrNonlocalTotal     float64                   `json:"hidden_or_nonlocal_premium_total"`
+	ExplicitVisibleShare      float64                   `json:"explicit_visible_share_of_greedy,omitempty"`
+	ByFamily                  []ScoreDecompositionEntry `json:"by_family,omitempty"`
+	ByElement                 []ScoreDecompositionEntry `json:"by_element,omitempty"`
+	BySourceType              []ScoreDecompositionEntry `json:"by_source_type,omitempty"`
+}
+
+type ScoreDecompositionEntry struct {
+	Key                    string  `json:"key"`
+	ExplicitVisible        float64 `json:"explicit_visible"`
+	HiddenOrNonlocal       float64 `json:"hidden_or_nonlocal_premium"`
+	GreedyBest             float64 `json:"greedy_best"`
+}
+
 type ScoreBreakdownEntry struct {
 	Key           string  `json:"key"`
 	Score         float64 `json:"score"`
@@ -124,4 +140,68 @@ func distinctSourceTypes(sources []Source) []string {
 	}
 	sort.Strings(values)
 	return values
+}
+
+func DeriveScoreDecomposition(greedy, visible ScoreBreakdown, greedyTotal, visibleTotal int64) ScoreDecomposition {
+	decomposition := ScoreDecomposition{
+		ExplicitVisibleTotal:  float64(visibleTotal),
+		HiddenOrNonlocalTotal: float64(greedyTotal - visibleTotal),
+		ByFamily:              deriveScoreDecompositionEntries(greedy.ByFamily, visible.ByFamily),
+		ByElement:             deriveScoreDecompositionEntries(greedy.ByElement, visible.ByElement),
+		BySourceType:          deriveScoreDecompositionEntries(greedy.BySourceType, visible.BySourceType),
+	}
+	if greedyTotal != 0 {
+		decomposition.ExplicitVisibleShare = float64(visibleTotal) / float64(greedyTotal)
+	}
+	return decomposition
+}
+
+func deriveScoreDecompositionEntries(greedyEntries, visibleEntries []ScoreBreakdownEntry) []ScoreDecompositionEntry {
+	if len(greedyEntries) == 0 && len(visibleEntries) == 0 {
+		return nil
+	}
+
+	greedy := make(map[string]float64, len(greedyEntries))
+	for _, entry := range greedyEntries {
+		greedy[entry.Key] = entry.Score
+	}
+	visible := make(map[string]float64, len(visibleEntries))
+	for _, entry := range visibleEntries {
+		visible[entry.Key] = entry.Score
+	}
+
+	keys := make([]string, 0, maxInt(len(greedy), len(visible)))
+	seen := make(map[string]struct{}, len(greedy)+len(visible))
+	for key := range greedy {
+		seen[key] = struct{}{}
+		keys = append(keys, key)
+	}
+	for key := range visible {
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		keys = append(keys, key)
+	}
+
+	entries := make([]ScoreDecompositionEntry, 0, len(keys))
+	for _, key := range keys {
+		greedyScore := greedy[key]
+		visibleScore := visible[key]
+		entries = append(entries, ScoreDecompositionEntry{
+			Key:              key,
+			ExplicitVisible:  visibleScore,
+			HiddenOrNonlocal: greedyScore - visibleScore,
+			GreedyBest:       greedyScore,
+		})
+	}
+
+	sort.Slice(entries, func(i, j int) bool {
+		left := math.Abs(entries[i].HiddenOrNonlocal)
+		right := math.Abs(entries[j].HiddenOrNonlocal)
+		if left == right {
+			return entries[i].Key < entries[j].Key
+		}
+		return left > right
+	})
+	return entries
 }

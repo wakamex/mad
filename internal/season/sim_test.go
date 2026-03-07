@@ -60,6 +60,15 @@ func TestSimulateDevSeason(t *testing.T) {
 	if len(report.Notes) == 0 {
 		t.Fatalf("expected simulation notes")
 	}
+	if report.Decomposition.ExplicitVisibleTotal != float64(report.Baselines["visible_greedy"].Ledger.Score) {
+		t.Fatalf("expected explicit visible total to match visible greedy score")
+	}
+	if report.Decomposition.HiddenOrNonlocalTotal != float64(report.Baselines["greedy_best"].Ledger.Score-report.Baselines["visible_greedy"].Ledger.Score) {
+		t.Fatalf("unexpected hidden/nonlocal total")
+	}
+	if len(report.Decomposition.BySourceType) == 0 {
+		t.Fatalf("expected source-type decomposition")
+	}
 	if report.RandomAudit == nil {
 		t.Fatalf("expected random audit")
 	}

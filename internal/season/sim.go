@@ -15,6 +15,7 @@ type SimulationReport struct {
 	TotalDuration int64                        `json:"total_duration_ms"`
 	Notes         []string                     `json:"notes,omitempty"`
 	Baselines     map[string]SimulatedBaseline `json:"baselines"`
+	Decomposition ScoreDecomposition           `json:"decomposition,omitempty"`
 	RandomAudit   *SimulatedRandomAudit        `json:"random_audit,omitempty"`
 	ActionSurface SimulatedActionSurface       `json:"action_surface"`
 	Ticks         []SimulatedTick              `json:"ticks"`
@@ -140,6 +141,7 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		Notes: []string{
 			"`greedy_best` is a tick-local baseline derived from rules classified as `best`; it is not a globally optimal season policy once lock-ins, opportunity costs, or stateful commitments exist.",
 			"`visible_greedy` is a constrained non-LLM baseline that only uses the public action surface, clock class, public requirements, and exact player state. It does not parse source text or inspect hidden scoring labels.",
+			"`decomposition.explicit_visible` is attributed to the constrained `visible_greedy` baseline. `decomposition.hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes true cross-beat value with any hidden-label advantage still present in `greedy_best`.",
 		},
 		Baselines: map[string]SimulatedBaseline{
 			"greedy_best":   {},
@@ -222,6 +224,12 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	visibleBaseline := report.Baselines["visible_greedy"]
 	visibleBaseline.Breakdown = visibleBreakdown.Materialize()
 	report.Baselines["visible_greedy"] = visibleBaseline
+	report.Decomposition = DeriveScoreDecomposition(
+		bestBaseline.Breakdown,
+		visibleBaseline.Breakdown,
+		bestBaseline.Ledger.Score,
+		visibleBaseline.Ledger.Score,
+	)
 	if options.RandomRuns > 0 {
 		report.RandomAudit = simulateRandomAudit(file, options)
 	}

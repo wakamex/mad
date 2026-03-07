@@ -132,7 +132,7 @@ Needed:
 
 ## 9. Standing Work Loop Audits
 
-Status: pending
+Status: in progress
 
 Goal:
 
@@ -144,3 +144,9 @@ Needed:
 - reject standing work that feeds only one hidden mandatory outcome
 - enforce diminishing returns, cooldowns, or rotation on grindable work
 - ensure at least some standing work competes with obviously better short-term actions
+
+Current execution:
+
+- audit standing work elements for real cost signals
+- audit standing work tag fan-out into multiple downstream beats
+- surface weak standing work counts in `mad-weave`

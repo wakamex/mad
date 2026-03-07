@@ -6,23 +6,33 @@ type IRAuditReport struct {
 	FamilyCounts                map[string]int `json:"family_counts"`
 	TagConsumingBeats           int            `json:"tag_consuming_beats"`
 	CrossElementDependencyBeats int            `json:"cross_element_dependency_beats"`
+	StandingWorkElements        int            `json:"standing_work_elements"`
+	WeakStandingWorkElements    []string       `json:"weak_standing_work_elements,omitempty"`
 	FlatGreedyBeats             []string       `json:"flat_greedy_beats,omitempty"`
 	Warnings                    []string       `json:"warnings,omitempty"`
 }
 
 func AuditIR(ir IRFile) IRAuditReport {
 	report := IRAuditReport{
-		FamilyCounts:    make(map[string]int),
-		FlatGreedyBeats: make([]string, 0),
+		FamilyCounts:             make(map[string]int),
+		WeakStandingWorkElements: make([]string, 0),
+		FlatGreedyBeats:          make([]string, 0),
 	}
 
 	beatLocations := make(map[string]beatLocation, totalBeatCount(ir.Elements))
 	beatToElement := make(map[string]string, totalBeatCount(ir.Elements))
+	tagConsumers := make(map[string]map[string]struct{})
 	for elementIndex, element := range ir.Elements {
 		report.FamilyCounts[element.Family]++
 		for beatIndex, beat := range element.Beats {
 			beatLocations[beat.BeatID] = beatLocation{elementIndex: elementIndex, beatIndex: beatIndex}
 			beatToElement[beat.BeatID] = element.ElementID
+			for _, tag := range requiredTagsForBeat(beat) {
+				if tagConsumers[tag] == nil {
+					tagConsumers[tag] = make(map[string]struct{})
+				}
+				tagConsumers[tag][beat.BeatID] = struct{}{}
+			}
 		}
 	}
 	guaranteedEarlier := make(map[string]map[string]struct{}, totalBeatCount(ir.Elements))
@@ -34,6 +44,10 @@ func AuditIR(ir IRFile) IRAuditReport {
 	}
 
 	for _, element := range ir.Elements {
+		if element.Family == "standing_work_loop" {
+			report.StandingWorkElements++
+			report.WeakStandingWorkElements = append(report.WeakStandingWorkElements, auditStandingWorkElement(element, beatToElement, tagConsumers)...)
+		}
 		for _, beat := range element.Beats {
 			if len(beat.ConsumesTags) > 0 {
 				report.TagConsumingBeats++
@@ -53,7 +67,69 @@ func AuditIR(ir IRFile) IRAuditReport {
 	if len(report.FlatGreedyBeats) > 0 {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("season has %d flat greedy beats", len(report.FlatGreedyBeats)))
 	}
+	if len(report.WeakStandingWorkElements) > 0 {
+		report.Warnings = append(report.Warnings, fmt.Sprintf("season has %d weak standing work elements", len(report.WeakStandingWorkElements)))
+	}
 	return report
+}
+
+func auditStandingWorkElement(element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) []string {
+	var warnings []string
+	if !standingWorkHasMeaningfulCost(element) {
+		warnings = append(warnings, fmt.Sprintf("%s: no meaningful immediate cost, lock, cooldown, or commitment pressure", element.ElementID))
+	}
+	if standingWorkFanoutCount(element, beatToElement, tagConsumers) < 2 {
+		warnings = append(warnings, fmt.Sprintf("%s: produced state fans out to fewer than 2 downstream beats", element.ElementID))
+	}
+	return warnings
+}
+
+func standingWorkHasMeaningfulCost(element StoryElement) bool {
+	for _, beat := range element.Beats {
+		for _, rule := range beat.Scoring.Rules {
+			if scalarScore(rule.Delta) < 0 ||
+				rule.Effects.LockTicks > 0 ||
+				rule.Effects.AvailabilityDelta != "" ||
+				len(rule.Effects.SetCooldowns) > 0 ||
+				rule.Effects.InventoryDelta != 0 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func standingWorkFanoutCount(element StoryElement, beatToElement map[string]string, tagConsumers map[string]map[string]struct{}) int {
+	consumerBeats := make(map[string]struct{})
+	for _, beat := range element.Beats {
+		for _, tag := range producedTagsForBeat(beat) {
+			for consumerBeatID := range tagConsumers[tag] {
+				if beatToElement[consumerBeatID] == element.ElementID {
+					continue
+				}
+				consumerBeats[consumerBeatID] = struct{}{}
+			}
+		}
+	}
+	return len(consumerBeats)
+}
+
+func producedTagsForBeat(beat StoryBeat) []string {
+	tags := append([]string{}, beat.ProducesTags...)
+	for _, rule := range beat.Scoring.Rules {
+		tags = append(tags, rule.Effects.AddTags...)
+	}
+	return tags
+}
+
+func requiredTagsForBeat(beat StoryBeat) []string {
+	tags := append([]string{}, beat.ConsumesTags...)
+	for _, rule := range beat.Scoring.Rules {
+		tags = append(tags, rule.Requirements.RequiresAllTags...)
+		tags = append(tags, rule.Requirements.RequiresAnyTags...)
+		tags = append(tags, rule.Requirements.ForbidsTags...)
+	}
+	return tags
 }
 
 func hasCrossElementDependency(beat StoryBeat, elementID string, beatToElement map[string]string, guaranteedEarlier map[string]struct{}, producers tagProducerSets) bool {

@@ -31,12 +31,13 @@ func main() {
 	}
 
 	log.Printf(
-		"compiled %d beats from %d story elements into %s (cross_element_dependencies=%d flat_greedy_beats=%d warnings=%d)",
+		"compiled %d beats from %d story elements into %s (cross_element_dependencies=%d flat_greedy_beats=%d weak_standing_work=%d warnings=%d)",
 		len(compiled.Ticks),
 		len(loadedIR.Elements),
 		*outPath,
 		audit.CrossElementDependencyBeats,
 		len(audit.FlatGreedyBeats),
+		len(audit.WeakStandingWorkElements),
 		len(audit.Warnings),
 	)
 }

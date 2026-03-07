@@ -124,3 +124,111 @@ func TestAuditIRDoesNotFlagAvailabilityBeatAsFlatGreedy(t *testing.T) {
 		t.Fatalf("expected availability-changing beat not to be flat greedy: %#v", report.FlatGreedyBeats)
 	}
 }
+
+func TestAuditIRFlagsWeakStandingWorkElement(t *testing.T) {
+	ir := IRFile{
+		SeasonID: "audit-standing-weak",
+		Elements: []StoryElement{
+			{
+				ElementID: "standing",
+				Family:    "standing_work_loop",
+				Beats: []StoryBeat{
+					{
+						BeatID:        "standing.1",
+						ClockClass:    "standard",
+						ProducesTags:  []string{"standing.token"},
+						Sources:       []Source{{SourceID: "standing.1.source", SourceType: "test", Text: "standing"}},
+						Opportunities: []Opportunity{{OpportunityID: "standing.op.1", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"work"}}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "standing.op.1", Option: "work"},
+									Delta:          ScoreDelta{Yield: 5},
+									Label:          "easy work",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "hold",
+									Classification: "miss",
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				ElementID: "payoff",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("payoff.1", "payoff.op.1", []string{"standing.token"}, nil),
+				},
+			},
+		},
+	}
+
+	report := AuditIR(ir)
+	if report.StandingWorkElements != 1 {
+		t.Fatalf("unexpected standing work count: got %d want 1", report.StandingWorkElements)
+	}
+	if len(report.WeakStandingWorkElements) < 2 {
+		t.Fatalf("expected standing work warnings, got %#v", report.WeakStandingWorkElements)
+	}
+}
+
+func TestAuditIRAcceptsStandingWorkWithCostAndFanout(t *testing.T) {
+	ir := IRFile{
+		SeasonID: "audit-standing-strong",
+		Elements: []StoryElement{
+			{
+				ElementID: "standing",
+				Family:    "standing_work_loop",
+				Beats: []StoryBeat{
+					{
+						BeatID:        "standing.1",
+						ClockClass:    "standard",
+						Sources:       []Source{{SourceID: "standing.1.source", SourceType: "test", Text: "standing"}},
+						Opportunities: []Opportunity{{OpportunityID: "standing.op.1", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"work"}}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "standing.op.1", Option: "work"},
+									Effects:        StateEffects{AddTags: []string{"standing.token"}, LockTicks: 1, AvailabilityDelta: "committed"},
+									Delta:          ScoreDelta{Debt: 1},
+									Label:          "standing work",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "hold",
+									Classification: "miss",
+								},
+							},
+						},
+					},
+				},
+			},
+			{
+				ElementID: "payoff_a",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("payoff.a.1", "payoff.a.op.1", []string{"standing.token"}, nil),
+				},
+			},
+			{
+				ElementID: "payoff_b",
+				Family:    "payoff_gate",
+				Beats: []StoryBeat{
+					testStoryBeatWithTags("payoff.b.1", "payoff.b.op.1", []string{"standing.token"}, nil),
+				},
+			},
+		},
+	}
+
+	report := AuditIR(ir)
+	if len(report.WeakStandingWorkElements) != 0 {
+		t.Fatalf("expected standing work element to pass audit, got %#v", report.WeakStandingWorkElements)
+	}
+}

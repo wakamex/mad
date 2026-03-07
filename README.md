@@ -105,6 +105,8 @@ For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-ru
 
 `scripts/mad-run` creates a timestamped run directory under `build/runs/`, stores the exact command it launched, and writes a live-updating `harness.json` plus `launcher.log`.
 
+For unambiguous experiment labels, use the canonical mode definitions in [CONFIG.md](/code/mad/CONFIG.md). Forecast ranges for common model/mode permutations live in [FORECAST.md](/code/mad/FORECAST.md).
+
 Memory and context semantics are explicit:
 
 - `codex --memory on`: create an isolated writable `CODEX_HOME` inside the run directory, preserve provider-native session continuity there, and explicitly enable Codex memory features.

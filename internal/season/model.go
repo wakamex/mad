@@ -16,13 +16,14 @@ type File struct {
 }
 
 type TickDefinition struct {
-	TickID        string        `json:"tick_id"`
-	ClockClass    string        `json:"clock_class"`
-	DurationMS    int64         `json:"duration_ms"`
-	Sources       []Source      `json:"sources"`
-	Opportunities []Opportunity `json:"opportunities"`
-	Scoring       ScoringPlan   `json:"scoring"`
-	Annotations   Annotations   `json:"annotations,omitempty"`
+	TickID              string         `json:"tick_id"`
+	ClockClass          string         `json:"clock_class"`
+	DurationMS          int64          `json:"duration_ms"`
+	Sources             []Source       `json:"sources"`
+	ActiveSourceRegimes []SourceRegime `json:"active_source_regimes,omitempty"`
+	Opportunities       []Opportunity  `json:"opportunities"`
+	Scoring             ScoringPlan    `json:"scoring"`
+	Annotations         Annotations    `json:"annotations,omitempty"`
 }
 
 type Source struct {
@@ -31,12 +32,29 @@ type Source struct {
 	Text       string `json:"text"`
 }
 
+type SourceRegime struct {
+	RegimeID            string   `json:"regime_id"`
+	Label               string   `json:"label"`
+	Description         string   `json:"description,omitempty"`
+	AffectedSourceTypes []string `json:"affected_source_types,omitempty"`
+}
+
 type Opportunity struct {
-	OpportunityID   string   `json:"opportunity_id"`
-	AllowedCommands []string `json:"allowed_commands"`
-	AllowedOptions  []string `json:"allowed_options,omitempty"`
-	TextSlot        bool     `json:"text_slot"`
-	PhraseHint      string   `json:"phrase_hint,omitempty"`
+	OpportunityID      string              `json:"opportunity_id"`
+	AllowedCommands    []string            `json:"allowed_commands"`
+	AllowedOptions     []string            `json:"allowed_options,omitempty"`
+	TextSlot           bool                `json:"text_slot"`
+	PhraseHint         string              `json:"phrase_hint,omitempty"`
+	PublicRequirements []PublicRequirement `json:"public_requirements,omitempty"`
+}
+
+type PublicRequirement struct {
+	Metric   string `json:"metric"`
+	Scope    string `json:"scope,omitempty"`
+	Operator string `json:"operator"`
+	Value    int64  `json:"value,omitempty"`
+	Tier     string `json:"tier,omitempty"`
+	Label    string `json:"label,omitempty"`
 }
 
 type ScoringPlan struct {
@@ -140,20 +158,22 @@ type Annotations struct {
 }
 
 type PublicTick struct {
-	TickID        string        `json:"tick_id"`
-	ClockClass    string        `json:"clock_class"`
-	DeadlineMS    int64         `json:"deadline_ms"`
-	Sources       []Source      `json:"sources"`
-	Opportunities []Opportunity `json:"opportunities"`
+	TickID              string         `json:"tick_id"`
+	ClockClass          string         `json:"clock_class"`
+	DeadlineMS          int64          `json:"deadline_ms"`
+	Sources             []Source       `json:"sources"`
+	ActiveSourceRegimes []SourceRegime `json:"active_source_regimes,omitempty"`
+	Opportunities       []Opportunity  `json:"opportunities"`
 }
 
 func (t TickDefinition) Public() PublicTick {
 	return PublicTick{
-		TickID:        t.TickID,
-		ClockClass:    t.ClockClass,
-		DeadlineMS:    t.DurationMS,
-		Sources:       t.Sources,
-		Opportunities: t.Opportunities,
+		TickID:              t.TickID,
+		ClockClass:          t.ClockClass,
+		DeadlineMS:          t.DurationMS,
+		Sources:             t.Sources,
+		ActiveSourceRegimes: t.ActiveSourceRegimes,
+		Opportunities:       t.Opportunities,
 	}
 }
 

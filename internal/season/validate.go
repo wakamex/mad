@@ -45,6 +45,15 @@ func Validate(file File) error {
 		if len(tick.Scoring.Rules) == 0 {
 			errs = append(errs, fmt.Errorf("%s: at least one scoring rule is required", prefix))
 		}
+		for regimeIndex, regime := range tick.ActiveSourceRegimes {
+			regimePrefix := fmt.Sprintf("%s active_source_regimes[%d]", prefix, regimeIndex)
+			if regime.RegimeID == "" {
+				errs = append(errs, fmt.Errorf("%s: regime_id is required", regimePrefix))
+			}
+			if regime.Label == "" {
+				errs = append(errs, fmt.Errorf("%s: label is required", regimePrefix))
+			}
+		}
 
 		opportunities := make(map[string]Opportunity, len(tick.Opportunities))
 		for opportunityIndex, opportunity := range tick.Opportunities {
@@ -63,6 +72,15 @@ func Validate(file File) error {
 			}
 			if len(opportunity.AllowedCommands) == 0 {
 				errs = append(errs, fmt.Errorf("%s: allowed_commands must not be empty", opPrefix))
+			}
+			for requirementIndex, requirement := range opportunity.PublicRequirements {
+				reqPrefix := fmt.Sprintf("%s public_requirements[%d]", opPrefix, requirementIndex)
+				if requirement.Metric == "" {
+					errs = append(errs, fmt.Errorf("%s: metric is required", reqPrefix))
+				}
+				if requirement.Operator == "" {
+					errs = append(errs, fmt.Errorf("%s: operator is required", reqPrefix))
+				}
 			}
 			opportunities[opportunity.OpportunityID] = opportunity
 			seenOpportunityIDs[opportunity.OpportunityID] = tick.TickID

@@ -22,6 +22,16 @@
           "text": "Rain-touched glass is trading at a premium in the southern wards."
         }
       ],
+      "active_source_regimes": [
+        {
+          "regime_id": "choir_suppression",
+          "label": "Choir Suppression",
+          "description": "Official bulletins omit sensitive cargo details.",
+          "affected_source_types": [
+            "official_bulletin"
+          ]
+        }
+      ],
       "opportunities": [
         {
           "opportunity_id": "quest.glass_choir.7",

@@ -26,15 +26,16 @@ type StoryElement struct {
 }
 
 type StoryBeat struct {
-	BeatID           string        `json:"beat_id"`
-	ClockClass       string        `json:"clock_class"`
-	Sources          []Source      `json:"sources"`
-	Opportunities    []Opportunity `json:"opportunities"`
-	Scoring          ScoringPlan   `json:"scoring"`
-	ProducesTags     []string      `json:"produces_tags,omitempty"`
-	ConsumesTags     []string      `json:"consumes_tags,omitempty"`
-	ResourceTouches  []string      `json:"resource_touches,omitempty"`
-	PrecursorBeatIDs []string      `json:"precursor_beat_ids,omitempty"`
+	BeatID              string         `json:"beat_id"`
+	ClockClass          string         `json:"clock_class"`
+	Sources             []Source       `json:"sources"`
+	ActiveSourceRegimes []SourceRegime `json:"active_source_regimes,omitempty"`
+	Opportunities       []Opportunity  `json:"opportunities"`
+	Scoring             ScoringPlan    `json:"scoring"`
+	ProducesTags        []string       `json:"produces_tags,omitempty"`
+	ConsumesTags        []string       `json:"consumes_tags,omitempty"`
+	ResourceTouches     []string       `json:"resource_touches,omitempty"`
+	PrecursorBeatIDs    []string       `json:"precursor_beat_ids,omitempty"`
 }
 
 func CompileIR(ir IRFile) (File, error) {
@@ -94,12 +95,13 @@ func CompileIR(ir IRFile) (File, error) {
 
 		tickID := fmt.Sprintf("S1-T%04d", len(compiled)+1)
 		tick := TickDefinition{
-			TickID:        tickID,
-			ClockClass:    beat.ClockClass,
-			DurationMS:    durationForClockClass(ir.ClockDefaults, beat.ClockClass),
-			Sources:       beat.Sources,
-			Opportunities: beat.Opportunities,
-			Scoring:       beat.Scoring,
+			TickID:              tickID,
+			ClockClass:          beat.ClockClass,
+			DurationMS:          durationForClockClass(ir.ClockDefaults, beat.ClockClass),
+			Sources:             beat.Sources,
+			ActiveSourceRegimes: beat.ActiveSourceRegimes,
+			Opportunities:       beat.Opportunities,
+			Scoring:             beat.Scoring,
 			Annotations: Annotations{
 				Family:           element.Family,
 				ElementID:        element.ElementID,
@@ -183,6 +185,17 @@ func ValidateIR(ir IRFile) error {
 			}
 			if len(beat.Scoring.Rules) == 0 {
 				return fmt.Errorf("element[%d] beat[%d]: at least one scoring rule is required", elementIndex, beatIndex)
+			}
+			for regimeIndex, regime := range beat.ActiveSourceRegimes {
+				if regime.RegimeID == "" {
+					return fmt.Errorf("element[%d] beat[%d] active_source_regimes[%d]: regime_id is required", elementIndex, beatIndex, regimeIndex)
+				}
+				if regime.Label == "" {
+					return fmt.Errorf("element[%d] beat[%d] active_source_regimes[%d]: label is required", elementIndex, beatIndex, regimeIndex)
+				}
+			}
+			if err := validatePublicRequirementHints(elementIndex, beatIndex, beat); err != nil {
+				return err
 			}
 		}
 	}
@@ -345,6 +358,54 @@ func collectTagProducerSets(ir IRFile) tagProducerSets {
 		}
 	}
 	return producers
+}
+
+func validatePublicRequirementHints(elementIndex, beatIndex int, beat StoryBeat) error {
+	opportunities := make(map[string]Opportunity, len(beat.Opportunities))
+	for _, opportunity := range beat.Opportunities {
+		opportunities[opportunity.OpportunityID] = opportunity
+	}
+
+	for ruleIndex, rule := range beat.Scoring.Rules {
+		if rule.Match.Command == "hold" || rule.Match.Target == "" {
+			continue
+		}
+		opportunity, ok := opportunities[rule.Match.Target]
+		if !ok {
+			continue
+		}
+		if err := validateRuleRequirementHints(elementIndex, beatIndex, ruleIndex, rule.Requirements, opportunity); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateRuleRequirementHints(elementIndex, beatIndex, ruleIndex int, requirements RuleRequirements, opportunity Opportunity) error {
+	if requirements.MinAura != 0 && !hasPublicRequirement(opportunity.PublicRequirements, "aura", "", ">=", requirements.MinAura) {
+		return fmt.Errorf("element[%d] beat[%d] rule[%d]: min_aura requirement must be surfaced in opportunity %q public_requirements", elementIndex, beatIndex, ruleIndex, opportunity.OpportunityID)
+	}
+	if requirements.MaxDebt != 0 && !hasPublicRequirement(opportunity.PublicRequirements, "debt", "", "<=", requirements.MaxDebt) {
+		return fmt.Errorf("element[%d] beat[%d] rule[%d]: max_debt requirement must be surfaced in opportunity %q public_requirements", elementIndex, beatIndex, ruleIndex, opportunity.OpportunityID)
+	}
+	for faction, minimum := range requirements.MinReputation {
+		if !hasPublicRequirement(opportunity.PublicRequirements, "reputation", faction, ">=", minimum) {
+			return fmt.Errorf("element[%d] beat[%d] rule[%d]: min_reputation[%q] must be surfaced in opportunity %q public_requirements", elementIndex, beatIndex, ruleIndex, faction, opportunity.OpportunityID)
+		}
+	}
+	return nil
+}
+
+func hasPublicRequirement(requirements []PublicRequirement, metric, scope, operator string, value int64) bool {
+	for _, requirement := range requirements {
+		if requirement.Metric == metric &&
+			requirement.Scope == scope &&
+			requirement.Operator == operator &&
+			requirement.Value == value {
+			return true
+		}
+	}
+	return false
 }
 
 func guaranteedEarlierBeats(ir IRFile, beatLocations map[string]beatLocation, beatID string) map[string]struct{} {

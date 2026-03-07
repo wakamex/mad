@@ -8,8 +8,73 @@
     "tick_id": {"type": "string"},
     "clock_class": {"type": "string"},
     "deadline_ms": {"type": "integer"},
-    "sources": {"type": "array"},
-    "opportunities": {"type": "array"}
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_type", "text"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "source_type": {"type": "string"},
+          "text": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "active_source_regimes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["regime_id", "label"],
+        "properties": {
+          "regime_id": {"type": "string"},
+          "label": {"type": "string"},
+          "description": {"type": "string"},
+          "affected_source_types": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "opportunities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["opportunity_id", "allowed_commands", "text_slot"],
+        "properties": {
+          "opportunity_id": {"type": "string"},
+          "allowed_commands": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "allowed_options": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "text_slot": {"type": "boolean"},
+          "phrase_hint": {"type": "string"},
+          "public_requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["metric", "operator"],
+              "properties": {
+                "metric": {"type": "string"},
+                "scope": {"type": "string"},
+                "operator": {"type": "string"},
+                "value": {"type": "integer"},
+                "tier": {"type": "string"},
+                "label": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
   "additionalProperties": false
 }

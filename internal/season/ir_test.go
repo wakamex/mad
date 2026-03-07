@@ -104,6 +104,53 @@ func TestCompileIRDerivesPrecursorAnnotations(t *testing.T) {
 	}
 }
 
+func TestCompileIRPreservesActiveSourceRegimes(t *testing.T) {
+	ir := IRFile{
+		SeasonID:    "regime-dev",
+		Title:       "Regime Dev",
+		CompileSeed: 1,
+		Elements: []StoryElement{
+			{
+				ElementID: "seed",
+				Family:    "seed_clue_chain",
+				Beats: []StoryBeat{
+					{
+						BeatID:     "seed.1",
+						ClockClass: "standard",
+						Sources:    []Source{{SourceID: "seed.1.source", SourceType: "official_bulletin", Text: "seed"}},
+						ActiveSourceRegimes: []SourceRegime{{
+							RegimeID:            "suppression",
+							Label:               "Suppression",
+							Description:         "Official bulletins are sanitized.",
+							AffectedSourceTypes: []string{"official_bulletin"},
+						}},
+						Opportunities: []Opportunity{{OpportunityID: "seed.op.1", AllowedCommands: []string{"hold"}}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{{
+								Match:          ActionMatch{Command: "hold"},
+								Delta:          ScoreDelta{},
+								Label:          "hold",
+								Classification: "miss",
+							}},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	compiled, err := CompileIR(ir)
+	if err != nil {
+		t.Fatalf("compile ir: %v", err)
+	}
+	if len(compiled.Ticks[0].ActiveSourceRegimes) != 1 {
+		t.Fatalf("expected active source regime to be preserved")
+	}
+	if compiled.Ticks[0].ActiveSourceRegimes[0].RegimeID != "suppression" {
+		t.Fatalf("unexpected regime id: %q", compiled.Ticks[0].ActiveSourceRegimes[0].RegimeID)
+	}
+}
+
 func TestValidateIRRejectsUnknownPrecursor(t *testing.T) {
 	err := ValidateIR(IRFile{
 		SeasonID: "broken-ir",
@@ -253,6 +300,104 @@ func TestValidateIRAllowsConsumedTagWithGuaranteedProducer(t *testing.T) {
 				Family:    "payoff_gate",
 				Beats: []StoryBeat{
 					testStoryBeatWithTags("gate.1", "gate.op.1", []string{"shared.tag"}, nil, "seed.1"),
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected valid ir, got %v", err)
+	}
+}
+
+func TestValidateIRRejectsNumericRequirementWithoutPublicHint(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "hidden-threshold",
+		Elements: []StoryElement{
+			{
+				ElementID: "choir",
+				Family:    "reputation_ladder",
+				Beats: []StoryBeat{
+					{
+						BeatID:     "choir.1",
+						ClockClass: "standard",
+						Sources:    []Source{{SourceID: "choir.1.source", SourceType: "notice", Text: "choir"}},
+						Opportunities: []Opportunity{{
+							OpportunityID:   "quest.choir.1",
+							AllowedCommands: []string{"commit", "hold"},
+							AllowedOptions:  []string{"broker"},
+						}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "quest.choir.1", Option: "broker"},
+									Requirements:   RuleRequirements{MinReputation: map[string]int64{"choir": 40}},
+									Delta:          ScoreDelta{Yield: 10},
+									Label:          "broker",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "hold",
+									Classification: "miss",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	})
+	if err == nil {
+		t.Fatalf("expected validation error")
+	}
+	if !strings.Contains(err.Error(), "public_requirements") {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestValidateIRAllowsNumericRequirementWithPublicHint(t *testing.T) {
+	err := ValidateIR(IRFile{
+		SeasonID: "public-threshold",
+		Elements: []StoryElement{
+			{
+				ElementID: "choir",
+				Family:    "reputation_ladder",
+				Beats: []StoryBeat{
+					{
+						BeatID:     "choir.1",
+						ClockClass: "standard",
+						Sources:    []Source{{SourceID: "choir.1.source", SourceType: "notice", Text: "choir"}},
+						Opportunities: []Opportunity{{
+							OpportunityID:   "quest.choir.1",
+							AllowedCommands: []string{"commit", "hold"},
+							AllowedOptions:  []string{"broker"},
+							PublicRequirements: []PublicRequirement{{
+								Metric:   "reputation",
+								Scope:    "choir",
+								Operator: ">=",
+								Value:    40,
+								Label:    "Choir reputation 40+",
+							}},
+						}},
+						Scoring: ScoringPlan{
+							Rules: []Rule{
+								{
+									Match:          ActionMatch{Command: "commit", Target: "quest.choir.1", Option: "broker"},
+									Requirements:   RuleRequirements{MinReputation: map[string]int64{"choir": 40}},
+									Delta:          ScoreDelta{Yield: 10},
+									Label:          "broker",
+									Classification: "best",
+								},
+								{
+									Match:          ActionMatch{Command: "hold"},
+									Delta:          ScoreDelta{},
+									Label:          "hold",
+									Classification: "miss",
+								},
+							},
+						},
+					},
 				},
 			},
 		},

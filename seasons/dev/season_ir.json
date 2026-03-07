@@ -22,6 +22,14 @@
           "beat_id": "glass_choir.offer_1",
           "clock_class": "standard",
           "produces_tags": ["glass_choir.broker_pattern"],
+          "active_source_regimes": [
+            {
+              "regime_id": "choir_suppression",
+              "label": "Choir Suppression",
+              "description": "Official bulletins omit sensitive cargo details.",
+              "affected_source_types": ["official_bulletin"]
+            }
+          ],
           "sources": [
             {
               "source_id": "archive.bulletin.77",

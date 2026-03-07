@@ -221,7 +221,6 @@ func (e *Engine) Submit(token string, action ActionSubmission, now time.Time) (A
 			Command:      action.Command,
 			Target:       action.Target,
 			Option:       action.Option,
-			Phrase:       action.Phrase,
 			Confidence:   action.Confidence,
 			ReceivedAt:   now,
 		})
@@ -397,7 +396,6 @@ func (e *Engine) RecoverFromRecords(records []storage.ActionRecord, until time.T
 			Command:      record.Command,
 			Target:       record.Target,
 			Option:       record.Option,
-			Phrase:       record.Phrase,
 			Confidence:   record.Confidence,
 			SubmissionID: record.SubmissionID,
 		}
@@ -520,7 +518,6 @@ func actionFingerprint(action ActionSubmission) uint64 {
 		action.Command,
 		action.Target,
 		action.Option,
-		action.Phrase,
 		fmt.Sprintf("%.6f", action.Confidence),
 		action.Theory,
 	}, "\x1f")))
@@ -737,9 +734,6 @@ func matches(match season.ActionMatch, action ActionSubmission) bool {
 	if match.Option != "" && match.Option != action.Option {
 		return false
 	}
-	if match.Phrase != "" && strings.TrimSpace(strings.ToLower(match.Phrase)) != strings.TrimSpace(strings.ToLower(action.Phrase)) {
-		return false
-	}
 	return true
 }
 
@@ -794,7 +788,6 @@ func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submi
 					Command: bestRule.Match.Command,
 					Option:  bestRule.Match.Option,
 					Target:  bestRule.Match.Target,
-					Phrase:  bestRule.Match.Phrase,
 				},
 				BadActionClasses:  bad,
 				PublicExplanation: bestRule.Label,
@@ -817,7 +810,7 @@ func validateAction(action ActionSubmission) error {
 	if action.Command != "hold" && (action.Confidence < 0 || action.Confidence > 1) {
 		return errInvalidBody
 	}
-	if len(action.Phrase) > 256 || len(action.Theory) > 512 {
+	if len(action.Theory) > 512 {
 		return errInvalidBody
 	}
 	return nil

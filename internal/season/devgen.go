@@ -65,7 +65,7 @@ var devRoles = []string{"broker", "warden", "auditor", "carrier", "scribe", "fac
 var devMaterials = []string{"glass", "salt", "wire", "resin", "silk", "amber", "basalt", "signal"}
 var devAliases = []string{"anchor", "choirmark", "ledger-key", "veil-token", "resonance seal", "relay shard", "storm docket", "proof reed"}
 var devDistricts = []string{"southern ward", "north quay", "mirror steps", "relay row", "silt exchange", "archive annex", "ember causeway", "river stairs"}
-var devWorkTypes = []string{"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "inventory"}
+var devWorkTypes = []string{"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry"}
 var devHazards = []string{"containment wash", "archive firebreak", "quarantine bloom", "signal spill", "relay fracture", "silt collapse", "fog surge", "glass quake"}
 
 func BuildGeneratedDevSeasonIR(tickCount int) (IRFile, error) {
@@ -124,7 +124,6 @@ type devTheme struct {
 	WorkA        string
 	WorkB        string
 	Hazard       string
-	Phrase       string
 	RepTier      int64
 	AuraTier     int64
 	DebtCap      int64
@@ -155,7 +154,6 @@ func buildDevTheme(cluster int) devTheme {
 		WorkA:        devWorkTypes[cluster%len(devWorkTypes)],
 		WorkB:        devWorkTypes[(cluster+3)%len(devWorkTypes)],
 		Hazard:       devHazards[(cluster*17+6)%len(devHazards)],
-		Phrase:       fmt.Sprintf("%s %s %s", color, phenomenon, role),
 		RepTier:      4 + int64((cluster/len(devFactions))%4)*2,
 		AuraTier:     6 + int64(cluster%3)*2,
 		DebtCap:      36 + int64((cluster/len(devRegimes))%5)*4,
@@ -316,7 +314,7 @@ func buildClueChainElement(cluster int, theme devTheme, plan devClusterPlan) Sto
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_clues", cluster+1),
 		Family:          "seed_clue_chain",
-		LatentVars:      []string{fmt.Sprintf("cluster_%03d_phrase", cluster+1), fmt.Sprintf("cluster_%03d_bias", cluster+1)},
+		LatentVars:      []string{fmt.Sprintf("cluster_%03d_suffix", cluster+1), fmt.Sprintf("cluster_%03d_bias", cluster+1)},
 		ResourceTouches: []string{"insight"},
 		Beats:           beats,
 	}
@@ -624,45 +622,49 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 
 		if i == 2 {
 			clockClass = "dossier"
+			suffixOptions := dossierSuffixOptions(theme, cluster)
 			opportunity = Opportunity{
 				OpportunityID:   target,
 				AllowedCommands: []string{"commit", "hold"},
-				AllowedOptions:  []string{"authorize"},
-				TextSlot:        true,
-				PhraseHint:      "three_word_pattern",
+				AllowedOptions:  suffixOptions,
 			}
 			sources = []Source{
 				{
 					SourceID:   fmt.Sprintf("archive_console.cluster_%03d", cluster+1),
 					SourceType: "archive_console",
-					Text:       fmt.Sprintf("Archive console: authorization requires the remembered three-word pattern for the %s %s line.", theme.Color, theme.Material),
+					Text:       fmt.Sprintf("Archive console: authorization requires selecting the verified %s-line suffix.", theme.Material),
 				},
 			}
 			rules = []Rule{
 				{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "authorize", Phrase: theme.Phrase},
+					Match: ActionMatch{Command: "commit", Target: target, Option: theme.Role},
 					Requirements: RuleRequirements{
 						RequiresAvailability: []string{defaultAvailability},
 					},
 					Delta:          ScoreDelta{Yield: 40, Insight: 220, Aura: 12, Debt: 0, MissPenalties: 0},
-					Label:          "The authorization phrase bound the whole clue chain together.",
+					Label:          "The dossier choice bound the whole clue chain together.",
 					Classification: "best",
-				},
-				{
-					Match: ActionMatch{Command: "commit", Target: target, Option: "authorize"},
-					Requirements: RuleRequirements{
-						RequiresAvailability: []string{defaultAvailability},
-					},
-					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 55, MissPenalties: 20},
-					Label:          "The archive rejected the phrase and charged the attempt against your credibility.",
-					Classification: "bad",
 				},
 				{
 					Match:          ActionMatch{Command: "hold"},
 					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 0, MissPenalties: 6},
-					Label:          "You let the dossier window pass without attempting the phrase.",
+					Label:          "You let the dossier window pass without attempting the authorization choice.",
 					Classification: "miss",
 				},
+			}
+			for _, option := range suffixOptions {
+				if option == theme.Role {
+					continue
+				}
+				rules = append(rules, Rule{
+					Match: ActionMatch{Command: "commit", Target: target, Option: option},
+					Requirements: RuleRequirements{
+						RequiresAvailability: []string{defaultAvailability},
+					},
+					Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 70, MissPenalties: 30},
+					Label:          "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+					Classification: "bad",
+				})
 			}
 			precursors = []string{
 				fmt.Sprintf("cluster_%03d.offer.%d", cluster+1, minInt(plan.Ladder, 2)),
@@ -752,6 +754,18 @@ func standingWorkText(theme devTheme, beat int, workName string) string {
 	}
 }
 
+func dossierSuffixOptions(theme devTheme, cluster int) []string {
+	options := []string{theme.Role}
+	for offset := 0; len(options) < len(devRoles); offset++ {
+		candidate := devRoles[(cluster*3+offset)%len(devRoles)]
+		if candidate == theme.Role {
+			continue
+		}
+		options = append(options, candidate)
+	}
+	return options
+}
+
 func clueTag(cluster, beat int) string {
 	switch beat {
 	case 1:
@@ -790,7 +804,7 @@ func clueText(theme devTheme, beat int) string {
 	case 1:
 		return fmt.Sprintf("Official bulletin: no %s %s crossed the %s under %s conditions.", theme.Color, theme.Material, theme.District, theme.Phenomenon)
 	case 2:
-		return fmt.Sprintf("Archive fragment: older ledgers call the %s consignment a %s, and the verified phrase retained the %s suffix.", theme.Material, theme.Alias, theme.Role)
+		return fmt.Sprintf("Archive fragment: older ledgers call the %s consignment a %s, and the verified authorization retained the %s suffix.", theme.Material, theme.Alias, theme.Role)
 	case 3:
 		return fmt.Sprintf("Market gossip ties the %s %s line to the %s suffix, not to literal cargo shape.", theme.Color, theme.Material, theme.Role)
 	case 4:

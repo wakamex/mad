@@ -41,7 +41,7 @@ Compile that larger dev season:
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple `greedy_best`-vs-`always_hold` score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate):
+Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, simple `greedy_best`-vs-`always_hold` score baselines, and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
 
 ```bash
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1

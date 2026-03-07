@@ -342,6 +342,28 @@ This packet is:
 
 The scoreboard tells you whether you are climbing. The reveal packet tells you why, later.
 
+## Client-Derived Private State
+
+Regular users should not be expected to memorize their own cooldowns, commitments, capability state, or reputation from raw text alone.
+
+The intended model is:
+
+- no private read endpoint for player state
+- the client keeps the player's own submitted action log locally
+- the client runs the same deterministic reducer used by the server for explicit player-owned state
+- the client renders commitments, cooldowns, capability flags, reputation, aura, and debt from that local derived state
+
+This keeps the architecture tractable:
+
+- the origin still has no personalized read path
+- there is no extra information leak beyond the player's own chosen actions
+- human web and CLI clients remain usable
+
+Design rule:
+
+- if a player-owned resource cannot be reconstructed from public ticks, published rules, and the player's own action log, redesign that resource or move it out of the benchmark
+- hidden world optimality is valid; hidden private bookkeeping is not
+
 ## Write Path Design
 
 The only hot dynamic endpoint is `POST /actions`.
@@ -390,11 +412,17 @@ PlayerState {
   debt_i32
   miss_penalties_i32
   reputation[8]i16
-  inventory_bits_u128
+  capability_bits_u128
   commitment_slots[3]u32
   cooldowns_u32
 }
 ```
+
+Interpret `capability_bits_u128` narrowly:
+
+- a compact set of visible permits, immunities, protocol flags, or preparedness capabilities
+- not a hidden bag of arbitrary item identities
+- if season authoring starts needing many opaque objects, move that pressure into commitments, cooldowns, or explicit capability flags instead
 
 Do not store this in a hot SQL table.
 
@@ -609,7 +637,6 @@ Precompile every tick into an immutable plan before publication:
 
 - allowed commands
 - allowed options
-- phrase grammar
 - scoring matrices
 - precursor ids for memory-distance scoring
 - source-bias regime metadata
@@ -965,7 +992,7 @@ Exit criteria:
 
 - produce a coherent 100-tick test season
 - interleave multi-tick story elements without hand-authoring final tick spacing
-- emit an offline report for tick order, reveal timing, precursor-distance diagnostics, simple `greedy_best`/`always_hold` baselines, and random-play audits (`mean`, `p90`, `p99`, positive-rate)
+- emit an offline report for tick order, reveal timing, precursor-distance diagnostics, simple `greedy_best`/`always_hold` baselines, and random-play audits (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown)
 - generate lawful answer keys and reveals automatically where possible
 - support repeatable content iteration without hand-editing raw tick JSON
 

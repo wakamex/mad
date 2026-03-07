@@ -32,8 +32,7 @@
             {
               "opportunity_id": "quest.ward_service.1",
               "allowed_commands": ["commit", "hold"],
-              "allowed_options": ["cleanup"],
-              "text_slot": false
+              "allowed_options": ["cleanup"]
             }
           ],
           "scoring": {
@@ -96,8 +95,7 @@
             {
               "opportunity_id": "quest.glass_choir.7",
               "allowed_commands": ["inspect", "commit", "hold"],
-              "allowed_options": ["penitent", "broker", "smuggler"],
-              "text_slot": false
+              "allowed_options": ["penitent", "broker", "smuggler"]
             }
           ],
           "scoring": {
@@ -147,8 +145,7 @@
                   "value": 4,
                   "label": "Choir standing 4+ unlocks trusted broker tier."
                 }
-              ],
-              "text_slot": false
+              ]
             }
           ],
           "scoring": {
@@ -186,48 +183,52 @@
     },
     {
       "element_id": "vault_authorization",
-      "family": "protocol_phrase",
+      "family": "payoff_gate",
       "latent_vars": ["choir_phase", "archive_protocol"],
       "resource_touches": ["insight", "debt"],
       "beats": [
         {
-          "beat_id": "vault_authorization.phrase_1",
+          "beat_id": "vault_authorization.choice_1",
           "clock_class": "dossier",
           "consumes_tags": ["glass_choir.broker_pattern"],
           "sources": [
             {
               "source_id": "archive.console.5",
               "source_type": "archive_fragment",
-              "text": "Terminal requests a three-word authorization pattern."
+              "text": "Terminal requests the verified authorization lane for the rain-touched vault dossier."
             }
           ],
           "opportunities": [
             {
               "opportunity_id": "auth.vault.3",
               "allowed_commands": ["commit", "hold"],
-              "allowed_options": ["authorize"],
-              "text_slot": true,
-              "phrase_hint": "three_word_pattern"
+              "allowed_options": ["broker", "penitent", "auditor"]
             }
           ],
           "scoring": {
             "rules": [
               {
-                "match": {"command": "commit", "target": "auth.vault.3", "option": "authorize", "phrase": "green rain broker"},
+                "match": {"command": "commit", "target": "auth.vault.3", "option": "broker"},
                 "delta": {"yield": 0, "insight": 220, "aura": 15, "debt": 0, "miss_penalties": 0},
-                "label": "The terminal accepted the remembered phrase tied back to the earlier rain-and-broker contradiction.",
+                "label": "The terminal accepted the remembered authorization lane tied back to the earlier rain-and-broker contradiction.",
                 "classification": "best"
               },
               {
-                "match": {"command": "commit", "target": "auth.vault.3", "option": "authorize"},
+                "match": {"command": "commit", "target": "auth.vault.3", "option": "penitent"},
                 "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 40, "miss_penalties": 15},
-                "label": "The terminal rejected the phrase and logged the attempt as suspicious.",
+                "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
+                "classification": "bad"
+              },
+              {
+                "match": {"command": "commit", "target": "auth.vault.3", "option": "auditor"},
+                "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 40, "miss_penalties": 15},
+                "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
                 "classification": "bad"
               },
               {
                 "match": {"command": "hold"},
                 "delta": {"yield": 0, "insight": 0, "aura": 0, "debt": 0, "miss_penalties": 5},
-                "label": "No authorization attempt was made.",
+                "label": "No authorization choice was made.",
                 "classification": "miss"
               }
             ]
@@ -265,8 +266,7 @@
                   "value": 4,
                   "label": "Civic standing 4+ unlocks trusted containment handling."
                 }
-              ],
-              "text_slot": false
+              ]
             }
           ],
           "scoring": {

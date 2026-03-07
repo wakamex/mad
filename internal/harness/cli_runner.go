@@ -382,9 +382,6 @@ func actionSchema() (string, error) {
 			"option": map[string]any{
 				"type": "string",
 			},
-			"phrase": map[string]any{
-				"type": "string",
-			},
 			"confidence": map[string]any{
 				"type":    "number",
 				"minimum": 0,
@@ -398,7 +395,7 @@ func actionSchema() (string, error) {
 				"maxLength": defaultMaxNotesChars,
 			},
 		},
-		"required": []string{"command", "target", "option", "phrase", "confidence", "theory", "notes"},
+		"required": []string{"command", "target", "option", "confidence", "theory", "notes"},
 	}
 	raw, err := json.Marshal(schema)
 	if err != nil {

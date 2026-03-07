@@ -466,7 +466,7 @@ func testStoryBeatWithTags(beatID, opportunityID string, consumesTags, producesT
 		BeatID:        beatID,
 		ClockClass:    "standard",
 		Sources:       []Source{{SourceID: beatID + ".source", SourceType: "test", Text: beatID + " source"}},
-		Opportunities: []Opportunity{{OpportunityID: opportunityID, AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"good"}, TextSlot: false}},
+		Opportunities: []Opportunity{{OpportunityID: opportunityID, AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"good"}}},
 		ProducesTags:  producesTags,
 		ConsumesTags:  consumesTags,
 		Scoring: ScoringPlan{

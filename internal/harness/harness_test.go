@@ -98,6 +98,9 @@ func TestRunSeasonCapturesScoreTrace(t *testing.T) {
 	if result.Session.ProviderSessionID != "fake-session" {
 		t.Fatalf("expected session info to propagate, got %#v", result.Session)
 	}
+	if len(result.Breakdown.ByFamily) == 0 {
+		t.Fatalf("expected run breakdown by family")
+	}
 }
 
 func TestRunSeasonEphemeralContextDoesNotPersistNotes(t *testing.T) {

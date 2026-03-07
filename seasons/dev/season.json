@@ -26,8 +26,7 @@
           ],
           "allowed_options": [
             "cleanup"
-          ],
-          "text_slot": false
+          ]
         }
       ],
       "scoring": {
@@ -122,8 +121,7 @@
             "penitent",
             "broker",
             "smuggler"
-          ],
-          "text_slot": false
+          ]
         }
       ],
       "scoring": {
@@ -205,7 +203,6 @@
             "broker",
             "penitent"
           ],
-          "text_slot": false,
           "public_requirements": [
             {
               "metric": "reputation",
@@ -326,7 +323,6 @@
             "evacuate",
             "deploy_dampener"
           ],
-          "text_slot": false,
           "public_requirements": [
             {
               "metric": "reputation",
@@ -430,7 +426,7 @@
         {
           "source_id": "archive.console.5",
           "source_type": "archive_fragment",
-          "text": "Terminal requests a three-word authorization pattern."
+          "text": "Terminal requests the verified authorization lane for the rain-touched vault dossier."
         }
       ],
       "opportunities": [
@@ -441,10 +437,10 @@
             "hold"
           ],
           "allowed_options": [
-            "authorize"
-          ],
-          "text_slot": true,
-          "phrase_hint": "three_word_pattern"
+            "broker",
+            "penitent",
+            "auditor"
+          ]
         }
       ],
       "scoring": {
@@ -453,8 +449,7 @@
             "match": {
               "command": "commit",
               "target": "auth.vault.3",
-              "option": "authorize",
-              "phrase": "green rain broker"
+              "option": "broker"
             },
             "delta": {
               "yield": 0,
@@ -463,14 +458,14 @@
               "debt": 0,
               "miss_penalties": 0
             },
-            "label": "The terminal accepted the remembered phrase tied back to the earlier rain-and-broker contradiction.",
+            "label": "The terminal accepted the remembered authorization lane tied back to the earlier rain-and-broker contradiction.",
             "classification": "best"
           },
           {
             "match": {
               "command": "commit",
               "target": "auth.vault.3",
-              "option": "authorize"
+              "option": "penitent"
             },
             "delta": {
               "yield": 0,
@@ -479,7 +474,23 @@
               "debt": 40,
               "miss_penalties": 15
             },
-            "label": "The terminal rejected the phrase and logged the attempt as suspicious.",
+            "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "auth.vault.3",
+              "option": "auditor"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 40,
+              "miss_penalties": 15
+            },
+            "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
             "classification": "bad"
           },
           {
@@ -493,15 +504,15 @@
               "debt": 0,
               "miss_penalties": 5
             },
-            "label": "No authorization attempt was made.",
+            "label": "No authorization choice was made.",
             "classification": "miss"
           }
         ]
       },
       "annotations": {
-        "family": "protocol_phrase",
+        "family": "payoff_gate",
         "element_id": "vault_authorization",
-        "beat_id": "vault_authorization.phrase_1",
+        "beat_id": "vault_authorization.choice_1",
         "precursor_beat_ids": [
           "glass_choir.offer_1"
         ],

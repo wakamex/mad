@@ -26,7 +26,6 @@ type ActionSubmission struct {
 	Target       string  `json:"target,omitempty"`
 	Option       string  `json:"option,omitempty"`
 	Confidence   float64 `json:"confidence,omitempty"`
-	Phrase       string  `json:"phrase,omitempty"`
 	Theory       string  `json:"theory,omitempty"`
 	SubmissionID string  `json:"submission_id,omitempty"`
 }
@@ -126,7 +125,6 @@ type RevealAction struct {
 	Command string `json:"command"`
 	Option  string `json:"option,omitempty"`
 	Target  string `json:"target,omitempty"`
-	Phrase  string `json:"phrase,omitempty"`
 }
 
 type RevealBadAction struct {

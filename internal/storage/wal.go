@@ -23,7 +23,6 @@ type ActionRecord struct {
 	Command      string    `json:"command"`
 	Target       string    `json:"target,omitempty"`
 	Option       string    `json:"option,omitempty"`
-	Phrase       string    `json:"phrase,omitempty"`
 	Confidence   float64   `json:"confidence"`
 	ReceivedAt   time.Time `json:"received_at"`
 }

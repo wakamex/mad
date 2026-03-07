@@ -41,7 +41,6 @@ func TestValidateRejectsBrokenSeason(t *testing.T) {
 								Command: "commit",
 								Target:  "op.1",
 								Option:  "bad",
-								Phrase:  "unexpected",
 							},
 							Classification: "best",
 						},
@@ -56,7 +55,6 @@ func TestValidateRejectsBrokenSeason(t *testing.T) {
 	got := err.Error()
 	for _, want := range []string{
 		`option "bad" is not allowed`,
-		"phrase match requires text_slot opportunity",
 		"scoring must include a hold fallback rule",
 	} {
 		if !strings.Contains(got, want) {

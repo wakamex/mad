@@ -42,7 +42,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["opportunity_id", "allowed_commands", "text_slot"],
+        "required": ["opportunity_id", "allowed_commands"],
         "properties": {
           "opportunity_id": {"type": "string"},
           "allowed_commands": {
@@ -53,8 +53,6 @@
             "type": "array",
             "items": {"type": "string"}
           },
-          "text_slot": {"type": "boolean"},
-          "phrase_hint": {"type": "string"},
           "public_requirements": {
             "type": "array",
             "items": {

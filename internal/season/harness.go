@@ -12,13 +12,13 @@ type HarnessStateSnapshot struct {
 	Reputation   map[string]int64 `json:"reputation"`
 	Availability string           `json:"availability"`
 	Cooldowns    map[string]int   `json:"cooldowns"`
-	Inventory    int              `json:"inventory"`
 	ActiveTags   []string         `json:"active_tags,omitempty"`
 }
 
 type HarnessOutcome struct {
 	AppliedAction SimulatedAction      `json:"applied_action"`
 	AppliedRule   Rule                 `json:"applied_rule"`
+	Annotations   Annotations          `json:"annotations,omitempty"`
 	Correct       bool                 `json:"correct"`
 	Label         string               `json:"label"`
 	ScoreBefore   int64                `json:"score_before"`
@@ -55,7 +55,6 @@ func (h *HarnessState) Snapshot() HarnessStateSnapshot {
 		Reputation:   reputation,
 		Availability: h.sim.Availability,
 		Cooldowns:    cooldowns,
-		Inventory:    h.sim.Inventory,
 		ActiveTags:   tags,
 	}
 }
@@ -67,6 +66,7 @@ func (h *HarnessState) ApplyAction(tick TickDefinition, action SimulatedAction) 
 	return HarnessOutcome{
 		AppliedAction: action,
 		AppliedRule:   rule,
+		Annotations:   tick.Annotations,
 		Correct:       correct,
 		Label:         rule.Label,
 		ScoreBefore:   scoreBefore,

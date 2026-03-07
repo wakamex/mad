@@ -90,8 +90,7 @@ func standingWorkHasMeaningfulCost(element StoryElement) bool {
 			if scalarScore(rule.Delta) < 0 ||
 				rule.Effects.LockTicks > 0 ||
 				rule.Effects.AvailabilityDelta != "" ||
-				len(rule.Effects.SetCooldowns) > 0 ||
-				rule.Effects.InventoryDelta != 0 {
+				len(rule.Effects.SetCooldowns) > 0 {
 				return true
 			}
 		}
@@ -219,7 +218,6 @@ func isFlatGreedyBeat(beat StoryBeat) bool {
 			len(rule.Effects.AddTags) > 0 ||
 			len(rule.Effects.RemoveTags) > 0 ||
 			rule.Effects.LockTicks > 0 ||
-			rule.Effects.InventoryDelta != 0 ||
 			len(rule.Effects.ReputationDelta) > 0 ||
 			rule.Effects.AvailabilityDelta != "" ||
 			len(rule.Effects.SetCooldowns) > 0 {

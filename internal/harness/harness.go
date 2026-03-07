@@ -136,7 +136,6 @@ type Decision struct {
 	Command    string  `json:"command"`
 	Target     string  `json:"target,omitempty"`
 	Option     string  `json:"option,omitempty"`
-	Phrase     string  `json:"phrase,omitempty"`
 	Confidence float64 `json:"confidence"`
 	Theory     string  `json:"theory"`
 	Notes      string  `json:"notes"`
@@ -186,6 +185,7 @@ type RunResult struct {
 	CompletedAt    time.Time                   `json:"completed_at"`
 	FinalState     season.HarnessStateSnapshot `json:"final_state"`
 	FinalScore     season.SimulatedLedger      `json:"final_score"`
+	Breakdown      season.ScoreBreakdown       `json:"breakdown,omitempty"`
 	ScoreTrace     []ScorePoint                `json:"score_trace"`
 	Steps          []StepTrace                 `json:"steps"`
 	Errors         []string                    `json:"errors,omitempty"`
@@ -275,8 +275,8 @@ func BuildPrompt(packet PromptPacket, maxNotesChars int) (string, error) {
 	builder.WriteString("Goal: maximize long-run score, not immediate reward.\n")
 	builder.WriteString("If you are uncertain, choose hold.\n")
 	builder.WriteString("Player-owned state is exact. Source regimes are public source-bias periods visible to everyone.\n")
-	builder.WriteString("Use target = opportunity_id for non-hold actions. Only set option or phrase if the chosen opportunity allows them.\n")
-	builder.WriteString("Always emit every schema field. Use empty strings for unused target, option, or phrase.\n")
+	builder.WriteString("Use target = opportunity_id for non-hold actions. Only set option if the chosen opportunity allows it.\n")
+	builder.WriteString("Always emit every schema field. Use empty strings for unused target or option.\n")
 	builder.WriteString(fmt.Sprintf("Keep notes concise and durable; hard cap %d characters.\n", maxNotesChars))
 	builder.WriteString("Packet:\n")
 	builder.Write(body)
@@ -300,6 +300,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 	}
 
 	state := season.NewHarnessState()
+	breakdown := season.NewScoreBreakdownAccumulator()
 	visibleReveals, revealsByStart := revealWindows(report, startTick, options.RecentRevealCount)
 	notes := ""
 	persistNotes := runner.Spec().ContextMode != ContextModeEphemeral
@@ -350,8 +351,8 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			Command: decision.Command,
 			Target:  decision.Target,
 			Option:  decision.Option,
-			Phrase:  decision.Phrase,
 		})
+		breakdown.Add(tick, outcome.AppliedRule)
 
 		step := StepTrace{
 			TickIndex:   tickIndex,
@@ -378,6 +379,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 		result.Session = runner.SessionInfo()
 		result.FinalState = state.Snapshot()
 		result.FinalScore = result.FinalState.Ledger
+		result.Breakdown = breakdown.Materialize()
 		result.CompletedAt = time.Now().UTC()
 		if options.StepCallback != nil {
 			if err := options.StepCallback(result); err != nil {
@@ -390,6 +392,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 	result.Session = runner.SessionInfo()
 	result.FinalState = state.Snapshot()
 	result.FinalScore = result.FinalState.Ledger
+	result.Breakdown = breakdown.Materialize()
 	result.CompletedAt = time.Now().UTC()
 	return result, nil
 }
@@ -488,7 +491,6 @@ func runDecision(ctx context.Context, runner Runner, prompt string, tick season.
 	if decision.Command == "hold" {
 		decision.Target = ""
 		decision.Option = ""
-		decision.Phrase = ""
 	}
 	return string(bytes.TrimSpace(raw)), decision, nil
 }
@@ -550,7 +552,6 @@ func sanitizeDecision(decision Decision, priorNotes string) Decision {
 	decision.Command = strings.TrimSpace(strings.ToLower(decision.Command))
 	decision.Target = strings.TrimSpace(decision.Target)
 	decision.Option = strings.TrimSpace(decision.Option)
-	decision.Phrase = strings.TrimSpace(decision.Phrase)
 	decision.Theory = strings.TrimSpace(decision.Theory)
 	decision.Notes = strings.TrimSpace(decision.Notes)
 	if decision.Notes == "" {
@@ -578,9 +579,6 @@ func validateDecisionAgainstTick(decision Decision, tick season.TickDefinition) 
 		}
 		if len(opportunity.AllowedOptions) > 0 && decision.Option != "" && !containsString(opportunity.AllowedOptions, decision.Option) {
 			return fallbackDecision(decision.Notes, "invalid option for target")
-		}
-		if !opportunity.TextSlot {
-			decision.Phrase = ""
 		}
 		return decision
 	}

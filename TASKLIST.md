@@ -96,10 +96,9 @@ Goal:
 
 Needed:
 
-- phrase template schema
-- normalization rules
+- dossier option schema
 - fragment-distribution rules
-- decoy fragment support
+- decoy option support
 
 ## 7. Stronger Baselines
 

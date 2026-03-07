@@ -35,7 +35,6 @@ func main() {
 	command := flag.String("command", "hold", "Action command to submit")
 	target := flag.String("target", "", "Action target to submit")
 	option := flag.String("option", "", "Action option to submit")
-	phrase := flag.String("phrase", "", "Action phrase to submit")
 	confidence := flag.Float64("confidence", 0, "Action confidence to submit")
 	flag.Parse()
 
@@ -85,7 +84,6 @@ func main() {
 					Command:    *command,
 					Target:     *target,
 					Option:     *option,
-					Phrase:     *phrase,
 					Confidence: *confidence,
 				})
 				if err != nil {

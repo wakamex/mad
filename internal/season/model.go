@@ -43,8 +43,6 @@ type Opportunity struct {
 	OpportunityID      string              `json:"opportunity_id"`
 	AllowedCommands    []string            `json:"allowed_commands"`
 	AllowedOptions     []string            `json:"allowed_options,omitempty"`
-	TextSlot           bool                `json:"text_slot"`
-	PhraseHint         string              `json:"phrase_hint,omitempty"`
 	PublicRequirements []PublicRequirement `json:"public_requirements,omitempty"`
 }
 
@@ -74,7 +72,6 @@ type ActionMatch struct {
 	Command string `json:"command"`
 	Target  string `json:"target,omitempty"`
 	Option  string `json:"option,omitempty"`
-	Phrase  string `json:"phrase,omitempty"`
 }
 
 type RuleRequirements struct {
@@ -95,7 +92,6 @@ type StateEffects struct {
 	LockTicks         int              `json:"lock_ticks,omitempty"`
 	AvailabilityDelta string           `json:"availability_delta,omitempty"`
 	SetCooldowns      map[string]int   `json:"set_cooldowns,omitempty"`
-	InventoryDelta    int              `json:"inventory_delta,omitempty"`
 	ReputationDelta   map[string]int64 `json:"reputation_delta,omitempty"`
 }
 
@@ -117,7 +113,6 @@ func (s StateEffects) IsZero() bool {
 		s.LockTicks == 0 &&
 		s.AvailabilityDelta == "" &&
 		len(s.SetCooldowns) == 0 &&
-		s.InventoryDelta == 0 &&
 		len(s.ReputationDelta) == 0
 }
 

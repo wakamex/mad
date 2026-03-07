@@ -24,11 +24,11 @@ Every story element template should declare at least:
 - `produces_tags`: beat-level facts, aliases, resources, or states introduced by the element
 - `consumes_tags`: beat-level facts or states required for its payoffs
 - `latent_vars`: hidden world variables it depends on or modifies
-- `resource_touches`: inventory, debt, aura, reputation, availability, cooldowns
+- `resource_touches`: debt, aura, reputation, availability, cooldowns, capability state
 - `source_profiles`: which narrator/source classes are used and how reliable they are
 - `clock_bias`: preferred clock classes for its beats
 - `memory_horizon`: short, medium, or long expected retrieval gap
-- `opportunity_cost`: whether the element locks time, inventory, or reputation
+- `opportunity_cost`: whether the element locks time, commitments, capability state, or reputation
 - `random_ev_target`: how punishing this element should be under random legal play
 
 This gives the compiler enough structure to interleave beats while preserving semantics and enough metadata to audit whether the season is actually testing the intended skills.
@@ -56,8 +56,8 @@ Explicit player state:
 
 - exact or tiered reputation
 - exact aura and debt
-- inventory load
 - locks, cooldowns, and commitments
+- current named capabilities, permits, or preparedness tags when a season uses them
 
 Latent world state:
 
@@ -71,6 +71,13 @@ This is a skill-ceiling requirement.
 - smart players should usually know whether they can take an action
 - smart players should still need to reason to know whether they should take it
 - the benchmark should reward planning and interpretation, not hidden off-by-one thresholds
+
+Preparedness-specific rule:
+
+- prefer visible capability flags, permits, or commitments over inventories
+- avoid seasons where success depends on remembering what ten opaque items secretly do
+- if a thing matters later, surface its current capability or lineage in player state
+- if commitment slots, cooldowns, permits, or public capability flags express the tradeoff cleanly, do not introduce item bookkeeping
 
 Generator rules:
 
@@ -110,7 +117,7 @@ Purpose:
 
 Typical beats:
 
-- phrase/auth challenge
+- dossier authorization challenge
 - exact option choice
 - protocol or target selection
 
@@ -205,11 +212,16 @@ What they test:
 - interruption handling
 - causal foresight
 
+Authoring rule:
+
+- prefer a small number of visible preparedness items or capability flags over large item collections
+- the challenge should be having prepared the right thing, not remembering silent bag contents
+
 ### 7. Market and Scarcity Loops
 
 Purpose:
 
-- create public state changes that only become exploitable when combined with old clues or inventory choices
+- create public state changes that only become exploitable when combined with old clues or earlier capability/commitment choices
 
 Typical beats:
 
@@ -264,22 +276,22 @@ Constraint:
 - no hidden narrator truth-state should be required for optimal play
 - regime changes must be inferable from shared public evidence, not private probe feedback
 
-### 10. Protocol and Phrase Elements
+### 10. Protocol and Dossier Elements
 
 Purpose:
 
-- stress exact retrieval and careful action formatting
+- stress constrained retrieval and careful protocol selection
 
 Typical beats:
 
 - protocol clue pieces distributed over time
-- later exact phrase or option gate
+- later explicit option or protocol gate
 
 What they test:
 
 - precise recall
-- action formatting under pressure
-- distinction between gist memory and exact memory
+- protocol selection under pressure
+- distinction between gist memory and exact protocol mapping
 
 ### 11. Decoy Sink Elements
 
@@ -328,7 +340,7 @@ Typical beats:
 What they should consume:
 
 - one memory chain
-- one resource or inventory chain
+- one resource or capability chain
 - one faction or reputation chain
 - one provenance or narrator-trust chain
 
@@ -346,7 +358,7 @@ The generator should not place these families independently. It should wire them
 
 - Every `Payoff Gate` should consume at least one `Seed Clue Chain`.
 - Most high-value `Payoff Gates` should consume two precursor families, not one.
-- Every `Preparedness Hazard` should point back to an earlier `Commitment Arc`, inventory decision, or market acquisition.
+- Every `Preparedness Hazard` should point back to an earlier `Commitment Arc`, capability decision, or market acquisition.
 - Every `Reputation Ladder` should be modulated by at least one non-faction signal such as scarcity, source reliability, or latent physics.
 - Every `Standing Work Loop` should fan out into at least two later branches or standing bands; otherwise it is just disguised mandatory homework.
 - Every `Ontological Drift Chain` should affect at least two downstream elements, otherwise the rename is cosmetic.
@@ -385,7 +397,7 @@ Good:
 Elements should consume:
 
 - availability
-- inventory slots
+- commitment slots or capability gates
 - debt headroom
 - faction reputation
 - cooldown budget

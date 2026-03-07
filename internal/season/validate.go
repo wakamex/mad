@@ -117,9 +117,6 @@ func Validate(file File) error {
 			if rule.Match.Option != "" && len(opportunity.AllowedOptions) > 0 && !contains(opportunity.AllowedOptions, rule.Match.Option) {
 				errs = append(errs, fmt.Errorf("%s: option %q is not allowed by opportunity %q", rulePrefix, rule.Match.Option, opportunity.OpportunityID))
 			}
-			if rule.Match.Phrase != "" && !opportunity.TextSlot {
-				errs = append(errs, fmt.Errorf("%s: phrase match requires text_slot opportunity", rulePrefix))
-			}
 		}
 		if !hasHoldRule {
 			errs = append(errs, fmt.Errorf("%s: scoring must include a hold fallback rule", prefix))

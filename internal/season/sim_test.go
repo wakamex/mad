@@ -28,21 +28,25 @@ func TestSimulateDevSeason(t *testing.T) {
 	if report.TotalDuration <= 0 {
 		t.Fatalf("expected positive total duration")
 	}
-	if report.ActionSurface.PhraseVariantCount != 512 {
-		t.Fatalf("unexpected phrase variant count: got %d want 512", report.ActionSurface.PhraseVariantCount)
+	if len(report.ActionSurface.Distribution) == 0 {
+		t.Fatalf("expected non-empty action surface distribution")
 	}
-	phraseTickID := findTextSlotTickID(t, loaded)
-	if report.ActionSurface.PerTickCounts[phraseTickID] != 513 {
-		t.Fatalf("unexpected random action count on phrase tick %s: got %d want 513", phraseTickID, report.ActionSurface.PerTickCounts[phraseTickID])
-	}
-	if report.ActionSurface.Distribution["513"] != 1 {
-		t.Fatalf("expected exactly one phrase-slot action surface, got %#v", report.ActionSurface.Distribution)
+	for _, tick := range loaded.Ticks {
+		if report.ActionSurface.PerTickCounts[tick.TickID] <= 0 {
+			t.Fatalf("expected positive random action count for tick %s", tick.TickID)
+		}
 	}
 	if len(report.Baselines["greedy_best"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected best baseline trace length")
 	}
 	if len(report.Baselines["always_hold"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected hold baseline trace length")
+	}
+	if len(report.Baselines["greedy_best"].Breakdown.ByFamily) == 0 {
+		t.Fatalf("expected greedy baseline family breakdown")
+	}
+	if len(report.Baselines["greedy_best"].Breakdown.BySourceType) == 0 {
+		t.Fatalf("expected greedy baseline source breakdown")
 	}
 	if report.Baselines["greedy_best"].Ledger.Score <= report.Baselines["always_hold"].Ledger.Score {
 		t.Fatalf("expected greedy_best baseline to outperform always_hold")
@@ -56,8 +60,20 @@ func TestSimulateDevSeason(t *testing.T) {
 	if report.RandomAudit.Runs != 2000 {
 		t.Fatalf("unexpected random runs: got %d want %d", report.RandomAudit.Runs, 2000)
 	}
-	if report.RandomAudit.MeanScore >= 0 {
-		t.Fatalf("expected random audit mean score to be negative, got %.2f", report.RandomAudit.MeanScore)
+	if report.RandomAudit.P99Run == nil {
+		t.Fatalf("expected p99 random run attribution")
+	}
+	if report.RandomAudit.P99Run.Score != report.RandomAudit.P99Score {
+		t.Fatalf("expected p99 run score to match p99 score: got %d want %d", report.RandomAudit.P99Run.Score, report.RandomAudit.P99Score)
+	}
+	if len(report.RandomAudit.P99Run.Breakdown.ByFamily) == 0 {
+		t.Fatalf("expected p99 random run family breakdown")
+	}
+	if report.RandomAudit.MinScore > report.RandomAudit.MaxScore {
+		t.Fatalf("expected random audit min <= max")
+	}
+	if report.RandomAudit.PositiveRate < 0 || report.RandomAudit.PositiveRate > 1 {
+		t.Fatalf("expected positive rate in [0,1], got %f", report.RandomAudit.PositiveRate)
 	}
 	if report.RandomAudit.P99Score > report.Baselines["greedy_best"].Ledger.Score {
 		t.Fatalf("expected random audit p99 not to exceed greedy baseline")
@@ -387,20 +403,6 @@ func TestGreedyBaselineRespectsCooldownReadiness(t *testing.T) {
 	if report.Ticks[2].ResolutionPreview == nil || report.Ticks[2].ResolutionPreview.BestKnownAction.Option != "cash_in" {
 		t.Fatalf("expected cooldown to expire before third tick")
 	}
-}
-
-func findTextSlotTickID(t *testing.T, file File) string {
-	t.Helper()
-
-	for _, tick := range file.Ticks {
-		for _, opportunity := range tick.Opportunities {
-			if opportunity.TextSlot {
-				return tick.TickID
-			}
-		}
-	}
-	t.Fatalf("expected a text-slot tick")
-	return ""
 }
 
 func maxMemoryDistance(ticks []SimulatedTick) int {

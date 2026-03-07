@@ -115,14 +115,13 @@ The world moves on whether or not a given player keeps up.
     {
       "opportunity_id": "quest.glass_choir.7",
       "allowed_commands": ["inspect", "commit", "hold"],
-      "allowed_options": ["penitent", "broker", "smuggler"],
-      "text_slot": false
+      "allowed_options": ["penitent", "broker", "smuggler"]
     }
   ]
 }
 ```
 
-### Phrase-Slot Tick
+### Dossier Choice Tick
 
 ```json
 {
@@ -133,16 +132,14 @@ The world moves on whether or not a given player keeps up.
     {
       "source_id": "archive.console.5",
       "source_type": "archive_fragment",
-      "text": "Terminal requests a three-word authorization pattern."
+      "text": "Terminal requests the verified authorization lane for the green-rain dossier."
     }
   ],
   "opportunities": [
     {
       "opportunity_id": "auth.vault.3",
       "allowed_commands": ["commit", "hold"],
-      "allowed_options": ["authorize"],
-      "text_slot": true,
-      "phrase_hint": "three_word_pattern"
+      "allowed_options": ["broker", "penitent", "auditor"]
     }
   ]
 }
@@ -166,8 +163,7 @@ The world moves on whether or not a given player keeps up.
     {
       "opportunity_id": "hazard.northern_hub.2",
       "allowed_commands": ["equip", "commit", "hold"],
-      "allowed_options": ["evacuate", "deploy_dampener"],
-      "text_slot": false
+      "allowed_options": ["evacuate", "deploy_dampener"]
     }
   ]
 }
@@ -213,6 +209,13 @@ This preserves tractability and closes the information-leak problem:
 - no player gets privileged explanatory text
 - brute-force farms get slower and more expensive feedback
 
+For regular users, this does not mean "memorize everything yourself."
+
+- the client should keep a local action log
+- the client should derive visible player-owned state from public ticks plus that local action log
+- web and CLI clients should render commitments, cooldowns, reputation, aura, debt, and any explicit capability flags from that local reducer
+- if a player-owned resource cannot be rendered this way, it probably does not belong in the benchmark
+
 ## Design Decision: Explicit Player State, Latent World State
 
 To preserve a high skill ceiling, most player-owned state should be explicit.
@@ -222,8 +225,8 @@ Visible state should include exact values or explicit tiers for:
 - reputation
 - aura
 - debt
-- inventory load
 - active locks, cooldowns, and commitments
+- explicit capability or permit flags when a season uses them
 
 Latent state should remain inferential:
 
@@ -239,6 +242,8 @@ This means:
 - players should usually be able to tell whether an action is legal or near-legal
 - players should still have to infer whether that legal action is strategically correct
 - the hard part is planning and interpretation, not guessing whether a hidden threshold was `39` or `40`
+- regular users should not have to memorize their own cooldowns, commitments, or capability state from raw prose alone
+- any important player-owned state should be renderable by a client without a private server read channel
 
 Authoring rules for thresholded actions:
 
@@ -315,7 +320,7 @@ Public state is identical for everyone:
 
 Authoritative player state differs per player:
 
-- Inventory with hard slot limits
+- Explicit capability and permit flags when the season uses them
 - Reputation with factions
 - Aura
 - Debt
@@ -328,11 +333,12 @@ The key fairness rule is simple: public input is shared, while per-player score 
 
 ## Core Resources
 
-### Inventory
+### Preparedness and Capability State
 
-- Default cap: 8 slots
-- Some items are bulky and consume 2 slots
-- Items can alter future opportunity quality, option availability, or faction reactions
+- Prefer explicit permits, protocol flags, immunities, or preparedness tags over generic inventories
+- If a season needs "having brought the right thing," model that as visible capability state or an earlier commitment
+- Avoid large bags of unique items; they create bookkeeping difficulty more than strategic depth
+- If a capability matters later, it should already be surfaced in the player's current state
 
 ### Reputation
 
@@ -378,6 +384,12 @@ This keeps the public stream intact while forcing private tradeoffs:
 - Take the safe, obvious quest now
 - Stay liquid for a better opportunity that may or may not arrive
 - Overcommit to one faction and miss a more valuable pivot later
+
+Design rule:
+
+- preparedness is valid when it creates explicit tradeoffs around time, commitments, and visible capability state
+- generic item clutter is invalid when it mostly punishes stateless baselines through clerical memory
+- in ambiguous cases, prefer commitment slots, cooldowns, permits, or named capability flags over item collections
 
 ## The Alien System
 
@@ -476,7 +488,6 @@ Canonical payload:
   "target": "quest.glass_choir.7",
   "option": "broker",
   "confidence": 0.82,
-  "phrase": "",
   "theory": "green rain changed glass value after the flood",
   "submission_id": "01jnh7x1yqv8x..."
 }
@@ -489,7 +500,6 @@ Field rules:
 - `target` must reference a valid public or private entity
 - `option` is optional but must be from the allowed set for the chosen command
 - `confidence` is a required float between `0.0` and `1.0` on all actions except `hold`
-- `phrase` is only valid when the tick explicitly advertises a text slot
 - `theory` is ignored by resolution and logged for analysis only
 - `submission_id` should be unique per tick submission so exact retries can be accepted idempotently
 
@@ -520,23 +530,23 @@ What players discover instead:
 
 - New valid targets
 - New option tokens
-- New phrase grammars for phrase-slot ticks
+- New dossier-option mappings and authorization lanes
 - New mappings between public signals and hidden payoff rules
 
 Discovery happens through lore fragments, prior outcomes, and source comparison. The syntax stays stable; the semantics deepen.
 
 ## Safe Free-Text Handling
 
-Free text is allowed only in bounded contexts and never touches a live model.
+V1 does not use free-text entry for scoring or world interaction.
 
 Rules:
 
-- `phrase` is disabled unless the current tick exposes a text slot
-- The server normalizes the string using deterministic rules
-- The server checks that normalized string against a finite generated grammar or exact matcher
-- The result is a canonical success or failure code
+- `theory` is the only free-text field in the action envelope
+- `theory` is ignored by resolution and stored only for analysis
+- all scored action selection happens through explicit `command`, `target`, and `option` fields
+- dossier and authorization challenges are constrained option-choice problems, not string-matching problems
 
-This is safe because the text is treated as inert data. It is never executed, never interpreted by an LLM, and never granted control over the server.
+This is safe because the free-text field never influences server resolution. It is inert analysis data, not a parser surface.
 
 ## Deterministic Hilarity
 
@@ -622,7 +632,7 @@ Good play looks like:
 - Taking a short-term hit to preserve future flexibility
 - Doing low-signal standing work when it buys broad future optionality, but not grinding it past the point of diminishing value
 - Correctly reinterpreting old evidence after a new anomaly
-- Maintaining enough liquidity, inventory space, and reputation to exploit sudden openings
+- Maintaining enough liquidity, commitment space, and reputation to exploit sudden openings
 - Acting quickly on interrupt ticks without abandoning the right long-horizon model
 - Accurately calibrating confidence when exploring ambiguous states
 
@@ -785,6 +795,6 @@ What is still weak:
 - Season-authoring pipeline is the single biggest risk. Generating 50,000+ coherent ticks with consistent rule mutations, lawful contradictions, valid answer keys, and memory-distance annotations is a massive content engineering challenge. This needs its own design doc.
 - The confidence-to-penalty curve needs simulation before deployment. The 10x multiplier for 1.0-confidence failures could produce pathological scoring if not tuned.
 - Memory-distance annotations require tooling. Manual annotation at scale is infeasible.
-- The `phrase` evaluation system (normalized string matching against pre-computed grammars) needs prototyping to find the right strictness threshold. Too strict = frustrating typo penalties. Too loose = vague answers score correctly.
+- Dossier-option challenge tuning needs prototyping to find the right difficulty curve. Too few options = locally legible and easy to brute-force. Too many or too opaque = arbitrary rather than skillful.
 - Spectator design is sketched but not detailed enough for implementation. Needs wireframes for the terminal viewer, Twitch overlay, and web dashboard.
 - No discussion of anti-cheating. If the season package is pre-generated, how do we prevent leaks? Rolling decryption? Chunked generation?

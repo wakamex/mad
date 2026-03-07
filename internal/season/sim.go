@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"slices"
-	"strings"
 )
 
 type SimulationReport struct {
@@ -29,6 +28,7 @@ type SimulationOptions struct {
 type SimulatedBaseline struct {
 	Ledger     SimulatedLedger `json:"ledger"`
 	ScoreTrace []int64         `json:"score_trace"`
+	Breakdown  ScoreBreakdown  `json:"breakdown,omitempty"`
 }
 
 type SimulatedLedger struct {
@@ -47,6 +47,7 @@ type SimulatedRandomAudit struct {
 	MedianScore     int64    `json:"median_score"`
 	P90Score        int64    `json:"p90_score"`
 	P99Score        int64    `json:"p99_score"`
+	P99Run          *SimulatedRandomRun `json:"p99_run,omitempty"`
 	MinScore        int64    `json:"min_score"`
 	MaxScore        int64    `json:"max_score"`
 	PositiveRate    float64  `json:"positive_rate"`
@@ -55,8 +56,15 @@ type SimulatedRandomAudit struct {
 	Warnings        []string `json:"warnings,omitempty"`
 }
 
+type SimulatedRandomRun struct {
+	RunIndex   int            `json:"run_index"`
+	Score      int64          `json:"score"`
+	Breakdown  ScoreBreakdown `json:"breakdown,omitempty"`
+	BeatBest   int            `json:"beat_best"`
+	TickCount  int            `json:"tick_count"`
+}
+
 type SimulatedActionSurface struct {
-	PhraseVariantCount int            `json:"phrase_variant_count"`
 	Distribution       map[string]int `json:"distribution"`
 	PerTickCounts      map[string]int `json:"per_tick_counts"`
 }
@@ -93,7 +101,6 @@ type SimulatedAction struct {
 	Command string `json:"command"`
 	Target  string `json:"target,omitempty"`
 	Option  string `json:"option,omitempty"`
-	Phrase  string `json:"phrase,omitempty"`
 }
 
 type SimulatedBadAction struct {
@@ -111,7 +118,6 @@ type simulatedPlayerState struct {
 	AvailabilityResetTick   int
 	AvailabilityBeforeLock  string
 	CooldownReadyTickByName map[string]int
-	Inventory               int
 }
 
 const defaultAvailability = "available"
@@ -138,28 +144,33 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 			"always_hold": {},
 		},
 		ActionSurface: SimulatedActionSurface{
-			PhraseVariantCount: randomPhraseVariantCount,
-			Distribution:       make(map[string]int),
-			PerTickCounts:      make(map[string]int, len(file.Ticks)),
+			Distribution:  make(map[string]int),
+			PerTickCounts: make(map[string]int, len(file.Ticks)),
 		},
 		Ticks: make([]SimulatedTick, 0, len(file.Ticks)),
 	}
 
 	greedyState := newSimulatedPlayerState()
 	holdState := newSimulatedPlayerState()
+	greedyBreakdown := NewScoreBreakdownAccumulator()
+	holdBreakdown := NewScoreBreakdownAccumulator()
 	var nowMS int64
 	for i, tick := range file.Ticks {
 		advanceSimulatedStateToTick(&greedyState, i)
 		advanceSimulatedStateToTick(&holdState, i)
 		resolution := simulateResolution(tick, greedyState)
 
+		greedyRule := chooseGreedyRule(tick, greedyState)
 		bestBaseline := report.Baselines["greedy_best"]
-		advanceBaseline(&bestBaseline, &greedyState, chooseGreedyRule(tick, greedyState))
+		advanceBaseline(&bestBaseline, &greedyState, greedyRule)
 		report.Baselines["greedy_best"] = bestBaseline
+		greedyBreakdown.Add(tick, greedyRule)
 
+		holdRule := chooseHoldRule(tick, holdState)
 		holdBaseline := report.Baselines["always_hold"]
-		advanceBaseline(&holdBaseline, &holdState, chooseHoldRule(tick, holdState))
+		advanceBaseline(&holdBaseline, &holdState, holdRule)
 		report.Baselines["always_hold"] = holdBaseline
+		holdBreakdown.Add(tick, holdRule)
 
 		simTick := SimulatedTick{
 			Index:             i,
@@ -189,13 +200,17 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		nowMS += tick.DurationMS
 	}
 	report.TotalDuration = nowMS
+	bestBaseline := report.Baselines["greedy_best"]
+	bestBaseline.Breakdown = greedyBreakdown.Materialize()
+	report.Baselines["greedy_best"] = bestBaseline
+	holdBaseline := report.Baselines["always_hold"]
+	holdBaseline.Breakdown = holdBreakdown.Materialize()
+	report.Baselines["always_hold"] = holdBaseline
 	if options.RandomRuns > 0 {
 		report.RandomAudit = simulateRandomAudit(file, options)
 	}
 	return report, nil
 }
-
-const randomPhraseVariantCount = 8 * 8 * 8
 
 func simulateResolution(tick TickDefinition, state simulatedPlayerState) *SimulatedResolution {
 	bestRule, ok := bestRuleForTick(tick, state)
@@ -209,7 +224,6 @@ func simulateResolution(tick TickDefinition, state simulatedPlayerState) *Simula
 			Command: bestRule.Match.Command,
 			Target:  bestRule.Match.Target,
 			Option:  bestRule.Match.Option,
-			Phrase:  bestRule.Match.Phrase,
 		},
 	}
 	if len(tick.Opportunities) > 0 {
@@ -284,40 +298,68 @@ func advanceBaseline(baseline *SimulatedBaseline, state *simulatedPlayerState, r
 func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomAudit {
 	rng := rand.New(rand.NewSource(options.RandomSeed))
 	scores := make([]int64, 0, options.RandomRuns)
+	type randomRunScore struct {
+		Score    int64
+		RunIndex int
+	}
+	runScores := make([]randomRunScore, 0, options.RandomRuns)
 	positive := 0
 	nonNegative := 0
 	totalBeatBest := 0
 	totalChoices := 0
 
 	for i := 0; i < options.RandomRuns; i++ {
-		state := newSimulatedPlayerState()
-		beatBestHits := 0
-		for tickIndex, tick := range file.Ticks {
-			advanceSimulatedStateToTick(&state, tickIndex)
-			action := randomActionForTick(tick, rng)
-			rule, isBest := evaluateSimulatedAction(tick.Scoring, action, state)
-			applyRuleToSimulatedState(&state, rule)
-			if isBest {
-				beatBestHits++
-			}
-		}
-		scores = append(scores, state.Ledger.Score)
+		score, beatBestHits, _ := simulateRandomRun(file, rng, false)
+		scores = append(scores, score)
+		runScores = append(runScores, randomRunScore{Score: score, RunIndex: i})
 		totalBeatBest += beatBestHits
 		totalChoices += len(file.Ticks)
-		if state.Ledger.Score > 0 {
+		if score > 0 {
 			positive++
 		}
-		if state.Ledger.Score >= 0 {
+		if score >= 0 {
 			nonNegative++
 		}
 	}
 	slices.Sort(scores)
+	slices.SortStableFunc(runScores, func(a, b randomRunScore) int {
+		switch {
+		case a.Score < b.Score:
+			return -1
+		case a.Score > b.Score:
+			return 1
+		case a.RunIndex < b.RunIndex:
+			return -1
+		case a.RunIndex > b.RunIndex:
+			return 1
+		default:
+			return 0
+		}
+	})
 
 	mean := 0.0
 	for _, score := range scores {
 		mean += float64(score)
 	}
 	mean /= float64(len(scores))
+
+	p99Index := quantileIndex(len(runScores), 0.99)
+	p99RunIndex := runScores[p99Index].RunIndex
+	p99SeedRNG := rand.New(rand.NewSource(options.RandomSeed))
+	var p99Run *SimulatedRandomRun
+	for i := 0; i <= p99RunIndex; i++ {
+		score, beatBestHits, breakdown := simulateRandomRun(file, p99SeedRNG, i == p99RunIndex)
+		if i == p99RunIndex {
+			p99Run = &SimulatedRandomRun{
+				RunIndex:  i,
+				Score:     score,
+				Breakdown: breakdown,
+				BeatBest:  beatBestHits,
+				TickCount: len(file.Ticks),
+			}
+			break
+		}
+	}
 
 	audit := &SimulatedRandomAudit{
 		Runs:            options.RandomRuns,
@@ -326,6 +368,7 @@ func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomA
 		MedianScore:     quantileScore(scores, 0.50),
 		P90Score:        quantileScore(scores, 0.90),
 		P99Score:        quantileScore(scores, 0.99),
+		P99Run:          p99Run,
 		MinScore:        scores[0],
 		MaxScore:        scores[len(scores)-1],
 		PositiveRate:    float64(positive) / float64(len(scores)),
@@ -347,6 +390,32 @@ func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomA
 	return audit
 }
 
+func simulateRandomRun(file File, rng *rand.Rand, captureBreakdown bool) (int64, int, ScoreBreakdown) {
+	state := newSimulatedPlayerState()
+	beatBestHits := 0
+	var breakdown ScoreBreakdown
+	var accumulator ScoreBreakdownAccumulator
+	if captureBreakdown {
+		accumulator = NewScoreBreakdownAccumulator()
+	}
+	for tickIndex, tick := range file.Ticks {
+		advanceSimulatedStateToTick(&state, tickIndex)
+		action := randomActionForTick(tick, rng)
+		rule, isBest := evaluateSimulatedAction(tick.Scoring, action, state)
+		applyRuleToSimulatedState(&state, rule)
+		if captureBreakdown {
+			accumulator.Add(tick, rule)
+		}
+		if isBest {
+			beatBestHits++
+		}
+	}
+	if captureBreakdown {
+		breakdown = accumulator.Materialize()
+	}
+	return state.Ledger.Score, beatBestHits, breakdown
+}
+
 func randomActionForTick(tick TickDefinition, rng *rand.Rand) SimulatedAction {
 	if len(tick.Opportunities) == 0 {
 		return SimulatedAction{Command: "hold"}
@@ -361,19 +430,7 @@ func randomActionForTick(tick TickDefinition, rng *rand.Rand) SimulatedAction {
 	if len(opportunity.AllowedOptions) > 0 && command != "hold" {
 		action.Option = opportunity.AllowedOptions[rng.Intn(len(opportunity.AllowedOptions))]
 	}
-	if opportunity.TextSlot && command != "hold" {
-		action.Phrase = randomPhrase(rng)
-	}
 	return action
-}
-
-func randomPhrase(rng *rand.Rand) string {
-	words := []string{"amber", "static", "mirror", "ledger", "signal", "dust", "chorus", "gamma"}
-	return strings.Join([]string{
-		words[rng.Intn(len(words))],
-		words[rng.Intn(len(words))],
-		words[rng.Intn(len(words))],
-	}, " ")
 }
 
 func randomActionCountForTick(tick TickDefinition) int {
@@ -391,9 +448,6 @@ func randomActionCountForTick(tick TickDefinition) int {
 			count := 1
 			if len(opportunity.AllowedOptions) > 0 {
 				count *= len(opportunity.AllowedOptions)
-			}
-			if opportunity.TextSlot {
-				count *= randomPhraseVariantCount
 			}
 			total += count
 		}
@@ -428,9 +482,6 @@ func matchesSimulatedAction(match ActionMatch, action SimulatedAction) bool {
 		return false
 	}
 	if match.Option != "" && match.Option != action.Option {
-		return false
-	}
-	if match.Phrase != "" && strings.TrimSpace(strings.ToLower(match.Phrase)) != strings.TrimSpace(strings.ToLower(action.Phrase)) {
 		return false
 	}
 	return true
@@ -541,7 +592,6 @@ func applyRuleToSimulatedState(state *simulatedPlayerState, rule Rule) {
 		}
 		state.CooldownReadyTickByName[cooldownName] = state.CurrentTick + cooldownTicks + 1
 	}
-	state.Inventory += rule.Effects.InventoryDelta
 	for faction, delta := range rule.Effects.ReputationDelta {
 		state.Reputation[faction] += delta
 	}
@@ -551,12 +601,19 @@ func quantileScore(sortedScores []int64, q float64) int64 {
 	if len(sortedScores) == 0 {
 		return 0
 	}
+	index := quantileIndex(len(sortedScores), q)
+	return sortedScores[index]
+}
+
+func quantileIndex(length int, q float64) int {
+	if length <= 0 {
+		return 0
+	}
 	if q <= 0 {
-		return sortedScores[0]
+		return 0
 	}
 	if q >= 1 {
-		return sortedScores[len(sortedScores)-1]
+		return length - 1
 	}
-	index := int(float64(len(sortedScores)-1) * q)
-	return sortedScores[index]
+	return int(float64(length-1) * q)
 }

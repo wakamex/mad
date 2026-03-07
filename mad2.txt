@@ -1,0 +1,199 @@
+02:00:50 claude/user: it's just Clod and Dex now. let's discuss implementation details. I'm worried about the tractability of running this on a server with up to 1 million players, since agents can be spun up at zero-cost, we have to plan for the worst. websockets sounds expensive. couldn't we have just one endpoint that returns the same thing for all players, with a unix epoch indicating when it will update, making spam-refreshing pointless? another flaw is sending private packets. that produces a leak scenario where an agent can run multiple sessions and gather more private information. we should avoid that by not having any private packets. consider how much user-specific calculation and customizability our server is capable of, assuming a $50/month Hetzner box. what language/framework would optimize this? Elixir for robust long-running sessions? Feel free to propose the best possible solution. Write down your proposed IMPLEMENTATION.md. Feel free to iterate on PROPOSAL.md as required if you need to modify it for tractability. include /signoff in your message when done.
+02:00:51 codex/user: it's just Clod and Dex now. let's discuss implementation details. I'm worried about the tractability of running this on a server with up to 1 million players, since agents can be spun up at zero-cost, we have to plan for the worst. websockets sounds expensive. couldn't we have just one endpoint that returns the same thing for all players, with a unix epoch indicating when it will update, making spam-refreshing pointless? another flaw is sending private packets. that produces a leak scenario where an agent can run multiple sessions and gather more private information. we should avoid that by not having any private packets. consider how much user-specific calculation and customizability our server is capable of, assuming a $50/month Hetzner box. what language/framework would optimize this? Elixir for robust long-running sessions? Feel free to propose the best possible solution. Write down your proposed IMPLEMENTATION.md. Feel free to iterate on PROPOSAL.md as required if you need to modify it for tractability. include /signoff in your message when done.
+02:01:07 codex: I’m reworking the design around the new hard constraint: assume effectively hostile scale, minimal per-player state, and a cheap box. First I’m checking the current repo state and then I’ll draft `IMPLEMENTATION.md`, updating `PROPOSAL.md` only where the architecture must change.
+02:04:23 codex: I’ve got the tractability direction. The key change is to separate “authoritative per-player scoring state” from “private packets” and make the read path fully shared/static. I’m locking that into `PROPOSAL.md` and then writing `IMPLEMENTATION.md` around a poll-based, batched, one-box architecture.
+02:04:25 claude: Great constraints. Let me think through this from first principles before writing anything.
+
+**Key insight:** If the stream is identical for all players and we eliminate private packets, the read path is a static file server. The only per-user work is accepting action POSTs and batch-evaluating them after each deadline. This changes the entire architecture.
+
+Let me check the current state of both files before writing.
+02:05:42 codex: I’m updating the proposal first so it stops implying per-player response packets. After that I’ll write the implementation doc around static reads, one write endpoint, compact state, and batched scoring.
+02:05:43 claude: Good — I have the full picture. Dex is also working on this. Let me write IMPLEMENTATION.md with the full scaling analysis, then update PROPOSAL.md for tractability.
+02:06:41 codex: I’m writing the implementation doc around the box’s real bottlenecks now: egress and write batching, not websocket fanout. The design will keep the origin dumb on reads and very constrained on writes.
+02:07:54 codex: The implementation doc is written. I’m doing a consistency pass now: removing any stale “private packet” language that survived in the proposal, and then I’ll wire the README to the new implementation doc.
+02:08:01 codex: I found a few stale references left from the earlier architecture: the README still says “private run,” the proposal still mentions WebSocket in transport, and the revision log still talks about private outcome examples. I’m normalizing those now.
+02:08:05 claude: Dex already wrote IMPLEMENTATION.md. Let me read it before writing mine to avoid conflict.
+02:08:08 codex: I’ve found a few stale phrases from the old architecture inside the proposal and README. I’m normalizing those so the docs all agree on the same runtime model.
+02:08:16 codex: The proposal is aligned now. I’m updating the README so the landing page matches the new runtime model and links the implementation plan directly.
+02:08:33 codex: The docs are drafted and aligned. I’m doing the final consistency pass now to make sure the new no-private-packets rule is reflected everywhere and that `IMPLEMENTATION.md` and `PROPOSAL.md` agree on the runtime shape.
+02:08:38 codex: One stale bullet is left in the proposal’s revision history. I’m fixing that now, and then the docs will be aligned end to end.
+02:08:42 claude: Dex's IMPLEMENTATION.md is strong. The score shard approach (publishing player scores in static cacheable shard files instead of per-user endpoints) is genuinely better than my GET /state proposal — it eliminates personalized reads entirely.
+
+The main gap: **how players learn whether their action was correct.** Dex's doc says "do not publish per-tick personalized result packets" but doesn't specify what replaces them for gameplay feedback. Let me add the public answer reveal mechanism and a few missing details.
+02:08:46 codex: The content changes are done. I’m running one last search for stale “private outcome” or websocket-era language and then I’ll hand over the file set.
+02:08:58 claude: Good. Now let me add a concrete bandwidth analysis with numbers, since Dex's version is directionally right but doesn't show the per-component math.
+02:09:13 codex: The missing piece is the public feedback loop. I’m adding that now: receipt-only writes, coarse public score epochs, and delayed public answer reveals so players can learn without reintroducing private packets.
+02:09:14 claude: Now let me update PROPOSAL.md to remove the private outcome packet and WebSocket transport.
+02:09:25 claude: Good — Dex already updated the PROPOSAL.md transport section to say "Shared HTTP polling" instead of WebSocket/SSE, and changed "Private resolver" to "Authoritative state resolver." The Private Outcome Packet example is also gone, replaced by a Score Snapshot. The doc is already aligned.
+
+Let me check if there's a `previous_result` / public answer reveal concept in the current PROPOSAL.md.
+02:09:30 claude: Not mentioned. The public answer reveal needs to be added to PROPOSAL.md — it's in IMPLEMENTATION.md but the design doc should specify it. Let me add it to the narrative model section.
+02:09:33 codex: I’m finishing the tractability update in two places: the proposal gets the no-private-packets feedback model, and the implementation doc gets explicit bandwidth math instead of just the topline estimates.
+02:09:40 claude: Dex has already added a comprehensive "Public Feedback Model" to IMPLEMENTATION.md with a three-layer approach and a separate `/reveals/` endpoint. This is better than my `previous_result` embedding — the configurable reveal lag is important for balancing feedback speed against brute-force probing.
+
+Let me add the public feedback concept to PROPOSAL.md so the design doc captures this game mechanic.
+02:09:59 claude: Good. Now let me verify the final state of both documents.
+02:10:04 codex: The implementation doc needs one more realism pass: the bandwidth math should be explicit, and score shards should be marked as low-frequency checkpoints rather than part of the normal gameplay loop. I’m tightening that now.
+02:10:14 claude: I see Dex already added a `## Feedback Model` section to PROPOSAL.md. Let me check if my addition under Core Loop duplicates it.
+02:10:21 codex: I’ve already moved the feedback concept into the proposal. I’m doing the final verification pass now, and I’ll patch the README only if it still omits the reveal schema from the handoff.
+02:10:23 claude: There's overlap but they're complementary — mine under Core Loop has more detail (the three numbered layers), Dex's is a concise summary. Let me remove my more verbose version and keep Dex's cleaner section, since it avoids repetition.
+02:10:30 claude: Good, cleaned up. Let me do a final consistency check — make sure there are no stale references to WebSockets, private packets, or SSE in either document.
+02:10:32 codex: There is one actual duplication left: `PROPOSAL.md` now has a `Public Feedback Model` under Core Loop and a second `Feedback Model` later. I’m removing the later duplicate and then patching the README schema note to include reveal packets.
+02:10:35 claude: All references to WebSockets and private packets are in the context of "don't do this" or "we removed this." No stale positive references. Clean.
+02:10:40 codex: The remaining cleanup is minor now. I’m updating the handoff line in the README to include reveal packets, and I’m softening one stale implementation step so it matches the already-updated proposal.
+02:10:40 claude: I already removed my duplicate — there should be just one "Feedback Model" section now. Let me verify.
+02:10:55 claude: Clean — only one. 
+
+Here's my summary of where things stand:
+
+---
+
+**IMPLEMENTATION.md** (736 lines) covers:
+- Architecture: static read path (CDN-cached) + tiny write path (POST /actions) + batch scoring
+- API: 6 endpoints, all public/cacheable except POST /actions
+- Public feedback model: receipt-only writes → score epoch shards → delayed answer reveals
+- Score shards replace per-user endpoints (Dex's best contribution here)
+- Scaling math: 1M players on $50 Hetzner + Cloudflare free tier is feasible
+- Bandwidth: CDN mandatory (57TB/month uncached vs <1TB cached)
+- Compute: batch evaluation takes ~1-2 seconds parallelized for 1M actions
+- Memory: ~200MB total for 1M players. 16GB box has 80x headroom
+- Language: Go + nginx. Elixir if we outgrow one box. Rust if we're CPU-bound (unlikely)
+- Implementation phases: origin skeleton → action ingest → batch scorer → score shards → season tooling
+
+**PROPOSAL.md** (694 lines) updated for tractability:
+- Private Outcome Packet removed, replaced by Feedback Model section
+- Transport changed from WebSocket/SSE to HTTP polling with epoch hints
+- Score Snapshot example replaces private outcome example
+- Implementation sketch references authoritative state resolver, not private resolver
+
+**My main contributions this round:**
+- The `previous_result` / public answer reveal concept (Dex improved it into the three-layer feedback model with configurable reveal lag)
+- Concrete bandwidth math tables in IMPLEMENTATION.md
+- Compute budget table showing per-operation costs
+- Cleanup of duplicate sections
+
+Both documents are aligned. No stale architecture references remain.
+
+/signoff
+02:10:58 codex: I’m doing that last verification now so the handoff is factual, not assumed.
+02:11:06 claude: Sounds good. The docs are in a solid state — PROPOSAL.md and IMPLEMENTATION.md agree on the runtime model, and the stale architecture references are gone. Minor README cleanup is all that's left.
+
+One thing worth noting for the human: the biggest open risk hasn't changed — it's still the **season authoring pipeline**. Everything we've designed and speced is implementable with straightforward engineering. But generating 67,000 coherent ticks with lawful rule mutations, valid answer keys, memory-distance annotations, narrator phase transitions, and ontological drift is a content problem that dwarfs the server work. Phase 5 in the implementation plan (season tooling) is where this project succeeds or fails.
+
+If you want to move to code next session, the right first deliverable is what Dex identified: a tick compiler that can generate a small test season (100 ticks), plus the action ingest + batch scorer running against it. That proves the core loop works before we invest in content at scale.
+
+/signoff
+02:11:10 claude: Agreed — verify, don't assume. I'll wait for your confirmation that the docs are consistent before we call it done.
+
+/signoff
+02:11:13 codex: Added [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md), and updated [PROPOSAL.md](/code/mad/PROPOSAL.md) plus [README.md](/code/mad/README.md) to match the tractable runtime model.
+
+The key change is architectural: no WebSockets, no private packets, no per-user read path. The recommended shape is shared HTTP polling with immutable tick files, one authenticated `POST /actions` ingest path, batched scoring, public score snapshots, and delayed public answer reveals. I recommend `nginx` + `Go` + compact in-memory state/WAL, with `SQLite` only for small admin/account metadata. The one-box constraint is feasible for authoritative scheduling/scoring, but not for serving 1M fully active uncached readers on a strict `$50/month` budget; egress is the real limit, not CPU.
+
+No tests were run because this was a design-doc task. Official sources used for the stack/budget discussion are linked in [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md): Hetzner cloud pricing, Hetzner’s cloud price-adjustment notice, Plug.Cowboy docs, Phoenix Channels docs, and Go’s `net/http` docs. /signoff
+02:11:23 codex: I’m verifying the current docs directly: looking for stale transport/private-packet language, checking that `PROPOSAL.md`, `IMPLEMENTATION.md`, and `README.md` agree on the runtime model, and making sure the feedback loop is specified once per doc in the right place.
+02:11:35 codex: The docs are consistent overall. I found one stale sentence in `IMPLEMENTATION.md` that still says “update the design doc to remove private packets” as if that work were pending; I’m fixing that so the handoff reads cleanly as present tense.
+02:11:40 codex: I fixed the schema list, but the stale first line is still there. I’m replacing it directly with the correct next step: keep the proposal aligned while freezing schemas.
+02:11:52 codex: I’ve made the only stale-looking handoff line consistent. One quick verification pass, then I’ll confirm the docs are aligned.
+02:11:59 codex: Confirmed: the docs are consistent now.
+
+What I verified:
+- [PROPOSAL.md](/code/mad/PROPOSAL.md) defines the shared-read/no-private-packets runtime and has a single `Feedback Model` section at [PROPOSAL.md](/code/mad/PROPOSAL.md#L198).
+- [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md) matches that runtime: static/shared reads, one `POST /actions`, batched scoring, score shards, and delayed reveals. Its `Public Feedback Model` is implementation detail, not a conflicting second design.
+- [README.md](/code/mad/README.md) now points to the right next schemas, including delayed reveal packets.
+
+I also fixed the stale handoff line in [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md) so it no longer talks about removing private packets as future work.
+
+Remaining mentions of WebSockets/private packets are only in “don’t do this” context, which is correct. No tests were run; this was a doc consistency pass. /signoff
+02:12:56 claude/user: how do you plan to handle non-response users who don't POST either from logging off or crashing? add /signoff to your message once done.
+02:12:57 codex/user: how do you plan to handle non-response users who don't POST either from logging off or crashing? add /signoff to your message once done.
+02:13:28 codex: I’m adding timeout and dormancy handling to `IMPLEMENTATION.md` so the non-response behavior is explicit in the architecture, not just implied.
+02:13:44 codex: The timeout model is now explicit in the implementation doc. I’m grabbing the section location so I can point you straight to it.
+02:13:50 claude: Good question — this has scaling implications too.
+
+**The short answer: non-response is a no-op.** The server doesn't process absent players.
+
+Here's why that works:
+
+**No connection state exists.** There are no WebSockets, no sessions, no "logged in" concept. The server only knows whether a player submitted an action for a given tick. No submission = no action taken. The server doesn't need to distinguish between "logged off," "crashed," "thinking too long," or "deliberately passing."
+
+**During batch evaluation**, the evaluator iterates over the `active_players` list — only players who POSTed an action. Players not on the list are skipped entirely. If 200K of 1M players are active in a given tick, we evaluate 200K actions. The other 800K cost zero compute. This is ideal for scalability — the server's work scales with active players, not registered players.
+
+**What happens to absent players:**
+
+| Tick type | Non-response outcome |
+|---|---|
+| Standard/dossier | 0 points. Missed opportunity, no penalty. |
+| Interrupt/crisis | Small bounded miss penalty. "You didn't dodge, so you got hit." But capped — a player who's offline for a crisis burst shouldn't hemorrhage unboundedly. |
+| Quest-locked ticks | No penalty. Player is expected to be unavailable for main-stream actions. |
+
+**Side effects of absence:**
+- **Streak resets to 0.** This is the main cost. Reconnecting means rebuilding your streak multiplier from scratch. Long absence = lost compounding.
+- **Debt interest still accrues.** Debt ticks happen on dossier cadence regardless of presence. If you have debt and go offline, it grows. This creates pressure to stay engaged if you're in debt, but doesn't punish debt-free players.
+- **No aura change.** You can't gain or lose aura while absent.
+
+**What this means strategically:**
+
+- Optimal play is NOT 24/7 connection. It's selective engagement — be present for high-value ticks, skip low-value ones. But you can't predict which ticks are high-value without reading the stream, so in practice good players stay connected during active periods.
+- Casual players can dip in and out. Their score grows slowly when present and stagnates (or bleeds via debt interest) when absent. They're never catastrophically punished for having a life.
+- Random-baseline bots (the user's "rolling random selections from home" scenario) are WORSE than non-response. Random play with random confidence actively destroys score. Non-response just flatlines. This means "doing nothing" is literally a better strategy than "doing random things confidently" — which is thematically perfect for a benchmark about calibration.
+
+**Implementation in Go:**
+
+The batch evaluator is dead simple:
+
+```go
+for _, playerID := range activePlayersThisTick {
+    action := pendingActions[playerID]
+    state  := playerStates[playerID]
+    delta  := evaluate(action, tickPlan, state)
+    applyDelta(state, delta)
+}
+// Separately, on dossier ticks only:
+for _, state := range allPlayerStates {
+    applyDebtInterest(state)
+}
+```
+
+The first loop is O(active players). The second loop is O(all players) but runs only every 12th tick and does one multiply-and-add per player — trivial even for 1M.
+
+**One edge case worth noting:** if a player submits an action but the POST arrives after the deadline (network latency, slow agent), the server rejects it with `410 Gone`. From the player's perspective, they tried to act but didn't make it. This is scored as non-response, not as a wrong answer. The latency penalty is the missed opportunity, not a score penalty. This is fair because the deadline is known in advance from the tick's `deadline_epoch`.
+
+This should be documented in PROPOSAL.md under the Relentless Tick section. Want me to add it?
+
+/signoff
+02:13:53 codex: Treat non-response as a first-class game action: if no valid POST arrives by the deadline, the server injects a synthetic `hold`. I would not try to distinguish “logged off”, “crashed”, and “chose not to act” because that creates session complexity without gameplay value.
+
+Operationally:
+- Only score `active_this_tick` players plus `scheduled_due` players whose commitments, debt, or cooldowns mature on that tick.
+- Fully dormant players are skipped entirely, so absent users do not create O(total_players) per-tick work.
+- Timed consequences are handled via `next_due_tick` lists or a timing wheel, not full scans.
+- Rejoin is just `current.json` + current tick + optional recent reveals/score shard fetches; no session resurrection path is needed.
+- Submission cutoff is based on server receive time, optionally with a tiny global grace window for jitter.
+- `last valid submission before deadline wins`, with optional client `submission_id` for idempotent retries after crashes.
+
+I added this explicitly to [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md#L452). /signoff
+02:13:56 claude: Good — that's the right place for it. The design intent (non-response = no-op, streak resets, bounded crisis penalties, debt accrues regardless) should live in PROPOSAL.md. The implementation detail (active_players list, O(active) evaluation, 410 Gone for late submissions, dossier-cadence bulk debt pass) should live in IMPLEMENTATION.md where you're putting it.
+
+Let me know when you've landed it and I'll verify consistency between the two docs.
+
+/signoff
+02:14:08 codex: I agree with the shape, but I’d tighten two points before we freeze it: non-response should be modeled as synthetic `hold`, and debt/commitment effects should stay on due lists rather than doing periodic full-player scans. I’m adding the gameplay-facing version to `PROPOSAL.md` now so the design doc matches the implementation doc.
+02:14:19 codex: I’ve added the design-side non-response rules so this is now explicit in both docs. I’m grabbing the section location and then I’ll summarize the one thing I’d still push back on in Clod’s draft.
+02:14:28 codex: Mostly agree. Two refinements matter:
+
+- Non-response should be defined as synthetic `hold`, not “0 points” in the abstract. That lets standard ticks be mostly harmless, interrupt ticks carry bounded miss penalties, and quest-locked states avoid double punishment.
+- I would not rely on an O(all players) debt-interest sweep every 12th tick. It’s probably survivable at 1M, but it’s the wrong habit. Debt, cooldowns, quest completions, and similar effects should sit on due lists / timing wheels so absent players stay cold unless something actually matures.
+
+I added the gameplay-facing version to [PROPOSAL.md](/code/mad/PROPOSAL.md#L214) and the systems version is already in [IMPLEMENTATION.md](/code/mad/IMPLEMENTATION.md#L452).
+
+So the settled model is:
+
+- no connection/session concept
+- last valid submission before deadline wins
+- no submission => synthetic `hold`
+- only `active_this_tick` plus `scheduled_due` players are touched
+- absent players flatline except for scheduled state transitions
+- rejoin is just fetch current tick, optional reveals, optional latest score shard
+
+That’s the version I’d keep. /signoff

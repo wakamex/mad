@@ -10,7 +10,7 @@ Official game mode name: The Relentless Tick
 
 ## Executive Summary
 
-MAD is a 24/7 season-long online benchmark where every player receives the same public game stream at the same time, but each player maintains a private run against that stream. The world is shared. The consequences are personal.
+MAD is a 24/7 season-long online benchmark where every player receives the same public game stream at the same time and submits actions against it. The world is shared. The consequences are personal, but the server does not emit player-specific narrative packets.
 
 This is not a PvP MUD. It is a massively shared solo benchmark. Players compete on interpretation, timing, memory, resource management, and calibration, not on griefing or manipulating one another's public state.
 
@@ -31,6 +31,7 @@ The benchmark should be entertaining to watch in a terminal or stream while rema
 - One official game mode only
 - One shared public season feed for all players
 - Player actions never mutate the public world
+- No private packets in the hot path
 - No permadeath
 - Strict server-side action parsing
 - No live LLM in the action-resolution path
@@ -50,12 +51,12 @@ The server emits a global sequence of public ticks. Each tick contains:
 - Zero or more actionable opportunities
 - Source tags and provenance metadata
 
-Every connected player sees the same public tick packet. Each player can then take one private action, or do nothing. That action resolves only against the player's own state and the canonical season state.
+Every connected player sees the same public tick packet. Each player can then submit one action, or do nothing. The server resolves that action against the player's authoritative score state and the canonical season state, but it does not return player-specific world information.
 
 This creates three simultaneous experiences:
 
 - A shared public drama that is fun to watch
-- A private optimization problem that is hard to solve
+- A personal optimization problem that is hard to solve
 - A replayable benchmark with identical public input for all entrants
 
 ## Core Loop
@@ -63,8 +64,8 @@ This creates three simultaneous experiences:
 1. The server broadcasts a public tick.
 2. Players receive the same text and metadata concurrently.
 3. Each player submits one action before the deadline, or times out.
-4. The server resolves that action against the player's private state and the canonical season state.
-5. The player receives a private outcome packet.
+4. The server records and resolves that action against the player's authoritative state and the canonical season state.
+5. On a coarser publication cadence, the server publishes public score snapshots and leaderboard updates.
 6. The season advances for everyone.
 
 The world moves on whether or not a given player keeps up.
@@ -170,30 +171,72 @@ The world moves on whether or not a given player keeps up.
 }
 ```
 
-### Private Outcome Packet
+### Score Snapshot
 
 ```json
 {
-  "tick_id": "S1-T2045",
-  "action_result": "commit.accepted",
-  "outcome_code": "quest_opened",
-  "score_delta": {
-    "yield": 120,
-    "insight": 40,
-    "aura": 8,
-    "debt": 0,
-    "miss_penalties": 0
-  },
-  "state_delta": {
-    "reputation.glass_choir": 6,
-    "commitment_slots_used": 1,
-    "inventory_delta": []
-  },
-  "flavor": "The Choir notices your timing before it notices your motives."
+  "score_epoch": "S1-E171",
+  "published_at": 1772865600,
+  "top": [
+    {
+      "rank": 1,
+      "player_id": "p_7f42",
+      "score": 104920,
+      "aura": 311,
+      "debt": 0
+    }
+  ],
+  "shards": [
+    "/score-epochs/S1-E171/shards/00.json.zst",
+    "/score-epochs/S1-E171/shards/01.json.zst"
+  ]
 }
 ```
 
-The public packets are identical for all players. The private outcome differs by player state, inventory, reputation, debt, and prior commitments.
+All read packets are public and shared. The server may maintain per-player authoritative state for scoring, but it does not emit private narrative or informational responses.
+
+## Feedback Model
+
+Players should still learn what happened. They just should not learn it through private result packets.
+
+The feedback loop should be:
+
+- Immediate: submission receipt only
+- Periodic: public score snapshots and leaderboard updates
+- Delayed: public answer reveals for closed ticks
+
+This preserves tractability and closes the information-leak problem:
+
+- everyone sees the same reveal
+- no player gets privileged explanatory text
+- brute-force farms get slower and more expensive feedback
+
+## Non-Response Semantics
+
+The game should not care why a player failed to submit.
+
+For benchmark purposes, these are equivalent:
+
+- the player intentionally passed
+- the agent took too long
+- the client disconnected
+- the process crashed
+
+If no valid action arrives before the deadline, the server injects a synthetic `hold`.
+
+Design consequences:
+
+- Standard and dossier ticks: missing a tick usually means missed opportunity, not catastrophic punishment
+- Interrupt ticks: missing a tick can incur a bounded miss penalty when the world event is inherently time-critical
+- Quest-locked players: absence from the main stream is expected while committed, so they are not double-penalized for unavailable actions
+- Streak-based upside should reset or decay on inactivity
+- Debt, cooldowns, and commitment timers can still advance while the player is absent
+
+This preserves fairness and tractability:
+
+- no session-state complexity
+- no need to distinguish offline from indecisive
+- absent players do not require full per-tick processing unless they have scheduled state transitions due
 
 ## The Relentless Tick
 
@@ -211,7 +254,7 @@ These are not separate modes. They are one clock with changing tempo. The point 
 - Standard windows reward consistent play
 - Interrupt windows punish bloated reasoning loops and stale context
 
-## Public State vs Private State
+## Public State vs Authoritative Player State
 
 Public state is identical for everyone:
 
@@ -222,7 +265,7 @@ Public state is identical for everyone:
 - Opportunity postings
 - Public chronology
 
-Private state differs per player:
+Authoritative player state differs per player:
 
 - Inventory with hard slot limits
 - Reputation with factions
@@ -233,7 +276,7 @@ Private state differs per player:
 - Private score ledgers
 - Quest outcomes
 
-The key fairness rule is simple: public input is shared, private consequences are individualized.
+The key fairness rule is simple: public input is shared, while per-player score state exists only to score actions and publish later public score snapshots.
 
 ## Core Resources
 
@@ -545,7 +588,7 @@ Live server components:
 - Season compiler
 - Canonical tick scheduler
 - Public stream broadcaster
-- Private resolver
+- Authoritative state resolver
 - Strict parser
 - Scoring engine
 - Replay and leaderboard service
@@ -559,8 +602,8 @@ Operational rules:
 
 Suggested transport:
 
-- WebSocket for live players
-- SSE mirror for observer clients
+- Shared HTTP polling for live players and observers
+- Immutable JSON tick files plus public score snapshots
 - JSON on the wire, optional CLI wrapper for human terminal play
 
 ## Open Risks
@@ -645,7 +688,7 @@ Score: 97/100
 
 What improved:
 
-- Added one authoritative set of public and private packet examples
+- Added one authoritative set of shared public packet examples and score snapshots
 - Defined ontological drift explicitly as a named mechanism
 - Added narrator phases so unreliability evolves rather than staying flat
 - Added memory distance as a direct diagnostic for long-range retrieval
@@ -663,7 +706,7 @@ Score: 97/100
 What improved:
 
 - All concurrent edits synthesized and deduplicated into one clean document
-- Complete JSON packet examples for all tick types plus private outcome
+- Complete JSON packet examples for all tick types plus public score snapshot
 - Ontological Drift, Narrator Phases, and Memory Distance formally defined as named mechanisms
 - Consistent action envelope with confidence field integrated into compounding math
 - Every user constraint addressed: shared stream, single-player isolation, one mode, no permadeath, deterministic scoring, lawful rules, prompt-injection-immune

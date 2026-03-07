@@ -427,7 +427,8 @@ Canonical payload:
   "option": "broker",
   "confidence": 0.82,
   "phrase": "",
-  "theory": "green rain changed glass value after the flood"
+  "theory": "green rain changed glass value after the flood",
+  "submission_id": "01jnh7x1yqv8x..."
 }
 ```
 
@@ -440,6 +441,13 @@ Field rules:
 - `confidence` is a required float between `0.0` and `1.0` on all actions except `hold`
 - `phrase` is only valid when the tick explicitly advertises a text slot
 - `theory` is ignored by resolution and logged for analysis only
+- `submission_id` should be unique per tick submission so exact retries can be accepted idempotently
+
+Submission rule:
+
+- the first accepted action for a player on a tick is final
+- exact retries of that same action may be replayed safely using the same `submission_id`
+- attempts to change the action after committing are rejected
 
 Core verbs:
 

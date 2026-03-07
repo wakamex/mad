@@ -168,6 +168,10 @@ func (s *Server) handleAction(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusAccepted, receipt)
 	case errors.Is(err, game.ErrorBadAuth()):
 		writeError(w, http.StatusUnauthorized, "bad_auth")
+	case errors.Is(err, game.ErrorSubmissionIDConflict()):
+		writeError(w, http.StatusConflict, "submission_id_conflict")
+	case errors.Is(err, game.ErrorTickAlreadyCommitted()):
+		writeError(w, http.StatusConflict, "tick_already_committed")
 	case errors.Is(err, game.ErrorWrongTick()):
 		writeError(w, http.StatusConflict, "wrong_tick")
 	case errors.Is(err, game.ErrorDeadlineMiss()):

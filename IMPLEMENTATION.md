@@ -348,8 +348,9 @@ The only hot dynamic endpoint is `POST /actions`.
 
 ### Submission Rules
 
-- one account can submit multiple times before deadline
-- the last valid submission before deadline wins
+- one account gets one accepted decision per tick
+- retrying the exact same payload with the same `submission_id` is allowed and returns the same receipt
+- trying to change the action after a successful commit is rejected
 - submissions after deadline are ignored
 - oversized payloads are rejected immediately
 - invalid schema is rejected immediately
@@ -556,9 +557,10 @@ If needed, add a tiny fixed grace window, such as `250-500 ms`, for network jitt
 
 To make crash-retry behavior safe:
 
-- allow an optional client-generated `submission_id`
+- require or strongly recommend a client-generated `submission_id`
 - treat duplicate `submission_id`s as retries
-- keep `last valid submission before deadline wins`
+- reject reused `submission_id`s when the payload changes
+- treat the first accepted action as final for that tick
 
 This makes client restarts harmless without making the server stateful in complicated ways.
 

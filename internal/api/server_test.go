@@ -31,9 +31,10 @@ func testServer(t *testing.T) (*Server, *game.Engine) {
 func TestActionEndpoint(t *testing.T) {
 	server, engine := testServer(t)
 	body, _ := json.Marshal(game.ActionSubmission{
-		TickID:     engine.Current().TickID,
-		Command:    "hold",
-		Confidence: 0,
+		TickID:       engine.Current().TickID,
+		Command:      "hold",
+		Confidence:   0,
+		SubmissionID: "sub-1",
 	})
 
 	req := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(body))
@@ -43,6 +44,36 @@ func TestActionEndpoint(t *testing.T) {
 
 	if rec.Code != http.StatusAccepted {
 		t.Fatalf("unexpected status: %d body=%s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestIdempotentRetryEndpoint(t *testing.T) {
+	server, engine := testServer(t)
+	body, _ := json.Marshal(game.ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "hold",
+		Confidence:   0,
+		SubmissionID: "retry-1",
+	})
+	handler := server.Routes()
+
+	req1 := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(body))
+	req1.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
+	rec1 := httptest.NewRecorder()
+	handler.ServeHTTP(rec1, req1)
+	if rec1.Code != http.StatusAccepted {
+		t.Fatalf("unexpected first status: %d body=%s", rec1.Code, rec1.Body.String())
+	}
+
+	req2 := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(body))
+	req2.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
+	rec2 := httptest.NewRecorder()
+	handler.ServeHTTP(rec2, req2)
+	if rec2.Code != http.StatusAccepted {
+		t.Fatalf("unexpected retry status: %d body=%s", rec2.Code, rec2.Body.String())
+	}
+	if rec1.Body.String() != rec2.Body.String() {
+		t.Fatalf("expected identical retry receipt\nfirst=%s\nsecond=%s", rec1.Body.String(), rec2.Body.String())
 	}
 }
 
@@ -70,32 +101,75 @@ func TestRevealEndpointAfterClose(t *testing.T) {
 	}
 }
 
-func TestRateLimit(t *testing.T) {
+func TestTickAlreadyCommittedEndpoint(t *testing.T) {
 	server, engine := testServer(t)
-	body, _ := json.Marshal(game.ActionSubmission{
-		TickID:     engine.Current().TickID,
-		Command:    "hold",
-		Confidence: 0,
+	firstBody, _ := json.Marshal(game.ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "hold",
+		Confidence:   0,
+		SubmissionID: "first",
+	})
+	secondBody, _ := json.Marshal(game.ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "broker",
+		Confidence:   0.8,
+		SubmissionID: "second",
 	})
 	handler := server.Routes()
-	for i := 0; i < 120; i++ {
-		req := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(body))
-		req.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
-		req.RemoteAddr = "127.0.0.1:1234"
-		rec := httptest.NewRecorder()
-		handler.ServeHTTP(rec, req)
-		if rec.Code != http.StatusAccepted {
-			t.Fatalf("unexpected early status at %d: %d", i, rec.Code)
-		}
-	}
 
-	req := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(firstBody))
 	req.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
-	req.RemoteAddr = "127.0.0.1:1234"
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
-	if rec.Code != http.StatusTooManyRequests {
-		t.Fatalf("expected rate limit, got %d body=%s", rec.Code, rec.Body.String())
+	if rec.Code != http.StatusAccepted {
+		t.Fatalf("unexpected first status: %d body=%s", rec.Code, rec.Body.String())
+	}
+
+	req = httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(secondBody))
+	req.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
+	rec = httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	if rec.Code != http.StatusConflict {
+		t.Fatalf("expected commit conflict, got %d body=%s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestSubmissionIDConflictEndpoint(t *testing.T) {
+	server, engine := testServer(t)
+	firstBody, _ := json.Marshal(game.ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "broker",
+		Confidence:   0.8,
+		SubmissionID: "same-id",
+	})
+	secondBody, _ := json.Marshal(game.ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "smuggler",
+		Confidence:   0.8,
+		SubmissionID: "same-id",
+	})
+	handler := server.Routes()
+
+	req := httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(firstBody))
+	req.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	if rec.Code != http.StatusAccepted {
+		t.Fatalf("unexpected first status: %d body=%s", rec.Code, rec.Body.String())
+	}
+
+	req = httptest.NewRequest(http.MethodPost, "/actions", bytes.NewReader(secondBody))
+	req.Header.Set("Authorization", "Bearer "+engine.DevToken(1))
+	rec = httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	if rec.Code != http.StatusConflict {
+		t.Fatalf("expected submission_id conflict, got %d body=%s", rec.Code, rec.Body.String())
 	}
 }
 

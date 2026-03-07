@@ -54,6 +54,8 @@ env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go test ./...
 
 The current due-state prototype uses a timing wheel to process absent-player scheduled effects without global scans. Today that concrete effect is debt interest on dossier cadence; global synthetic `hold` for every absent player is still intentionally out of scope until the game models exposed cohorts explicitly. The hard rule is: if a mechanic requires touching every player every tick, redesign it as sparse cohorts, scheduled due events, or lazy settlement.
 
+Action commits are now single-shot per tick: the first accepted action is final, and only exact retries using the same `submission_id` are accepted idempotently.
+
 ## Handoff & Next Steps
 
 As detailed in [IMPLEMENTATION.md](./IMPLEMENTATION.md), the work should proceed in this order:

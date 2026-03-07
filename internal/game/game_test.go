@@ -150,6 +150,85 @@ func TestSnapshotRoundTrip(t *testing.T) {
 	}
 }
 
+func TestSubmitIdempotentRetry(t *testing.T) {
+	engine := newTestEngine(t)
+	now := time.Now().UTC()
+	action := ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "hold",
+		Confidence:   0,
+		SubmissionID: "retry-1",
+	}
+
+	first, err := engine.Submit(engine.DevToken(1), action, now)
+	if err != nil {
+		t.Fatalf("first submit: %v", err)
+	}
+	second, err := engine.Submit(engine.DevToken(1), action, now.Add(250*time.Millisecond))
+	if err != nil {
+		t.Fatalf("retry submit: %v", err)
+	}
+	if !reflect.DeepEqual(first, second) {
+		t.Fatalf("retry receipt mismatch\nfirst=%+v\nsecond=%+v", first, second)
+	}
+}
+
+func TestSubmitRejectsMutationAfterCommit(t *testing.T) {
+	engine := newTestEngine(t)
+	now := time.Now().UTC()
+
+	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "hold",
+		Confidence:   0,
+		SubmissionID: "first",
+	}, now)
+	if err != nil {
+		t.Fatalf("first submit: %v", err)
+	}
+
+	_, err = engine.Submit(engine.DevToken(1), ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "broker",
+		Confidence:   0.8,
+		SubmissionID: "second",
+	}, now.Add(250*time.Millisecond))
+	if !CheckErr(err, ErrorTickAlreadyCommitted()) {
+		t.Fatalf("expected tick already committed, got %v", err)
+	}
+}
+
+func TestSubmitRejectsConflictingSubmissionID(t *testing.T) {
+	engine := newTestEngine(t)
+	now := time.Now().UTC()
+
+	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "broker",
+		Confidence:   0.8,
+		SubmissionID: "same-id",
+	}, now)
+	if err != nil {
+		t.Fatalf("first submit: %v", err)
+	}
+
+	_, err = engine.Submit(engine.DevToken(1), ActionSubmission{
+		TickID:       engine.Current().TickID,
+		Command:      "commit",
+		Target:       "quest.glass_choir.7",
+		Option:       "smuggler",
+		Confidence:   0.8,
+		SubmissionID: "same-id",
+	}, now.Add(250*time.Millisecond))
+	if !CheckErr(err, ErrorSubmissionIDConflict()) {
+		t.Fatalf("expected submission id conflict, got %v", err)
+	}
+}
+
 func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 	loadedSeason, err := season.LoadFile(filepath.Join("..", "..", "seasons", "dev", "season.json"))
 	if err != nil {

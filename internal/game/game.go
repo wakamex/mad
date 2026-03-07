@@ -3,6 +3,7 @@ package game
 import (
 	"context"
 	"crypto/sha1"
+	"encoding/binary"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -16,10 +17,12 @@ import (
 )
 
 var (
-	errBadAuth      = errors.New("bad auth token")
-	errWrongTick    = errors.New("submission for non-current tick")
-	errDeadlineMiss = errors.New("submission missed deadline")
-	errInvalidBody  = errors.New("invalid action body")
+	errBadAuth              = errors.New("bad auth token")
+	errWrongTick            = errors.New("submission for non-current tick")
+	errDeadlineMiss         = errors.New("submission missed deadline")
+	errInvalidBody          = errors.New("invalid action body")
+	errSubmissionIDConflict = errors.New("submission_id reused with different body")
+	errTickAlreadyCommitted = errors.New("player already committed an action for this tick")
 )
 
 const (
@@ -41,6 +44,8 @@ type Engine struct {
 	authTokens        map[string]uint32
 	pending           []PendingAction
 	pendingSubmission []string
+	pendingHash       []uint64
+	pendingReceipt    []ActionReceipt
 	hasPending        []bool
 	activePlayers     []uint32
 	activeMarked      []bool
@@ -61,6 +66,8 @@ func NewEngine(seasonFile season.File, wal *storage.WAL, devPlayers int) *Engine
 	authTokens := make(map[string]uint32, devPlayers)
 	pending := make([]PendingAction, devPlayers)
 	pendingSubmission := make([]string, devPlayers)
+	pendingHash := make([]uint64, devPlayers)
+	pendingReceipt := make([]ActionReceipt, devPlayers)
 	hasPending := make([]bool, devPlayers)
 	activeMarked := make([]bool, devPlayers)
 
@@ -84,6 +91,8 @@ func NewEngine(seasonFile season.File, wal *storage.WAL, devPlayers int) *Engine
 		authTokens:        authTokens,
 		pending:           pending,
 		pendingSubmission: pendingSubmission,
+		pendingHash:       pendingHash,
+		pendingReceipt:    pendingReceipt,
 		hasPending:        hasPending,
 		activePlayers:     make([]uint32, 0, devPlayers/8+1),
 		activeMarked:      activeMarked,
@@ -183,16 +192,24 @@ func (e *Engine) Submit(token string, action ActionSubmission, now time.Time) (A
 	if now.After(e.currentEndsAt) {
 		return ActionReceipt{}, errDeadlineMiss
 	}
-	if action.SubmissionID != "" && e.pendingSubmission[playerID] == action.SubmissionID {
-		return ActionReceipt{
-			Status:       "accepted",
-			TickID:       action.TickID,
-			ReceivedAt:   now.Unix(),
-			SubmissionID: action.SubmissionID,
-		}, nil
+	fingerprint := actionFingerprint(action)
+	if e.hasPending[playerID] {
+		if action.SubmissionID != "" && e.pendingSubmission[playerID] == action.SubmissionID {
+			if e.pendingHash[playerID] != fingerprint {
+				return ActionReceipt{}, errSubmissionIDConflict
+			}
+			return e.pendingReceipt[playerID], nil
+		}
+		return ActionReceipt{}, errTickAlreadyCommitted
 	}
 
-	e.storePendingLocked(playerID, action, now)
+	receipt := ActionReceipt{
+		Status:       "accepted",
+		TickID:       action.TickID,
+		ReceivedAt:   now.Unix(),
+		SubmissionID: action.SubmissionID,
+	}
+	e.storePendingLocked(playerID, action, receipt, fingerprint, now)
 
 	if e.wal != nil {
 		_ = e.wal.Append(storage.ActionRecord{
@@ -210,12 +227,7 @@ func (e *Engine) Submit(token string, action ActionSubmission, now time.Time) (A
 		})
 	}
 
-	return ActionReceipt{
-		Status:       "accepted",
-		TickID:       action.TickID,
-		ReceivedAt:   now.Unix(),
-		SubmissionID: action.SubmissionID,
-	}, nil
+	return receipt, nil
 }
 
 func (e *Engine) RunScheduler(ctx context.Context) {
@@ -330,6 +342,8 @@ func (e *Engine) RestoreSnapshot(snapshot Snapshot) error {
 	e.currentEndsAt = time.Unix(snapshot.CurrentEndsAt, 0).UTC()
 	clear(e.pending)
 	clear(e.pendingSubmission)
+	clear(e.pendingHash)
+	clear(e.pendingReceipt)
 	clear(e.hasPending)
 	clear(e.activeMarked)
 	e.activePlayers = e.activePlayers[:0]
@@ -338,7 +352,13 @@ func (e *Engine) RestoreSnapshot(snapshot Snapshot) error {
 		if entry.PlayerID >= uint32(len(e.players)) {
 			continue
 		}
-		e.storePendingLocked(entry.PlayerID, entry.Action, time.Unix(0, entry.ReceivedAt).UTC())
+		receipt := ActionReceipt{
+			Status:       "accepted",
+			TickID:       entry.Action.TickID,
+			ReceivedAt:   time.Unix(0, entry.ReceivedAt).UTC().Unix(),
+			SubmissionID: entry.Action.SubmissionID,
+		}
+		e.storePendingLocked(entry.PlayerID, entry.Action, receipt, actionFingerprint(entry.Action), time.Unix(0, entry.ReceivedAt).UTC())
 	}
 	for _, event := range snapshot.DueEvents {
 		e.pushDueEventLocked(event)
@@ -392,7 +412,19 @@ func (e *Engine) RecoverFromRecords(records []storage.ActionRecord, until time.T
 			continue
 		}
 
-		e.storePendingLocked(record.PlayerID, action, record.ReceivedAt)
+		if e.hasPending[record.PlayerID] {
+			if action.SubmissionID != "" && e.pendingSubmission[record.PlayerID] == action.SubmissionID && e.pendingHash[record.PlayerID] == actionFingerprint(action) {
+				continue
+			}
+			continue
+		}
+		receipt := ActionReceipt{
+			Status:       "accepted",
+			TickID:       action.TickID,
+			ReceivedAt:   record.ReceivedAt.Unix(),
+			SubmissionID: action.SubmissionID,
+		}
+		e.storePendingLocked(record.PlayerID, action, receipt, actionFingerprint(action), record.ReceivedAt)
 		replayed++
 	}
 
@@ -437,6 +469,8 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 		}
 		e.pending[playerID] = PendingAction{}
 		e.pendingSubmission[playerID] = ""
+		e.pendingHash[playerID] = 0
+		e.pendingReceipt[playerID] = ActionReceipt{}
 		e.hasPending[playerID] = false
 		e.activeMarked[playerID] = false
 		_ = label
@@ -468,14 +502,29 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 	e.currentEndsAt = now.Add(e.season.DurationForTick(e.currentIndex))
 }
 
-func (e *Engine) storePendingLocked(playerID uint32, action ActionSubmission, receivedAt time.Time) {
+func (e *Engine) storePendingLocked(playerID uint32, action ActionSubmission, receipt ActionReceipt, fingerprint uint64, receivedAt time.Time) {
 	if !e.activeMarked[playerID] {
 		e.activePlayers = append(e.activePlayers, playerID)
 		e.activeMarked[playerID] = true
 	}
 	e.pending[playerID] = PendingAction{Action: action, ReceivedAt: receivedAt}
 	e.pendingSubmission[playerID] = action.SubmissionID
+	e.pendingHash[playerID] = fingerprint
+	e.pendingReceipt[playerID] = receipt
 	e.hasPending[playerID] = true
+}
+
+func actionFingerprint(action ActionSubmission) uint64 {
+	sum := sha1.Sum([]byte(strings.Join([]string{
+		action.TickID,
+		action.Command,
+		action.Target,
+		action.Option,
+		action.Phrase,
+		fmt.Sprintf("%.6f", action.Confidence),
+		action.Theory,
+	}, "\x1f")))
+	return binary.BigEndian.Uint64(sum[:8])
 }
 
 func (e *Engine) clearDueWheelLocked() {
@@ -836,10 +885,12 @@ func CheckErr(err error, target error) bool {
 	return errors.Is(err, target)
 }
 
-func ErrorBadAuth() error      { return errBadAuth }
-func ErrorWrongTick() error    { return errWrongTick }
-func ErrorDeadlineMiss() error { return errDeadlineMiss }
-func ErrorInvalidBody() error  { return errInvalidBody }
+func ErrorBadAuth() error              { return errBadAuth }
+func ErrorWrongTick() error            { return errWrongTick }
+func ErrorDeadlineMiss() error         { return errDeadlineMiss }
+func ErrorInvalidBody() error          { return errInvalidBody }
+func ErrorSubmissionIDConflict() error { return errSubmissionIDConflict }
+func ErrorTickAlreadyCommitted() error { return errTickAlreadyCommitted }
 
 func EncodeShardHint(publicID string, shardCount int) string {
 	return hex.EncodeToString([]byte(playerShard(publicID, shardCount)))

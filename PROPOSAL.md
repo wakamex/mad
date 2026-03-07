@@ -240,6 +240,12 @@ This preserves fairness and tractability:
 - no need to distinguish offline from indecisive
 - absent players do not require full per-tick processing unless they have scheduled state transitions due
 
+Hard scalability rule:
+
+- if a mechanic requires touching every player every tick, it is not valid for MAD in its current deployment model
+- global absent-player punishment must be rewritten as sparse exposed cohorts, scheduled consequences, or lazy settlement at checkpoint/reactivation time
+- content authoring should assume the server processes `active_this_tick + scheduled_due`, not all registered players
+
 ## The Relentless Tick
 
 The Relentless Tick is the only official mode. It uses one public stream with variable cadence inside it.

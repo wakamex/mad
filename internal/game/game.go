@@ -22,13 +22,19 @@ var (
 	errInvalidBody  = errors.New("invalid action body")
 )
 
+const (
+	defaultDueWheelSize  = 1024
+	dueEventDebtInterest = "debt_interest"
+)
+
 type Engine struct {
-	mu            sync.RWMutex
-	season        season.File
-	startedAt     time.Time
-	currentIndex  int
-	currentEndsAt time.Time
-	wal           *storage.WAL
+	mu             sync.RWMutex
+	season         season.File
+	startedAt      time.Time
+	currentIndex   int
+	currentTickSeq uint64
+	currentEndsAt  time.Time
+	wal            *storage.WAL
 
 	players           []PlayerState
 	publicIDs         []string
@@ -38,6 +44,7 @@ type Engine struct {
 	hasPending        []bool
 	activePlayers     []uint32
 	activeMarked      []bool
+	dueWheel          [][]DueEvent
 
 	scoreEpochs map[string]ScoreEpochSnapshot
 	scoreShards map[string]map[string]ScoreShard
@@ -80,6 +87,7 @@ func NewEngine(seasonFile season.File, wal *storage.WAL, devPlayers int) *Engine
 		hasPending:        hasPending,
 		activePlayers:     make([]uint32, 0, devPlayers/8+1),
 		activeMarked:      activeMarked,
+		dueWheel:          make([][]DueEvent, defaultDueWheelSize),
 		scoreEpochs:       make(map[string]ScoreEpochSnapshot),
 		scoreShards:       make(map[string]map[string]ScoreShard),
 		reveals:           make(map[string]RevealPacket),
@@ -258,6 +266,14 @@ func (e *Engine) Snapshot() Snapshot {
 		})
 	}
 
+	dueEvents := make([]DueEvent, 0)
+	for _, bucket := range e.dueWheel {
+		if len(bucket) == 0 {
+			continue
+		}
+		dueEvents = append(dueEvents, bucket...)
+	}
+
 	scoreEpochs := make(map[string]ScoreEpochSnapshot, len(e.scoreEpochs))
 	for k, v := range e.scoreEpochs {
 		scoreEpochs[k] = v
@@ -283,9 +299,11 @@ func (e *Engine) Snapshot() Snapshot {
 		SavedAt:         savedAt.Unix(),
 		SavedAtUnixNano: savedAt.UnixNano(),
 		CurrentIndex:    e.currentIndex,
+		CurrentTickSeq:  e.currentTickSeq,
 		CurrentEndsAt:   e.currentEndsAt.Unix(),
 		Players:         players,
 		Pending:         pending,
+		DueEvents:       dueEvents,
 		ScoreEpochs:     scoreEpochs,
 		ScoreShards:     scoreShards,
 		Reveals:         reveals,
@@ -308,17 +326,22 @@ func (e *Engine) RestoreSnapshot(snapshot Snapshot) error {
 
 	copy(e.players, snapshot.Players)
 	e.currentIndex = snapshot.CurrentIndex
+	e.currentTickSeq = snapshot.CurrentTickSeq
 	e.currentEndsAt = time.Unix(snapshot.CurrentEndsAt, 0).UTC()
 	clear(e.pending)
 	clear(e.pendingSubmission)
 	clear(e.hasPending)
 	clear(e.activeMarked)
 	e.activePlayers = e.activePlayers[:0]
+	e.clearDueWheelLocked()
 	for _, entry := range snapshot.Pending {
 		if entry.PlayerID >= uint32(len(e.players)) {
 			continue
 		}
 		e.storePendingLocked(entry.PlayerID, entry.Action, time.Unix(0, entry.ReceivedAt).UTC())
+	}
+	for _, event := range snapshot.DueEvents {
+		e.pushDueEventLocked(event)
 	}
 	e.scoreEpochs = snapshot.ScoreEpochs
 	if e.scoreEpochs == nil {
@@ -386,6 +409,7 @@ func (e *Engine) CloseCurrentTick(now time.Time) {
 
 func (e *Engine) closeCurrentTickLocked(now time.Time) {
 	tick := e.season.Ticks[e.currentIndex]
+	tickSeq := e.currentTickSeq
 	submissionCount := int64(0)
 	correctCount := int64(0)
 	var sumCorrectConfidence float64
@@ -401,6 +425,7 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 		delta, label, correct := evaluateAction(tick.Scoring, action)
 		player := &e.players[playerID]
 		applyDelta(player, tick.TickID, delta)
+		e.reconcilePlayerDueStateLocked(playerID, tickSeq)
 		if correct {
 			correctCount++
 			sumCorrectConfidence += action.Confidence
@@ -417,6 +442,7 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 		_ = label
 	}
 	e.activePlayers = e.activePlayers[:0]
+	e.processDueEventsLocked(tick, tickSeq)
 
 	if (e.currentIndex+1)%e.season.ScoreEpochTicks == 0 {
 		e.publishScoreEpochLocked(now)
@@ -437,6 +463,7 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 		)
 	}
 
+	e.currentTickSeq++
 	e.currentIndex = (e.currentIndex + 1) % len(e.season.Ticks)
 	e.currentEndsAt = now.Add(e.season.DurationForTick(e.currentIndex))
 }
@@ -449,6 +476,114 @@ func (e *Engine) storePendingLocked(playerID uint32, action ActionSubmission, re
 	e.pending[playerID] = PendingAction{Action: action, ReceivedAt: receivedAt}
 	e.pendingSubmission[playerID] = action.SubmissionID
 	e.hasPending[playerID] = true
+}
+
+func (e *Engine) clearDueWheelLocked() {
+	for i := range e.dueWheel {
+		e.dueWheel[i] = e.dueWheel[i][:0]
+	}
+}
+
+func (e *Engine) pushDueEventLocked(event DueEvent) {
+	if len(e.dueWheel) == 0 {
+		return
+	}
+	slot := int(event.DueTick % uint64(len(e.dueWheel)))
+	e.dueWheel[slot] = append(e.dueWheel[slot], event)
+}
+
+func (e *Engine) processDueEventsLocked(tick season.TickDefinition, tickSeq uint64) {
+	if len(e.dueWheel) == 0 {
+		return
+	}
+	slot := int(tickSeq % uint64(len(e.dueWheel)))
+	bucket := e.dueWheel[slot]
+	if len(bucket) == 0 {
+		return
+	}
+
+	survivors := bucket[:0]
+	for _, event := range bucket {
+		if event.DueTick != tickSeq {
+			survivors = append(survivors, event)
+			continue
+		}
+		switch event.Kind {
+		case dueEventDebtInterest:
+			e.applyDebtInterestLocked(event.PlayerID, event.Generation, tick, tickSeq)
+		}
+	}
+	e.dueWheel[slot] = survivors
+}
+
+func (e *Engine) applyDebtInterestLocked(playerID uint32, generation uint32, tick season.TickDefinition, tickSeq uint64) {
+	if playerID >= uint32(len(e.players)) {
+		return
+	}
+	player := &e.players[playerID]
+	if player.Debt <= 0 || player.DebtDueTick != tickSeq || player.DebtGen != generation {
+		return
+	}
+
+	interest := debtInterestDelta(player.Debt)
+	player.Debt += interest
+	player.Score -= interest
+	player.LastTickID = tick.TickID
+	player.DebtDueTick = 0
+
+	e.reconcilePlayerDueStateLocked(playerID, tickSeq)
+}
+
+func (e *Engine) reconcilePlayerDueStateLocked(playerID uint32, afterTickSeq uint64) {
+	player := &e.players[playerID]
+	if player.Debt <= 0 {
+		if player.DebtDueTick != 0 {
+			player.DebtDueTick = 0
+			player.DebtGen++
+		}
+		return
+	}
+	if player.DebtDueTick > afterTickSeq {
+		return
+	}
+
+	nextDueTick, ok := e.nextTickSeqMatchingClassAfter(afterTickSeq, "dossier")
+	if !ok {
+		return
+	}
+	player.DebtGen++
+	player.DebtDueTick = nextDueTick
+	e.pushDueEventLocked(DueEvent{
+		DueTick:    nextDueTick,
+		PlayerID:   playerID,
+		Kind:       dueEventDebtInterest,
+		Generation: player.DebtGen,
+	})
+}
+
+func (e *Engine) nextTickSeqMatchingClassAfter(afterTickSeq uint64, class string) (uint64, bool) {
+	if len(e.season.Ticks) == 0 {
+		return 0, false
+	}
+	for offset := uint64(1); offset <= uint64(len(e.season.Ticks))*2; offset++ {
+		seq := afterTickSeq + offset
+		idx := int(seq % uint64(len(e.season.Ticks)))
+		if e.season.Ticks[idx].ClockClass == class {
+			return seq, true
+		}
+	}
+	return 0, false
+}
+
+func debtInterestDelta(currentDebt int64) int64 {
+	if currentDebt <= 0 {
+		return 0
+	}
+	interest := currentDebt / 10
+	if interest < 1 {
+		interest = 1
+	}
+	return interest
 }
 
 func (e *Engine) advanceUntilBeforeLocked(target time.Time) {

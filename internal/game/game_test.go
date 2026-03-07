@@ -249,6 +249,49 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 	}
 }
 
+func TestAbsentPlayerScheduledDebtInterest(t *testing.T) {
+	engine := newTestEngine(t)
+	now := time.Now().UTC()
+
+	_, err := engine.Submit(engine.DevToken(2), ActionSubmission{
+		TickID:     engine.Current().TickID,
+		Command:    "commit",
+		Target:     "quest.glass_choir.7",
+		Option:     "smuggler",
+		Confidence: 0.95,
+	}, now)
+	if err != nil {
+		t.Fatalf("submit debt action: %v", err)
+	}
+
+	engine.CloseCurrentTick(now)
+
+	player := engine.players[1]
+	if player.Debt != 50 {
+		t.Fatalf("unexpected debt after bad action: got %d want 50", player.Debt)
+	}
+	if player.DebtDueTick != 1 {
+		t.Fatalf("unexpected debt due tick: got %d want 1", player.DebtDueTick)
+	}
+
+	dossierClose := now.Add(engine.season.DurationForTick(1))
+	engine.CloseCurrentTick(dossierClose)
+
+	player = engine.players[1]
+	if player.Debt != 55 {
+		t.Fatalf("unexpected debt after scheduled interest: got %d want 55", player.Debt)
+	}
+	if player.Score != -65 {
+		t.Fatalf("unexpected score after scheduled interest: got %d want -65", player.Score)
+	}
+	if player.LastTickID != "S1-T0002" {
+		t.Fatalf("unexpected last tick after scheduled interest: got %s", player.LastTickID)
+	}
+	if player.DebtDueTick != 5 {
+		t.Fatalf("unexpected rescheduled debt due tick: got %d want 5", player.DebtDueTick)
+	}
+}
+
 func BenchmarkSubmit(b *testing.B) {
 	loadedSeason, err := season.LoadFile(filepath.Join("..", "..", "seasons", "dev", "season.json"))
 	if err != nil {
@@ -274,6 +317,33 @@ func BenchmarkSubmit(b *testing.B) {
 		}, time.Now().UTC()); err != nil {
 			b.Fatal(err)
 		}
+	}
+}
+
+func BenchmarkCloseCurrentTickSparseDue(b *testing.B) {
+	loadedSeason, err := season.LoadFile(filepath.Join("..", "..", "seasons", "dev", "season.json"))
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		engine := NewEngine(loadedSeason, nil, 100_000)
+		engine.season.ScoreEpochTicks = 1_000_000
+		now := time.Now().UTC()
+
+		engine.mu.Lock()
+		engine.currentIndex = 1
+		engine.currentTickSeq = 1
+		engine.currentEndsAt = now
+		for playerID := 0; playerID < 32; playerID++ {
+			engine.players[playerID].Debt = 100
+			engine.reconcilePlayerDueStateLocked(uint32(playerID), 0)
+		}
+		engine.mu.Unlock()
+
+		b.StartTimer()
+		engine.CloseCurrentTick(now)
+		b.StopTimer()
 	}
 }
 

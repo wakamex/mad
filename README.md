@@ -52,6 +52,8 @@ env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go test ./...
 
 `mad-core` now persists periodic snapshots plus an action WAL in `./var/` by default. On restart it restores the last snapshot and replays accepted post-snapshot actions from the WAL before resuming the scheduler. When deployed behind Cloudflare or another proxy, `-trust-proxy-headers` lets the origin rate limit on `CF-Connecting-IP` / `X-Forwarded-For` instead of the proxy hop.
 
+The current due-state prototype uses a timing wheel to process absent-player scheduled effects without global scans. Today that concrete effect is debt interest on dossier cadence; global synthetic `hold` for every absent player is still intentionally out of scope until the game models exposed cohorts explicitly. The hard rule is: if a mechanic requires touching every player every tick, redesign it as sparse cohorts, scheduled due events, or lazy settlement.
+
 ## Handoff & Next Steps
 
 As detailed in [IMPLEMENTATION.md](./IMPLEMENTATION.md), the work should proceed in this order:

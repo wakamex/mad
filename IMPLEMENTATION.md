@@ -500,6 +500,39 @@ That means:
 - absent players are not scanned globally
 - only players with actual due state transitions are revisited
 
+### Hard Constraint: No Global Per-Tick Player Effects
+
+This is not an optimization pass to do later. It is a modeling constraint.
+
+The runtime target is:
+
+- `O(active_players + scheduled_due + small_constant_world_work)`
+
+Not:
+
+- `O(total_players)`
+
+Therefore:
+
+- if a mechanic requires touching every player on every tick, reject it or redesign it
+- global effects should be represented as shared public state, not per-player work
+- player-specific consequences must be sparse, scheduled, or lazily settled
+
+The three acceptable patterns are:
+
+- sparse cohorts: track only exposed players, such as carriers of unstable cargo or members of a committed quest
+- scheduled due events: use timing wheels / due lists for quest completions, debt interest, cooldown expiry, and similar timers
+- lazy settlement: store a global epoch or multiplier and settle it only when a player next becomes active or otherwise due
+
+Examples:
+
+- bad: "every absent player loses 3 points every tick"
+- good: "players carrying unstable cargo lose points when the hazard matures"
+- good: "debt interest applies on dossier cadence only to players currently carrying debt"
+- good: "a global faction tax changes at epoch boundaries and is settled when a player next receives score"
+
+If a rule cannot be indexed sparsely, scheduled explicitly, or settled lazily, it is too expensive for the one-box design and should not ship.
+
 ### Rejoin Behavior
 
 Rejoining is simple:

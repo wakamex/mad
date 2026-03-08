@@ -177,3 +177,167 @@ Current execution:
 - audit standing work elements for real cost signals
 - audit standing work tag fan-out into multiple downstream beats
 - surface weak standing work counts in `mad-weave`
+
+## 11. Local Semantic Leakage Audit
+
+Status: pending
+
+Goal:
+
+- determine why strong no-history LLM runs outperform `visible_greedy` by such a large margin
+
+Needed:
+
+- add a text-ablation simulator and harness mode that preserves current explicit state and opportunities but removes or neutralizes `source.text`
+- compare `ephemeral + memory off + recent_reveals 0` runs with:
+  - full prose
+  - source-type-only
+  - text-redacted variants
+- decide whether the main leak is:
+  - local semantic cues in prose
+  - over-informative structured opportunities
+  - or both
+
+Current execution:
+
+- Haiku `ephemeral + memory off + recent_reveals 0` scored far above `visible_greedy`
+- this is now treated as a benchmark-design warning, not as evidence that `visible_greedy` is the no-history ceiling
+
+## 12. Hazard Learnability Audit
+
+Status: pending
+
+Goal:
+
+- determine whether `hazard_interrupt` is testing learnable prospective structure or merely adding a family-wide score tax
+
+Needed:
+
+- compute timing statistics for hazard beats directly from compiled seasons:
+  - inter-arrival distribution
+  - autocorrelation
+  - source/family co-occurrence
+- determine whether hazards have:
+  - regular spacing
+  - cluster-level predictability
+  - or effectively memoryless timing
+- only keep interrupts as a first-class family if they have detectable structure a smart actor could exploit
+
+Current execution:
+
+- hazards are currently net negative even for `greedy_best`
+- until learnability is quantified, hazard scores should be treated as low-confidence signal when interpreting memory quality
+
+## 13. Stronger Upper-Bound Probes
+
+Status: pending
+
+Goal:
+
+- define more interpretable upper-bound comparisons than `greedy_best` without pretending to solve the full season optimally
+
+Needed:
+
+- add a full-knowledge look-ahead oracle baseline that can see compiled future reveals and pick over short future windows
+- keep it clearly labeled as:
+  - stronger than `greedy_best`
+  - weaker than true season-optimal planning
+- compare:
+  - `visible_greedy`
+  - `greedy_best`
+  - look-ahead oracle
+  - real harness runs
+
+Current execution:
+
+- `greedy_best` is still only a local hidden-label baseline
+- we have no tighter non-LLM upper bound yet
+
+## 14. Memory-Write Telemetry
+
+Status: pending
+
+Goal:
+
+- measure whether memory-capable harnesses actually write useful cross-tick state, rather than inferring memory use only from final scores
+
+Needed:
+
+- log for each run:
+  - native memory file presence
+  - write count
+  - average write length
+  - first/last write tick
+  - whether writes mention future-relevant entities or only summarize recent past
+- surface these fields in `harness.json`
+- separate:
+  - provider-native memory artifacts
+  - harness-carried notes
+  - raw persistent transcript continuity
+
+Current execution:
+
+- Claude isolation is now fixed, and we have confirmed that `memory=on` does not guarantee a `MEMORY.md` write under the normal MAD prompt
+- Codex zero-idle memory runs are now possible, but write/read behavior still needs explicit telemetry
+
+## 15. External Memory-System Comparisons
+
+Status: pending
+
+Goal:
+
+- show that MAD is testing something different from existing memory benchmarks, not just reproducing LongMemEval/LOCOMO rankings
+
+Needed:
+
+- plug in top-performing external memory systems or wrappers where practical:
+  - naive RAG
+  - LongMemEval-style systems
+  - observational-memory systems
+- compare their MAD scores against:
+  - plain model baselines
+  - `visible_greedy`
+  - persistent-memory harness runs
+- document benchmark-capability dissociations explicitly
+
+Current execution:
+
+- this is not wired up yet
+- current evidence from model baselines already suggests MAD rewards different capabilities than short-horizon or purely retrieval-oriented baselines
+
+## 16. Harness-Instructions Ablations
+
+Status: pending
+
+Goal:
+
+- measure how much performance changes when agents are given explicit benchmark-strategy help before or during a run
+
+Needed:
+
+- add controlled pre-run instruction variants such as:
+  - repo-review bootstrap:
+    - let the agent read selected benchmark docs or the whole repo before the run
+  - memory-coaching bootstrap:
+    - ask the agent to write its own durable memory strategy before tick 1
+  - provider-memory coaching:
+    - explicitly explain how to use `MEMORY.md` or provider-native memory when available
+- keep these as ablations, not default benchmark settings
+- compare against the clean baseline to separate:
+  - raw capability
+  - strategy bootstrapping
+  - memory-tool literacy
+
+Guardrails:
+
+- benchmark-default runs should remain "cold start" and avoid benchmark-specific coaching
+- any coached runs must be labeled clearly in reports and plots
+- repo-review ablations should distinguish:
+  - reading public benchmark docs only
+  - reading implementation code
+  - reading prior run artifacts
+
+Current execution:
+
+- this is not wired up yet
+- recent Claude results suggest provider-native memory exists but is often unused without stronger prompting, which makes explicit memory-usage coaching a useful ablation

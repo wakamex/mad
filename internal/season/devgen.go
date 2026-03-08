@@ -10,12 +10,18 @@ const (
 )
 
 type devFaction struct {
-	ID                  string
-	Name                string
-	Protocol            string
-	StabilizeBonus      int64
-	ExploitBonus        int64
-	StabilizeDebtRelief int64
+	ID                    string
+	Name                  string
+	Protocol              string
+	StabilizeBonus        int64
+	ExploitBonus          int64
+	StabilizeDebtRelief   int64
+	StabilizeRepThreshold int64
+	StabilizeRepSpend     int64
+	StabilizeDebtCap      int64
+	ExploitAuraThreshold  int64
+	ExploitAuraSpend      int64
+	ExploitDebtCap        int64
 }
 
 type devRegime struct {
@@ -28,12 +34,12 @@ type devRegime struct {
 }
 
 var devFactions = []devFaction{
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 14, ExploitBonus: 0, StabilizeDebtRelief: 10},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 10, ExploitBonus: 2, StabilizeDebtRelief: 12},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 6, ExploitBonus: 10, StabilizeDebtRelief: 6},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 8, ExploitBonus: 6, StabilizeDebtRelief: 8},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 4, ExploitBonus: 14, StabilizeDebtRelief: 4},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 12, ExploitBonus: 4, StabilizeDebtRelief: 9},
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 14, ExploitBonus: 0, StabilizeDebtRelief: 10, StabilizeRepThreshold: 16, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraThreshold: 20, ExploitAuraSpend: 10, ExploitDebtCap: 30},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 10, ExploitBonus: 2, StabilizeDebtRelief: 12, StabilizeRepThreshold: 10, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraThreshold: 18, ExploitAuraSpend: 8, ExploitDebtCap: 30},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 6, ExploitBonus: 10, StabilizeDebtRelief: 6, StabilizeRepThreshold: 8, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraThreshold: 12, ExploitAuraSpend: 6, ExploitDebtCap: 36},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 8, ExploitBonus: 6, StabilizeDebtRelief: 8, StabilizeRepThreshold: 18, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraThreshold: 18, ExploitAuraSpend: 5, ExploitDebtCap: 34},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 4, ExploitBonus: 14, StabilizeDebtRelief: 4, StabilizeRepThreshold: 7, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraThreshold: 10, ExploitAuraSpend: 7, ExploitDebtCap: 38},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 12, ExploitBonus: 4, StabilizeDebtRelief: 9, StabilizeRepThreshold: 14, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraThreshold: 22, ExploitAuraSpend: 9, ExploitDebtCap: 32},
 }
 
 var devRegimes = []devRegime{
@@ -469,10 +475,12 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
 		stabilizeTarget := target + ".stabilize"
 		exploitTarget := target + ".exploit"
-		stabilizeRep := hazardStabilizeReputationThreshold(theme, cluster, i)
-		stabilizeDebtCap := theme.DebtCap + theme.Faction.StabilizeDebtRelief/2 - int64((i-1)%2)*2
-		exploitAura := hazardAuraThreshold(theme, cluster, i)
-		exploitDebtCap := theme.DebtCap - 4 - int64((i-1)%2)*2
+		stabilizeRep := theme.Faction.StabilizeRepThreshold
+		stabilizeRepSpend := theme.Faction.StabilizeRepSpend
+		stabilizeDebtCap := theme.Faction.StabilizeDebtCap
+		exploitAura := theme.Faction.ExploitAuraThreshold
+		exploitAuraSpend := theme.Faction.ExploitAuraSpend
+		exploitDebtCap := theme.Faction.ExploitDebtCap
 		sourceText := fmt.Sprintf(
 			"%s struck the %s. %s is offering %s to trusted operators, while risk-takers can still try to exploit the surge if their aura and debt stay within public limits.",
 			theme.Hazard,
@@ -495,13 +503,13 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					MaxDebt:              stabilizeDebtCap,
 				},
 				Effects: StateEffects{
-					ReputationDelta: map[string]int64{theme.Faction.ID: 1},
+					ReputationDelta: map[string]int64{theme.Faction.ID: -stabilizeRepSpend},
 				},
 				Delta: ScoreDelta{
-					Yield:         24 + int64(i*4) + theme.Faction.StabilizeBonus,
+					Yield:         32 + int64(i*5) + theme.Faction.StabilizeBonus,
 					Insight:       10 + int64(i*2),
 					Aura:          0,
-					Debt:          -(6 + theme.Faction.StabilizeDebtRelief/2),
+					Debt:          -(5 + theme.Faction.StabilizeDebtRelief/2),
 					MissPenalties: 0,
 				},
 				Label:          fmt.Sprintf("%s trusted you to run the %s protocol and contain the spill cleanly.", theme.Faction.Name, theme.Faction.Protocol),
@@ -516,8 +524,8 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					Yield:         0,
 					Insight:       0,
 					Aura:          0,
-					Debt:          14 + int64(i*2),
-					MissPenalties: 9 + int64(i),
+					Debt:          2 + int64(i/2),
+					MissPenalties: 18 + int64(i*2),
 				},
 				Label:          "You reached for faction cover without enough standing to clear the lane.",
 				Classification: "bad",
@@ -530,10 +538,10 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					MaxDebt:              exploitDebtCap,
 				},
 				Delta: ScoreDelta{
-					Yield:         82 + int64(i*10) + theme.Faction.ExploitBonus,
+					Yield:         74 + int64(i*8) + theme.Faction.ExploitBonus,
 					Insight:       8 + int64(i*2),
-					Aura:          -(4 + int64(i/2)),
-					Debt:          8 + int64(i),
+					Aura:          -exploitAuraSpend,
+					Debt:          2 + int64(i/2),
 					MissPenalties: 0,
 				},
 				Label:          "You exploited the disruption for value, burning readiness to do it.",
@@ -548,15 +556,15 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					Yield:         0,
 					Insight:       0,
 					Aura:          0,
-					Debt:          28 + int64(i*4),
-					MissPenalties: 12 + int64(i),
+					Debt:          4 + int64(i),
+					MissPenalties: 20 + int64(i*2),
 				},
 				Label:          "You lunged for upside without enough visible margin to survive the blast.",
 				Classification: "bad",
 			},
 			{
 				Match:          ActionMatch{Command: "hold"},
-				Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 10 + int64(i), MissPenalties: 10 + int64(i)},
+				Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 0, MissPenalties: 14 + int64(i*2)},
 				Label:          "The interrupt rolled through while you hesitated.",
 				Classification: "bad",
 			},
@@ -586,7 +594,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Scope:    theme.Faction.ID,
 							Operator: ">=",
 							Value:    stabilizeRep,
-							Label:    fmt.Sprintf("%s standing %d+ unlocks %s.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol),
+							Label:    fmt.Sprintf("%s standing %d+ unlocks %s; successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, stabilizeRepSpend),
 						},
 						{
 							Metric:   "debt",
@@ -605,7 +613,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Metric:   "aura",
 							Operator: ">=",
 							Value:    exploitAura,
-							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation.", exploitAura),
+							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation; successful use spends %d aura.", exploitAura, exploitAuraSpend),
 						},
 						{
 							Metric:   "debt",
@@ -627,18 +635,6 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		ResourceTouches: []string{"availability", "aura", "debt", "reputation"},
 		Beats:           beats,
 	}
-}
-
-func hazardAuraThreshold(theme devTheme, cluster, beat int) int64 {
-	threshold := theme.AuraTier + int64(cluster*18)
-	if beat >= 2 {
-		threshold += int64((beat - 2) % 2 * 2)
-	}
-	return threshold
-}
-
-func hazardStabilizeReputationThreshold(theme devTheme, cluster, beat int) int64 {
-	return theme.RepTier + int64(cluster/5) + int64((beat-1)%2)*2
 }
 
 func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) StoryElement {

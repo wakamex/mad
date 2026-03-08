@@ -142,6 +142,14 @@ Current execution:
 - current `hazard_interrupt` rewrite fixed the visible-state leak but is likely overcorrected and too punitive overall
 - first-pass timing audit shows hazards recur heavily but do not currently have a strong payoff-vs-distance relationship
 - next redesign pass should treat hazards as a specialization/resource-allocation family, not as a prep-memory family
+- first-pass hazard access audit on the stable-profile redesign shows the premium lanes are currently unreachable even for `greedy_best`
+- the blocker is overwhelmingly `debt`, not threshold learnability:
+  - `any_premium_eligible_ticks = 0 / 244`
+  - dominant block reasons are `debt` first, then distant `availability`, with `reputation` and `aura` currently minor
+- the family is currently self-poisoning:
+  - `hazard_interrupt` itself contributes the vast majority of greedy-path debt
+  - once premium lanes are missed, hazard penalties generate the debt that blocks later hazard lanes
+- next balance pass should target the debt / standing economy before doing more threshold retuning
 
 ## 9. Generator Prototype
 

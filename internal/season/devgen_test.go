@@ -45,19 +45,25 @@ func TestBuildGeneratedDevSeasonIRRejectsUnsupportedTickCounts(t *testing.T) {
 	}
 }
 
-func TestHazardAuraThresholdScalesWithClusterProgress(t *testing.T) {
+func TestHazardFactionProfilesStayStableAcrossClusters(t *testing.T) {
 	t.Parallel()
 
-	theme := devTheme{AuraTier: 8}
+	first := buildDevTheme(0)
+	repeat := buildDevTheme(len(devFactions))
 
-	early := hazardAuraThreshold(theme, 0, 2)
-	mid := hazardAuraThreshold(theme, 10, 2)
-	late := hazardAuraThreshold(theme, 49, 2)
-
-	if !(early < mid && mid < late) {
-		t.Fatalf("expected aura threshold to grow with cluster progress: early=%d mid=%d late=%d", early, mid, late)
+	if first.Faction.ID != repeat.Faction.ID {
+		t.Fatalf("expected same faction after one full rotation: first=%s repeat=%s", first.Faction.ID, repeat.Faction.ID)
 	}
-	if early != 8 {
-		t.Fatalf("unexpected early threshold: got %d want 8", early)
+	if first.Faction.StabilizeRepThreshold != repeat.Faction.StabilizeRepThreshold {
+		t.Fatalf("expected stable stabilize threshold across cluster reuse: first=%d repeat=%d", first.Faction.StabilizeRepThreshold, repeat.Faction.StabilizeRepThreshold)
+	}
+	if first.Faction.StabilizeRepSpend != repeat.Faction.StabilizeRepSpend {
+		t.Fatalf("expected stable stabilize spend across cluster reuse: first=%d repeat=%d", first.Faction.StabilizeRepSpend, repeat.Faction.StabilizeRepSpend)
+	}
+	if first.Faction.ExploitAuraThreshold != repeat.Faction.ExploitAuraThreshold {
+		t.Fatalf("expected stable exploit threshold across cluster reuse: first=%d repeat=%d", first.Faction.ExploitAuraThreshold, repeat.Faction.ExploitAuraThreshold)
+	}
+	if first.Faction.ExploitAuraSpend != repeat.Faction.ExploitAuraSpend {
+		t.Fatalf("expected stable exploit spend across cluster reuse: first=%d repeat=%d", first.Faction.ExploitAuraSpend, repeat.Faction.ExploitAuraSpend)
 	}
 }

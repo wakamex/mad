@@ -227,6 +227,55 @@ func TestCodexArgsIncludeMemoryConfig(t *testing.T) {
 	}
 }
 
+func TestClaudeArgsUseSessionIDBeforeSessionExists(t *testing.T) {
+	t.Parallel()
+
+	runner, err := NewCLIRunner(RunnerSpec{
+		Provider:    "claude",
+		Model:       "haiku",
+		Effort:      "low",
+		MemoryMode:  MemoryModeOff,
+		ContextMode: ContextModePersistent,
+	}, ".", "")
+	if err != nil {
+		t.Fatalf("NewCLIRunner: %v", err)
+	}
+	t.Cleanup(func() { _ = runner.Close() })
+
+	args := runner.claudeArgs("prompt", false)
+	if !slices.Contains(args, "--session-id") {
+		t.Fatalf("expected initial persistent claude args to use --session-id: %v", args)
+	}
+	if slices.Contains(args, "--resume") {
+		t.Fatalf("did not expect initial persistent claude args to use --resume: %v", args)
+	}
+}
+
+func TestClaudeArgsUseResumeAfterSessionExists(t *testing.T) {
+	t.Parallel()
+
+	runner, err := NewCLIRunner(RunnerSpec{
+		Provider:    "claude",
+		Model:       "haiku",
+		Effort:      "low",
+		MemoryMode:  MemoryModeOff,
+		ContextMode: ContextModePersistent,
+	}, ".", "")
+	if err != nil {
+		t.Fatalf("NewCLIRunner: %v", err)
+	}
+	t.Cleanup(func() { _ = runner.Close() })
+
+	runner.nativeSessionPath = "/tmp/claude-session.jsonl"
+	args := runner.claudeArgs("prompt", false)
+	if !slices.Contains(args, "--resume") {
+		t.Fatalf("expected subsequent persistent claude args to use --resume: %v", args)
+	}
+	if slices.Contains(args, "--session-id") {
+		t.Fatalf("did not expect resumed persistent claude args to use --session-id: %v", args)
+	}
+}
+
 func TestCodexArgsIncludeServiceTier(t *testing.T) {
 	t.Parallel()
 

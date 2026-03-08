@@ -263,7 +263,11 @@ func (r *CLIRunner) claudeArgs(prompt string, ephemeral bool) []string {
 	if ephemeral || r.spec.ContextMode == ContextModeEphemeral {
 		args = append(args, "--no-session-persistence")
 	} else if r.claudeSessionID != "" {
-		args = append(args, "--session-id", r.claudeSessionID)
+		if r.nativeSessionPath != "" {
+			args = append(args, "--resume", r.claudeSessionID)
+		} else {
+			args = append(args, "--session-id", r.claudeSessionID)
+		}
 	}
 	args = append(args, prompt)
 	return args

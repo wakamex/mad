@@ -76,6 +76,39 @@ func TestDecodeDecisionSupportsLetterChoice(t *testing.T) {
 	}
 }
 
+func TestDecodeDecisionSupportsNumberWithColon(t *testing.T) {
+	raw := []byte("2:")
+	decision, err := decodeDecision(raw)
+	if err != nil {
+		t.Fatalf("decode decision: %v", err)
+	}
+	if decision.ActionIndex != 2 {
+		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
+func TestDecodeDecisionSupportsPrefixedNumber(t *testing.T) {
+	raw := []byte("choice 2")
+	decision, err := decodeDecision(raw)
+	if err != nil {
+		t.Fatalf("decode decision: %v", err)
+	}
+	if decision.ActionIndex != 2 {
+		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
+func TestDecodeDecisionSupportsLetterWithColon(t *testing.T) {
+	raw := []byte("A:")
+	decision, err := decodeDecision(raw)
+	if err != nil {
+		t.Fatalf("decode decision: %v", err)
+	}
+	if decision.ActionIndex != 1 {
+		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
 func TestBuildPromptOmitsNotesInstructionsWhenDisabled(t *testing.T) {
 	packet := PromptPacket{}
 	prompt, err := BuildPrompt(packet, 100, false, ActionLabelNumbers)
@@ -109,6 +142,33 @@ func TestBuildPromptUsesLetterInstructionWhenRequested(t *testing.T) {
 	}
 	if !strings.Contains(prompt, "Reply with only the action letter") {
 		t.Fatalf("expected prompt to require action letter, got %q", prompt)
+	}
+}
+
+func TestBuildActionChoicesPermutesOpenRouterLogprobOrder(t *testing.T) {
+	tick := season.TickDefinition{
+		TickID: "S1-T0001",
+		Opportunities: []season.Opportunity{
+			{
+				OpportunityID:   "opp.one",
+				AllowedCommands: []string{"commit"},
+				AllowedOptions:  []string{"alpha"},
+			},
+		},
+	}
+	choices := buildActionChoices(
+		RunnerSpec{Provider: "openrouter", Model: "openai/gpt-4o-mini"},
+		tick,
+		ActionLabelLetters,
+	)
+	if len(choices) != 2 {
+		t.Fatalf("expected 2 choices, got %d", len(choices))
+	}
+	if choices[0].Summary == "hold" {
+		t.Fatalf("expected first choice to be permuted away from hold: %#v", choices)
+	}
+	if choices[0].Label != "A" || choices[1].Label != "B" {
+		t.Fatalf("expected letter labels to remain positional: %#v", choices)
 	}
 }
 

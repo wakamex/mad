@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"strconv"
 	"strings"
 	"time"
@@ -380,7 +381,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			TickIndex:     tickIndex,
 			TickCount:     len(file.Ticks),
 			CurrentTick:   tick.Public(),
-			ActionChoices: buildActionChoices(tick, actionStyle),
+			ActionChoices: buildActionChoices(runner.Spec(), tick, actionStyle),
 			CurrentState:  state.Snapshot(),
 			RecentReveals: cloneReveals(visibleReveals),
 		}
@@ -407,7 +408,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			notes = ""
 		}
 
-		outcome := state.ApplyAction(tick, resolveDecisionAction(decision, tick))
+		outcome := state.ApplyAction(tick, resolveDecisionAction(decision, tick, runner.Spec()))
 		breakdown.Add(tick, outcome.AppliedRule)
 
 		step := StepTrace{
@@ -540,7 +541,7 @@ func runDecision(ctx context.Context, runner Runner, prompt string, tick season.
 		return string(bytes.TrimSpace(raw)), fallbackDecision(priorNotes, fmt.Sprintf("decode error: %v", err)), err
 	}
 	decision = sanitizeDecision(decision, priorNotes)
-	decision = validateDecisionAgainstTick(decision, tick)
+	decision = validateDecisionAgainstTick(decision, tick, runner.Spec())
 	return string(bytes.TrimSpace(raw)), decision, nil
 }
 
@@ -626,11 +627,11 @@ func sanitizeDecision(decision Decision, priorNotes string) Decision {
 	return decision
 }
 
-func validateDecisionAgainstTick(decision Decision, tick season.TickDefinition) Decision {
+func validateDecisionAgainstTick(decision Decision, tick season.TickDefinition, spec RunnerSpec) Decision {
 	if decision.ActionIndex <= 0 {
 		return fallbackDecision(decision.Notes, "missing action index")
 	}
-	actions := season.EnumerateActions(tick)
+	actions := actionsForRunnerTick(spec, tick)
 	if decision.ActionIndex > len(actions) {
 		return fallbackDecision(decision.Notes, "action index out of range")
 	}
@@ -678,8 +679,8 @@ func tickActionCount(file season.File) int {
 	return maxActions
 }
 
-func buildActionChoices(tick season.TickDefinition, style ActionLabelStyle) []PromptActionChoice {
-	actions := season.EnumerateActions(tick)
+func buildActionChoices(spec RunnerSpec, tick season.TickDefinition, style ActionLabelStyle) []PromptActionChoice {
+	actions := actionsForRunnerTick(spec, tick)
 	opportunityByID := make(map[string]season.Opportunity, len(tick.Opportunities))
 	for _, opportunity := range tick.Opportunities {
 		opportunityByID[opportunity.OpportunityID] = opportunity
@@ -697,6 +698,42 @@ func buildActionChoices(tick season.TickDefinition, style ActionLabelStyle) []Pr
 		})
 	}
 	return choices
+}
+
+func actionsForRunnerTick(spec RunnerSpec, tick season.TickDefinition) []season.SimulatedAction {
+	actions := season.EnumerateActions(tick)
+	if !openRouterUsesLogprobChoice(spec.Model) || len(actions) <= 1 {
+		return actions
+	}
+	out := make([]season.SimulatedAction, len(actions))
+	copy(out, actions)
+	permuteActionsDeterministically(out, spec.Model, tick.TickID)
+	return out
+}
+
+func permuteActionsDeterministically(actions []season.SimulatedAction, model string, tickID string) {
+	if len(actions) <= 1 {
+		return
+	}
+	h := fnv.New64a()
+	_, _ = h.Write([]byte(model))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(tickID))
+	state := h.Sum64()
+	for i := len(actions) - 1; i > 0; i-- {
+		state ^= state << 13
+		state ^= state >> 7
+		state ^= state << 17
+		j := int(state % uint64(i+1))
+		actions[i], actions[j] = actions[j], actions[i]
+	}
+	if actions[0].Command == "hold" && len(actions) > 1 {
+		state ^= state << 13
+		state ^= state >> 7
+		state ^= state << 17
+		j := int(state%uint64(len(actions)-1)) + 1
+		actions[0], actions[j] = actions[j], actions[0]
+	}
 }
 
 func actionChoiceLabel(index int, style ActionLabelStyle) string {
@@ -731,8 +768,8 @@ func actionSummary(action season.SimulatedAction, opportunity season.Opportunity
 	return summary
 }
 
-func resolveDecisionAction(decision Decision, tick season.TickDefinition) season.SimulatedAction {
-	actions := season.EnumerateActions(tick)
+func resolveDecisionAction(decision Decision, tick season.TickDefinition, spec RunnerSpec) season.SimulatedAction {
+	actions := actionsForRunnerTick(spec, tick)
 	if decision.ActionIndex <= 0 || decision.ActionIndex > len(actions) {
 		return season.SimulatedAction{Command: "hold"}
 	}
@@ -769,11 +806,12 @@ func decodePlainDecision(raw string) (Decision, error) {
 
 func parseActionIndex(selection string) (int, error) {
 	trimmed := strings.TrimSpace(selection)
-	trimmed = strings.Trim(trimmed, "[](){}.,")
+	trimmed = strings.Trim(trimmed, "[](){}.,:;`'\"")
 	lower := strings.ToLower(trimmed)
 	for _, prefix := range []string{"action:", "action", "choice:", "choice", "#"} {
 		if strings.HasPrefix(lower, prefix) {
 			trimmed = strings.TrimSpace(trimmed[len(prefix):])
+			trimmed = strings.Trim(trimmed, "[](){}.,:;`'\"")
 			lower = strings.ToLower(trimmed)
 			break
 		}
@@ -795,6 +833,9 @@ func parseActionIndex(selection string) (int, error) {
 	}
 	fields := strings.Fields(trimmed)
 	if len(fields) > 0 {
+		if fields[0] == trimmed {
+			return 0, fmt.Errorf("invalid action selection %q", selection)
+		}
 		return parseActionIndex(fields[0])
 	}
 	return 0, fmt.Errorf("invalid action selection %q", selection)

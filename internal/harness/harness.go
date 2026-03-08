@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -127,18 +128,24 @@ type PromptPacket struct {
 	TickIndex     int                         `json:"tick_index"`
 	TickCount     int                         `json:"tick_count"`
 	CurrentTick   season.PublicTick           `json:"current_tick"`
+	ActionChoices []PromptActionChoice        `json:"action_choices"`
 	CurrentState  season.HarnessStateSnapshot `json:"current_state"`
 	RecentReveals []season.SimulatedReveal    `json:"recent_reveals,omitempty"`
 	Notes         string                      `json:"notes,omitempty"`
 }
 
+type PromptActionChoice struct {
+	Label   string `json:"label,omitempty"`
+	Index   int    `json:"index"`
+	Summary string `json:"summary"`
+	Command string `json:"command"`
+	Target  string `json:"target,omitempty"`
+	Option  string `json:"option,omitempty"`
+}
+
 type Decision struct {
-	Command    string  `json:"command"`
-	Target     string  `json:"target,omitempty"`
-	Option     string  `json:"option,omitempty"`
-	Confidence float64 `json:"confidence"`
-	Theory     string  `json:"theory"`
-	Notes      string  `json:"notes"`
+	ActionIndex int    `json:"action_index"`
+	Notes       string `json:"notes,omitempty"`
 }
 
 type ScorePoint struct {
@@ -236,7 +243,7 @@ func ParseRunnerSpec(raw string) (RunnerSpec, error) {
 	spec := RunnerSpec{
 		Provider: strings.ToLower(strings.TrimSpace(provider)),
 	}
-	if spec.Provider != "codex" && spec.Provider != "claude" {
+	if spec.Provider != "codex" && spec.Provider != "claude" && spec.Provider != "openrouter" {
 		return RunnerSpec{}, fmt.Errorf("unsupported provider %q", spec.Provider)
 	}
 
@@ -260,7 +267,51 @@ func DefaultRunnerSpecs() []RunnerSpec {
 	}
 }
 
-func BuildPrompt(packet PromptPacket, maxNotesChars int) (string, error) {
+func RunnerWarnings(spec RunnerSpec) []string {
+	var warnings []string
+	if spec.Provider == "openrouter" {
+		if spec.MemoryMode != MemoryModeOff {
+			warnings = append(
+				warnings,
+				fmt.Sprintf(
+					"%s: memory=%s has no provider-native effect for OpenRouter; the current harness behaves like memory-off for this provider",
+					spec.Label(),
+					firstNonEmptyString(string(spec.MemoryMode), string(MemoryModeInherit)),
+				),
+			)
+		}
+		if spec.ContextMode == ContextModePersistent {
+			warnings = append(
+				warnings,
+				fmt.Sprintf(
+					"%s: context=persistent only carries harness notes forward; there is no provider-native OpenRouter session continuity",
+					spec.Label(),
+				),
+			)
+		}
+		if openRouterUsesLogprobChoice(spec.Model) && spec.ServiceTier == ServiceTierFast {
+			warnings = append(
+				warnings,
+				fmt.Sprintf(
+					"%s: service-tier=fast is ignored in OpenRouter logprob mode so the harness can stay on a provider path that returns top_logprobs",
+					spec.Label(),
+				),
+			)
+		}
+	}
+	return warnings
+}
+
+func firstNonEmptyString(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
+}
+
+func BuildPrompt(packet PromptPacket, maxNotesChars int, allowNotes bool, style ActionLabelStyle) (string, error) {
 	if maxNotesChars <= 0 {
 		maxNotesChars = defaultMaxNotesChars
 	}
@@ -271,13 +322,20 @@ func BuildPrompt(packet PromptPacket, maxNotesChars int) (string, error) {
 
 	var builder strings.Builder
 	builder.WriteString("You are playing Mutual Agent Destruction (MAD) offline.\n")
-	builder.WriteString("Return only JSON matching the provided schema.\n")
+	builder.WriteString("Choose exactly one action from ActionChoices.\n")
+	if style == ActionLabelLetters {
+		builder.WriteString("Reply with only the action letter, for example: A\n")
+	} else {
+		builder.WriteString("Reply with only the action number, for example: 1\n")
+	}
+	builder.WriteString("Do not explain. Do not output JSON. Do not output markdown. Do not repeat the prompt.\n")
 	builder.WriteString("Goal: maximize long-run score, not immediate reward.\n")
-	builder.WriteString("If you are uncertain, choose hold.\n")
+	builder.WriteString("If you are uncertain, choose 1 for hold.\n")
 	builder.WriteString("Player-owned state is exact. Source regimes are public source-bias periods visible to everyone.\n")
-	builder.WriteString("Use target = opportunity_id for non-hold actions. Only set option if the chosen opportunity allows it.\n")
-	builder.WriteString("Always emit every schema field. Use empty strings for unused target or option.\n")
-	builder.WriteString(fmt.Sprintf("Keep notes concise and durable; hard cap %d characters.\n", maxNotesChars))
+	if allowNotes {
+		builder.WriteString("You may optionally add a second line starting with 'Notes:' to store a short reminder.\n")
+		builder.WriteString(fmt.Sprintf("If you add notes, keep them concise and durable; hard cap %d characters.\n", maxNotesChars))
+	}
 	builder.WriteString("Packet:\n")
 	builder.Write(body)
 	builder.WriteString("\n")
@@ -304,6 +362,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 	visibleReveals, revealsByStart := revealWindows(report, startTick, options.RecentRevealCount)
 	notes := ""
 	persistNotes := runner.Spec().ContextMode != ContextModeEphemeral
+	actionStyle := actionLabelStyleForRunner(runner.Spec(), tickActionCount(file))
 
 	for tickIndex := startTick; tickIndex < endTick; tickIndex++ {
 		for _, reveal := range revealsByStart[tickIndex] {
@@ -321,13 +380,14 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			TickIndex:     tickIndex,
 			TickCount:     len(file.Ticks),
 			CurrentTick:   tick.Public(),
+			ActionChoices: buildActionChoices(tick, actionStyle),
 			CurrentState:  state.Snapshot(),
 			RecentReveals: cloneReveals(visibleReveals),
 		}
 		if persistNotes {
 			packet.Notes = notes
 		}
-		prompt, err := BuildPrompt(packet, options.MaxNotesChars)
+		prompt, err := BuildPrompt(packet, options.MaxNotesChars, persistNotes, actionStyle)
 		if err != nil {
 			return result, err
 		}
@@ -347,11 +407,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			notes = ""
 		}
 
-		outcome := state.ApplyAction(tick, season.SimulatedAction{
-			Command: decision.Command,
-			Target:  decision.Target,
-			Option:  decision.Option,
-		})
+		outcome := state.ApplyAction(tick, resolveDecisionAction(decision, tick))
 		breakdown.Add(tick, outcome.AppliedRule)
 
 		step := StepTrace{
@@ -485,13 +541,6 @@ func runDecision(ctx context.Context, runner Runner, prompt string, tick season.
 	}
 	decision = sanitizeDecision(decision, priorNotes)
 	decision = validateDecisionAgainstTick(decision, tick)
-	if decision.Command == "" {
-		decision.Command = "hold"
-	}
-	if decision.Command == "hold" {
-		decision.Target = ""
-		decision.Option = ""
-	}
 	return string(bytes.TrimSpace(raw)), decision, nil
 }
 
@@ -506,8 +555,29 @@ func decodeDecision(raw []byte) (Decision, error) {
 		return direct, nil
 	}
 
+	var directIndex int
+	if err := json.Unmarshal(trimmed, &directIndex); err == nil {
+		return Decision{ActionIndex: directIndex}, nil
+	}
+
 	var wrapped map[string]json.RawMessage
 	if err := json.Unmarshal(trimmed, &wrapped); err == nil {
+		indexKeys := []string{"action_index", "choice", "index", "action"}
+		for _, key := range indexKeys {
+			payload, ok := wrapped[key]
+			if !ok {
+				continue
+			}
+			if decision, err := decodeDecision(payload); err == nil {
+				if notesRaw, ok := wrapped["notes"]; ok {
+					var notes string
+					if err := json.Unmarshal(notesRaw, &notes); err == nil {
+						decision.Notes = strings.TrimSpace(notes)
+					}
+				}
+				return decision, nil
+			}
+		}
 		for _, key := range []string{"structured_output", "result", "response", "content", "output"} {
 			payload, ok := wrapped[key]
 			if !ok {
@@ -530,59 +600,41 @@ func decodeDecision(raw []byte) (Decision, error) {
 		return decodeDecision([]byte(content))
 	}
 
+	if decision, err := decodePlainDecision(string(trimmed)); err == nil {
+		return decision, nil
+	}
+
 	return Decision{}, fmt.Errorf("could not decode decision from %q", string(trimmed))
 }
 
 func looksLikeDecision(decision Decision) bool {
-	return strings.TrimSpace(decision.Command) != "" ||
-		strings.TrimSpace(decision.Theory) != "" ||
-		strings.TrimSpace(decision.Notes) != ""
+	return decision.ActionIndex > 0 || strings.TrimSpace(decision.Notes) != ""
 }
 
 func fallbackDecision(priorNotes string, reason string) Decision {
 	return Decision{
-		Command:    "hold",
-		Confidence: 0,
-		Theory:     clampText(reason, 240),
-		Notes:      priorNotes,
+		ActionIndex: 1,
+		Notes:       clampText(firstNonEmptyString(priorNotes, reason), defaultMaxNotesChars),
 	}
 }
 
 func sanitizeDecision(decision Decision, priorNotes string) Decision {
-	decision.Command = strings.TrimSpace(strings.ToLower(decision.Command))
-	decision.Target = strings.TrimSpace(decision.Target)
-	decision.Option = strings.TrimSpace(decision.Option)
-	decision.Theory = strings.TrimSpace(decision.Theory)
 	decision.Notes = strings.TrimSpace(decision.Notes)
 	if decision.Notes == "" {
 		decision.Notes = priorNotes
-	}
-	if decision.Confidence < 0 {
-		decision.Confidence = 0
-	}
-	if decision.Confidence > 1 {
-		decision.Confidence = 1
 	}
 	return decision
 }
 
 func validateDecisionAgainstTick(decision Decision, tick season.TickDefinition) Decision {
-	if decision.Command == "hold" {
-		return decision
+	if decision.ActionIndex <= 0 {
+		return fallbackDecision(decision.Notes, "missing action index")
 	}
-	for _, opportunity := range tick.Opportunities {
-		if decision.Target != opportunity.OpportunityID {
-			continue
-		}
-		if !containsString(opportunity.AllowedCommands, decision.Command) {
-			return fallbackDecision(decision.Notes, "invalid command for target")
-		}
-		if len(opportunity.AllowedOptions) > 0 && decision.Option != "" && !containsString(opportunity.AllowedOptions, decision.Option) {
-			return fallbackDecision(decision.Notes, "invalid option for target")
-		}
-		return decision
+	actions := season.EnumerateActions(tick)
+	if decision.ActionIndex > len(actions) {
+		return fallbackDecision(decision.Notes, "action index out of range")
 	}
-	return fallbackDecision(decision.Notes, "unknown target for current tick")
+	return decision
 }
 
 func containsString(values []string, target string) bool {
@@ -600,4 +652,150 @@ func clampText(value string, limit int) string {
 		return value
 	}
 	return strings.TrimSpace(value[:limit])
+}
+
+type ActionLabelStyle string
+
+const (
+	ActionLabelNumbers ActionLabelStyle = "numbers"
+	ActionLabelLetters ActionLabelStyle = "letters"
+)
+
+func actionLabelStyleForRunner(spec RunnerSpec, maxActions int) ActionLabelStyle {
+	if openRouterUsesLogprobChoice(spec.Model) && maxActions <= 26 {
+		return ActionLabelLetters
+	}
+	return ActionLabelNumbers
+}
+
+func tickActionCount(file season.File) int {
+	maxActions := 1
+	for _, tick := range file.Ticks {
+		if n := len(season.EnumerateActions(tick)); n > maxActions {
+			maxActions = n
+		}
+	}
+	return maxActions
+}
+
+func buildActionChoices(tick season.TickDefinition, style ActionLabelStyle) []PromptActionChoice {
+	actions := season.EnumerateActions(tick)
+	opportunityByID := make(map[string]season.Opportunity, len(tick.Opportunities))
+	for _, opportunity := range tick.Opportunities {
+		opportunityByID[opportunity.OpportunityID] = opportunity
+	}
+	choices := make([]PromptActionChoice, 0, len(actions))
+	for i, action := range actions {
+		opportunity := opportunityByID[action.Target]
+		choices = append(choices, PromptActionChoice{
+			Label:   actionChoiceLabel(i, style),
+			Index:   i + 1,
+			Summary: actionSummary(action, opportunity),
+			Command: action.Command,
+			Target:  action.Target,
+			Option:  action.Option,
+		})
+	}
+	return choices
+}
+
+func actionChoiceLabel(index int, style ActionLabelStyle) string {
+	if style == ActionLabelLetters && index >= 0 && index < 26 {
+		return string(rune('A' + index))
+	}
+	return strconv.Itoa(index + 1)
+}
+
+func actionSummary(action season.SimulatedAction, opportunity season.Opportunity) string {
+	if action.Command == "hold" {
+		return "hold"
+	}
+	summary := action.Command
+	if action.Target != "" {
+		summary += " " + action.Target
+	}
+	if action.Option != "" {
+		summary += " [" + action.Option + "]"
+	}
+	if len(opportunity.PublicRequirements) > 0 {
+		labels := make([]string, 0, len(opportunity.PublicRequirements))
+		for _, requirement := range opportunity.PublicRequirements {
+			if requirement.Label != "" {
+				labels = append(labels, requirement.Label)
+			}
+		}
+		if len(labels) > 0 {
+			summary += " | req: " + strings.Join(labels, "; ")
+		}
+	}
+	return summary
+}
+
+func resolveDecisionAction(decision Decision, tick season.TickDefinition) season.SimulatedAction {
+	actions := season.EnumerateActions(tick)
+	if decision.ActionIndex <= 0 || decision.ActionIndex > len(actions) {
+		return season.SimulatedAction{Command: "hold"}
+	}
+	return actions[decision.ActionIndex-1]
+}
+
+func decodePlainDecision(raw string) (Decision, error) {
+	lines := strings.Split(strings.ReplaceAll(raw, "\r\n", "\n"), "\n")
+	selection := ""
+	notes := ""
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		lower := strings.ToLower(line)
+		if strings.HasPrefix(lower, "notes:") {
+			notes = strings.TrimSpace(line[len("notes:"):])
+			continue
+		}
+		if selection == "" {
+			selection = line
+		}
+	}
+	if selection == "" {
+		return Decision{}, errors.New("missing action selection")
+	}
+	index, err := parseActionIndex(selection)
+	if err != nil {
+		return Decision{}, err
+	}
+	return Decision{ActionIndex: index, Notes: notes}, nil
+}
+
+func parseActionIndex(selection string) (int, error) {
+	trimmed := strings.TrimSpace(selection)
+	trimmed = strings.Trim(trimmed, "[](){}.,")
+	lower := strings.ToLower(trimmed)
+	for _, prefix := range []string{"action:", "action", "choice:", "choice", "#"} {
+		if strings.HasPrefix(lower, prefix) {
+			trimmed = strings.TrimSpace(trimmed[len(prefix):])
+			lower = strings.ToLower(trimmed)
+			break
+		}
+	}
+	if trimmed == "" {
+		return 0, errors.New("empty action selection")
+	}
+	if idx, err := strconv.Atoi(trimmed); err == nil && idx > 0 {
+		return idx, nil
+	}
+	if len(trimmed) == 1 {
+		ch := trimmed[0]
+		if ch >= 'A' && ch <= 'Z' {
+			return int(ch-'A') + 1, nil
+		}
+		if ch >= 'a' && ch <= 'z' {
+			return int(ch-'a') + 1, nil
+		}
+	}
+	fields := strings.Fields(trimmed)
+	if len(fields) > 0 {
+		return parseActionIndex(fields[0])
+	}
+	return 0, fmt.Errorf("invalid action selection %q", selection)
 }

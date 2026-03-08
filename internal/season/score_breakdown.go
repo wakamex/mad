@@ -12,19 +12,19 @@ type ScoreBreakdown struct {
 }
 
 type ScoreDecomposition struct {
-	ExplicitVisibleTotal      float64                   `json:"explicit_visible_total"`
-	HiddenOrNonlocalTotal     float64                   `json:"hidden_or_nonlocal_premium_total"`
-	ExplicitVisibleShare      float64                   `json:"explicit_visible_share_of_greedy,omitempty"`
-	ByFamily                  []ScoreDecompositionEntry `json:"by_family,omitempty"`
-	ByElement                 []ScoreDecompositionEntry `json:"by_element,omitempty"`
-	BySourceType              []ScoreDecompositionEntry `json:"by_source_type,omitempty"`
+	ExplicitVisibleTotal  float64                   `json:"explicit_visible_total"`
+	HiddenOrNonlocalTotal float64                   `json:"hidden_or_nonlocal_premium_total"`
+	ExplicitVisibleShare  float64                   `json:"explicit_visible_share_of_greedy,omitempty"`
+	ByFamily              []ScoreDecompositionEntry `json:"by_family,omitempty"`
+	ByElement             []ScoreDecompositionEntry `json:"by_element,omitempty"`
+	BySourceType          []ScoreDecompositionEntry `json:"by_source_type,omitempty"`
 }
 
 type ScoreDecompositionEntry struct {
-	Key                    string  `json:"key"`
-	ExplicitVisible        float64 `json:"explicit_visible"`
-	HiddenOrNonlocal       float64 `json:"hidden_or_nonlocal_premium"`
-	GreedyBest             float64 `json:"greedy_best"`
+	Key              string  `json:"key"`
+	ExplicitVisible  float64 `json:"explicit_visible"`
+	HiddenOrNonlocal float64 `json:"hidden_or_nonlocal_premium"`
+	GreedyBest       float64 `json:"greedy_best"`
 }
 
 type ScoreBreakdownEntry struct {

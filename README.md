@@ -102,11 +102,37 @@ For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-ru
   ./scripts/mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100
   ./scripts/mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json
   ./scripts/mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe
+  ./scripts/mad-run --provider openrouter --model openai/gpt-oss-20b --memory off --context ephemeral --service-tier fast --max-ticks 100
 ```
 
 `scripts/mad-run` creates a timestamped run directory under `build/runs/`, stores the exact command it launched, and writes a live-updating `harness.json` plus `launcher.log`.
 
 For unambiguous experiment labels, use the canonical mode definitions in [CONFIG.md](/code/mad/CONFIG.md). Forecast ranges for common model/mode permutations live in [FORECAST.md](/code/mad/FORECAST.md).
+
+## OpenRouter Fast-Baseline Shortlist
+
+If we add an OpenRouter-backed harness provider, it should accept any
+`openrouter:<model-slug>` runner and also ship a small preset shortlist for the
+canonical fast baselines.
+
+Recommended presets:
+
+- `openai/gpt-oss-20b`: default fast winner
+- `openai/gpt-oss-120b`: bigger / stronger fast model
+- `qwen/qwen3-32b`: non-OpenAI comparison
+- `meta-llama/llama-3.1-8b-instruct`: cheap weak floor
+
+Excluded for now:
+
+- `google/gemini-2.5-flash-lite-preview-09-2025`: does not add much beyond the
+  four models above
+- specialized apply / safeguard models: not fair general MAD baselines
+
+Design rule:
+
+- allow any OpenRouter slug so the harness stays future-proof
+- keep the four models above as named benchmark presets so plots and docs stay
+  comparable over time
 
 Memory and context semantics are explicit:
 
@@ -116,6 +142,7 @@ Memory and context semantics are explicit:
 - `codex --service-tier flex`: request the normal flex tier explicitly.
 - `claude --memory on`: use an isolated Claude home inside the run directory. With `--context persistent`, the harness keeps a persisted `claude -p` session. With `--context ephemeral`, it uses `--no-session-persistence` but still leaves Claude auto-memory enabled.
 - `claude --memory off`: use the same isolated Claude home, but explicitly set `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`. Session persistence still follows `--context`; memory-off no longer implies ephemeral.
+- `openrouter`: requires `OPENROUTER_API_KEY` in the environment. The current harness path is intended for fast baseline runs, especially `--memory off --context ephemeral`. It uses direct OpenRouter chat completions and asks the model to return a numbered action choice, which the harness validates locally. Unlike Codex and Claude, it does not currently have a provider-native session or memory layer inside the harness.
 - `--context persistent`: keep thread/session continuity and let the harness carry forward the model's own `notes` field across ticks.
 - `--context ephemeral`: run each tick as a one-shot baseline. Provider-native session continuity is disabled, and the harness does not carry prior `notes` into later prompts.
 

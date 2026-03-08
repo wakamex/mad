@@ -25,7 +25,6 @@ type ActionSubmission struct {
 	Command      string  `json:"command"`
 	Target       string  `json:"target,omitempty"`
 	Option       string  `json:"option,omitempty"`
-	Confidence   float64 `json:"confidence,omitempty"`
 	Theory       string  `json:"theory,omitempty"`
 	SubmissionID string  `json:"submission_id,omitempty"`
 }
@@ -134,11 +133,9 @@ type RevealBadAction struct {
 }
 
 type RevealStats struct {
-	Submissions             int64   `json:"submissions"`
-	CorrectPct              float64 `json:"correct_pct"`
-	MeanConfidenceCorrect   float64 `json:"mean_confidence_correct"`
-	MeanConfidenceIncorrect float64 `json:"mean_confidence_incorrect"`
-	MostCommonWrongOption   string  `json:"most_common_wrong_option,omitempty"`
+	Submissions           int64   `json:"submissions"`
+	CorrectPct            float64 `json:"correct_pct"`
+	MostCommonWrongOption string  `json:"most_common_wrong_option,omitempty"`
 }
 
 func (s Snapshot) SavedAtTime() time.Time {

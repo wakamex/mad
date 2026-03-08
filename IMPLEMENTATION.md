@@ -488,7 +488,7 @@ There is no separate timeout packet and no special crash recovery path in the ga
 - strategically meaningful
 - safer than random guessing
 
-Missing a tick should usually be bad, but not as bad as a wildly wrong high-confidence action.
+Missing a tick should usually be bad, but not as bad as a wildly wrong action that compounds debt or miss penalties.
 
 ### Dormant Players
 

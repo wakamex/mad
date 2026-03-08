@@ -130,7 +130,7 @@ What they test:
 
 - long-range retrieval
 - clue binding
-- confidence calibration on exploitation
+- disciplined exploitation under ambiguity
 
 ### 3. Reputation Ladders
 
@@ -195,27 +195,30 @@ What they test:
 - timing
 - willingness to skip locally attractive opportunities
 
-### 6. Preparedness Hazards
+### 6. Hazard Interrupts
 
 Purpose:
 
-- reward players who prepared earlier and punish reactive guessing
+- force explicit interrupt choices that depend on visible shared state, not parser trivia or hidden bookkeeping
 
 Typical beats:
 
-- early setup opportunity to obtain a tool, immunity, or protocol
-- later interrupt requiring exactly that preparation
+- interrupt with at least two meaningful response lanes
+- faction-specific protection or stabilization option
+- higher-upside exploit option with stricter visible requirements
 
 What they test:
 
-- delayed payoff
 - interruption handling
-- causal foresight
+- explicit-state planning under pressure
+- whether the player can trade safety against upside using visible state rather than hidden prep flags
 
 Authoring rule:
 
-- prefer a small number of visible preparedness items or capability flags over large item collections
-- the challenge should be having prepared the right thing, not remembering silent bag contents
+- do not introduce hazard-specific prep flags, inventories, or latent "did I prepare?" bookkeeping
+- do not make the family an always-positive local freebie
+- do not make the family so punitive that even strong play is net-negative
+- this family is currently unresolved and should be treated as an open balancing/design problem, not a finished template
 
 ### 7. Market and Scarcity Loops
 
@@ -486,7 +489,7 @@ The first useful milestone should support:
 - `Reputation Ladders`
 - `Standing Work Loops`
 - `Commitment Arcs`
-- `Preparedness Hazards`
+- `Hazard Interrupts`
 - `Decoy Sink Elements`
 
 That set is enough to create:
@@ -495,7 +498,7 @@ That set is enough to create:
 - broad optionality under uncertainty
 - delayed payoff
 - faction lock-in
-- interrupt preparedness
+- interrupt handling
 - anti-random pressure
 
 After that, add:

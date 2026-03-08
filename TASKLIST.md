@@ -115,7 +115,28 @@ Needed:
 - no-provenance baseline
 - greedy-calibrated baseline
 
-## 8. Generator Prototype
+## 8. Hazard Interrupt Redesign
+
+Status: pending
+
+Goal:
+
+- resolve whether the current `hazard_interrupt` family has a real skill ceiling instead of being either a visible-state leak or simply net-negative for every policy
+
+Needed:
+
+- decide whether interrupts should remain a first-class family at all
+- if they stay, make them reward smart visible-state planning without turning into free local EV
+- ensure `greedy_best` can recover net positive value from the family while `visible_greedy` stays near-neutral or negative
+- verify that any remaining interrupt difficulty comes from meaningful tradeoffs, not arbitrary punishment
+
+Current execution:
+
+- old `preparedness_hazard` leak was removed
+- current `hazard_interrupt` rewrite fixed the visible-state leak but is likely overcorrected and too punitive overall
+- defer further balancing until the family is reconsidered at the design level
+
+## 9. Generator Prototype
 
 Status: completed
 
@@ -136,7 +157,7 @@ Current execution:
 - the current audit is clean at weave time: `cross_element_dependencies=701`, `flat_greedy_beats=0`, `weak_standing_work=0`
 - the current random audit over `5000` runs yields roughly `mean=-1601`, `p90=-146`, and `positive_rate≈8.1%`
 
-## 9. Standing Work Loop Audits
+## 10. Standing Work Loop Audits
 
 Status: in progress
 

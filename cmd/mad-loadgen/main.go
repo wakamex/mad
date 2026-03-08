@@ -35,7 +35,6 @@ func main() {
 	command := flag.String("command", "hold", "Action command to submit")
 	target := flag.String("target", "", "Action target to submit")
 	option := flag.String("option", "", "Action option to submit")
-	confidence := flag.Float64("confidence", 0, "Action confidence to submit")
 	flag.Parse()
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -84,7 +83,6 @@ func main() {
 					Command:    *command,
 					Target:     *target,
 					Option:     *option,
-					Confidence: *confidence,
 				})
 				if err != nil {
 					atomic.AddInt64(&other, 1)

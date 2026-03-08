@@ -79,6 +79,11 @@ func main() {
 		specs[i].ContextMode = contextMode
 		specs[i].ServiceTier = serviceTier
 	}
+	for _, spec := range specs {
+		for _, warning := range harness.RunnerWarnings(spec) {
+			log.Printf("runner_warning %s", warning)
+		}
+	}
 
 	report := harness.SuiteReport{
 		GeneratedAt: time.Now().UTC(),

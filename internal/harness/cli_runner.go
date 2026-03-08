@@ -7,21 +7,21 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
+const openRouterChatURL = "https://openrouter.ai/api/v1/chat/completions"
+
 type CLIRunner struct {
 	spec              RunnerSpec
 	workdir           string
 	tempDir           string
 	cleanup           bool
-	actionSchemaJSON  string
-	probeSchemaJSON   string
-	actionSchemaPath  string
-	probeSchemaPath   string
 	codexThreadID     string
 	claudeSessionID   string
 	nativeHomeDir     string
@@ -53,32 +53,11 @@ func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner,
 		}
 	}
 
-	actionSchemaJSON, err := actionSchema()
-	if err != nil {
-		return nil, err
-	}
-	probeSchemaJSON, err := probeSchema()
-	if err != nil {
-		return nil, err
-	}
-	actionSchemaPath := filepath.Join(tempDir, "action.schema.json")
-	probeSchemaPath := filepath.Join(tempDir, "probe.schema.json")
-	if err := os.WriteFile(actionSchemaPath, []byte(actionSchemaJSON), 0o644); err != nil {
-		return nil, err
-	}
-	if err := os.WriteFile(probeSchemaPath, []byte(probeSchemaJSON), 0o644); err != nil {
-		return nil, err
-	}
-
 	runner := &CLIRunner{
-		spec:             spec,
-		workdir:          absWorkdir,
-		tempDir:          tempDir,
-		cleanup:          cleanup,
-		actionSchemaJSON: actionSchemaJSON,
-		probeSchemaJSON:  probeSchemaJSON,
-		actionSchemaPath: actionSchemaPath,
-		probeSchemaPath:  probeSchemaPath,
+		spec:    spec,
+		workdir: absWorkdir,
+		tempDir: tempDir,
+		cleanup: cleanup,
 	}
 	if spec.Provider == "claude" {
 		runner.claudeHome = filepath.Join(tempDir, "claude-home")
@@ -98,6 +77,8 @@ func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner,
 	} else if spec.Provider == "codex" {
 		runner.nativeHomeDir = resolveCodexHome()
 		runner.nativeProjectDir = filepath.Join(resolveCodexHome(), "sessions")
+	} else if spec.Provider == "openrouter" {
+		runner.nativeProjectDir = ""
 	}
 	return runner, nil
 }
@@ -135,23 +116,27 @@ func (r *CLIRunner) Decide(ctx context.Context, prompt string) ([]byte, error) {
 	ephemeral := r.spec.ContextMode == ContextModeEphemeral
 	switch r.spec.Provider {
 	case "codex":
-		return r.runCodex(ctx, prompt, r.actionSchemaPath, ephemeral)
+		return r.runCodex(ctx, prompt, ephemeral)
 	case "claude":
-		return r.runClaude(ctx, prompt, r.actionSchemaJSON, ephemeral)
+		return r.runClaude(ctx, prompt, ephemeral)
+	case "openrouter":
+		return r.runOpenRouter(ctx, prompt)
 	default:
 		return nil, fmt.Errorf("unsupported provider %q", r.spec.Provider)
 	}
 }
 
 func (r *CLIRunner) Probe(ctx context.Context) error {
-	const prompt = `Return exactly {"ok": true}.`
+	const prompt = "Reply with exactly OK."
 	var raw []byte
 	var err error
 	switch r.spec.Provider {
 	case "codex":
-		raw, err = r.runCodex(ctx, prompt, r.probeSchemaPath, true)
+		raw, err = r.runCodex(ctx, prompt, true)
 	case "claude":
-		raw, err = r.runClaude(ctx, prompt, r.probeSchemaJSON, true)
+		raw, err = r.runClaude(ctx, prompt, true)
+	case "openrouter":
+		raw, err = r.runOpenRouter(ctx, prompt)
 	default:
 		return fmt.Errorf("unsupported provider %q", r.spec.Provider)
 	}
@@ -161,7 +146,7 @@ func (r *CLIRunner) Probe(ctx context.Context) error {
 	return decodeProbe(raw)
 }
 
-func (r *CLIRunner) runCodex(ctx context.Context, prompt string, schemaPath string, ephemeral bool) ([]byte, error) {
+func (r *CLIRunner) runCodex(ctx context.Context, prompt string, ephemeral bool) ([]byte, error) {
 	outputFile, err := os.CreateTemp("", "mad-codex-output-*.json")
 	if err != nil {
 		return nil, err
@@ -172,7 +157,7 @@ func (r *CLIRunner) runCodex(ctx context.Context, prompt string, schemaPath stri
 	}
 	defer os.Remove(outputPath)
 
-	args := r.codexArgs(prompt, schemaPath, outputPath, ephemeral)
+	args := r.codexArgs(prompt, outputPath, ephemeral)
 
 	cmd := exec.CommandContext(ctx, "codex", args...)
 	cmd.Dir = r.workdir
@@ -183,7 +168,7 @@ func (r *CLIRunner) runCodex(ctx context.Context, prompt string, schemaPath stri
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		if recovered, ok := recoverStructuredOutput(outputPath, stdout.Bytes(), stderr.Bytes()); ok {
+		if recovered, ok := recoverModelText(outputPath, stdout.Bytes(), stderr.Bytes()); ok {
 			if !ephemeral {
 				r.captureCodexSession(stdout.Bytes())
 			}
@@ -195,15 +180,15 @@ func (r *CLIRunner) runCodex(ctx context.Context, prompt string, schemaPath stri
 		r.captureCodexSession(stdout.Bytes())
 	}
 
-	content, ok := recoverStructuredOutput(outputPath, stdout.Bytes(), stderr.Bytes())
+	content, ok := recoverModelText(outputPath, stdout.Bytes(), stderr.Bytes())
 	if !ok {
-		return nil, fmt.Errorf("codex %s produced empty structured output", r.spec.Label())
+		return nil, fmt.Errorf("codex %s produced empty output", r.spec.Label())
 	}
 	return content, nil
 }
 
-func (r *CLIRunner) runClaude(ctx context.Context, prompt string, schemaJSON string, ephemeral bool) ([]byte, error) {
-	args := r.claudeArgs(prompt, schemaJSON, ephemeral)
+func (r *CLIRunner) runClaude(ctx context.Context, prompt string, ephemeral bool) ([]byte, error) {
+	args := r.claudeArgs(prompt, ephemeral)
 	cmd := exec.CommandContext(ctx, "claude", args...)
 	cmd.Dir = r.workdir
 	cmd.Env = r.claudeEnv()
@@ -212,7 +197,7 @@ func (r *CLIRunner) runClaude(ctx context.Context, prompt string, schemaJSON str
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		if recovered, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes()); ok {
+		if recovered, ok := recoverModelText("", stdout.Bytes(), stderr.Bytes()); ok {
 			if !ephemeral || r.claudeSessionID != "" {
 				r.captureClaudeSession()
 			}
@@ -223,19 +208,53 @@ func (r *CLIRunner) runClaude(ctx context.Context, prompt string, schemaJSON str
 	if !ephemeral || r.claudeSessionID != "" {
 		r.captureClaudeSession()
 	}
-	content, ok := recoverStructuredOutput("", stdout.Bytes(), stderr.Bytes())
+	content, ok := recoverModelText("", stdout.Bytes(), stderr.Bytes())
 	if !ok {
-		return nil, fmt.Errorf("claude %s produced empty structured output stdout=%q stderr=%q", r.spec.Label(), strings.TrimSpace(stdout.String()), strings.TrimSpace(stderr.String()))
+		return nil, fmt.Errorf("claude %s produced empty output stdout=%q stderr=%q", r.spec.Label(), strings.TrimSpace(stdout.String()), strings.TrimSpace(stderr.String()))
 	}
 	return content, nil
 }
 
-func (r *CLIRunner) claudeArgs(prompt string, schemaJSON string, ephemeral bool) []string {
+func (r *CLIRunner) runOpenRouter(ctx context.Context, prompt string) ([]byte, error) {
+	payload, err := openRouterPayload(r.spec, prompt)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, openRouterChatURL, bytes.NewReader(payload))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+openRouterAPIKey())
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "mad-harness/1")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("openrouter %s request failed: %w", r.spec.Label(), err)
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("openrouter %s read failed: %w", r.spec.Label(), err)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("openrouter %s status=%s body=%s", r.spec.Label(), resp.Status, strings.TrimSpace(string(body)))
+	}
+	content, err := extractOpenRouterContent(body)
+	if err != nil {
+		return nil, fmt.Errorf("openrouter %s decode failed: %w body=%s", r.spec.Label(), err, strings.TrimSpace(string(body)))
+	}
+	if recovered, ok := recoverModelText("", content, nil); ok {
+		return recovered, nil
+	}
+	return nil, fmt.Errorf("openrouter %s produced non-JSON content=%q", r.spec.Label(), strings.TrimSpace(string(content)))
+}
+
+func (r *CLIRunner) claudeArgs(prompt string, ephemeral bool) []string {
 	args := []string{
 		"-p",
 		"--model", r.spec.Model,
-		"--output-format", "json",
-		"--json-schema", schemaJSON,
 		"--tools", "",
 	}
 	if r.spec.Effort != "" {
@@ -264,7 +283,7 @@ func (r *CLIRunner) claudeEnv() []string {
 	return env
 }
 
-func (r *CLIRunner) codexArgs(prompt string, schemaPath string, outputPath string, ephemeral bool) []string {
+func (r *CLIRunner) codexArgs(prompt string, outputPath string, ephemeral bool) []string {
 	if r.codexThreadID != "" && !ephemeral {
 		args := []string{"exec", "resume", r.codexThreadID}
 		if r.spec.Model != "" {
@@ -291,7 +310,6 @@ func (r *CLIRunner) codexArgs(prompt string, schemaPath string, outputPath strin
 		"-s", "read-only",
 		"-C", r.workdir,
 		"--skip-git-repo-check",
-		"--output-schema", schemaPath,
 		"-o", outputPath,
 		"--color", "never",
 		"--json",
@@ -334,6 +352,9 @@ func decodeProbe(raw []byte) error {
 	if len(trimmed) == 0 {
 		return fmt.Errorf("empty probe response")
 	}
+	if strings.EqualFold(string(trimmed), "ok") {
+		return nil
+	}
 
 	var direct struct {
 		OK bool `json:"ok"`
@@ -368,61 +389,6 @@ func decodeProbe(raw []byte) error {
 	return fmt.Errorf("probe response did not validate: %s", string(trimmed))
 }
 
-func actionSchema() (string, error) {
-	schema := map[string]any{
-		"type":                 "object",
-		"additionalProperties": false,
-		"properties": map[string]any{
-			"command": map[string]any{
-				"type": "string",
-			},
-			"target": map[string]any{
-				"type": "string",
-			},
-			"option": map[string]any{
-				"type": "string",
-			},
-			"confidence": map[string]any{
-				"type":    "number",
-				"minimum": 0,
-				"maximum": 1,
-			},
-			"theory": map[string]any{
-				"type": "string",
-			},
-			"notes": map[string]any{
-				"type":      "string",
-				"maxLength": defaultMaxNotesChars,
-			},
-		},
-		"required": []string{"command", "target", "option", "confidence", "theory", "notes"},
-	}
-	raw, err := json.Marshal(schema)
-	if err != nil {
-		return "", err
-	}
-	return string(raw), nil
-}
-
-func probeSchema() (string, error) {
-	schema := map[string]any{
-		"type":                 "object",
-		"additionalProperties": false,
-		"properties": map[string]any{
-			"ok": map[string]any{
-				"type":  "boolean",
-				"const": true,
-			},
-		},
-		"required": []string{"ok"},
-	}
-	raw, err := json.Marshal(schema)
-	if err != nil {
-		return "", err
-	}
-	return string(raw), nil
-}
-
 func filteredEnv(dropKeys ...string) []string {
 	if len(dropKeys) == 0 {
 		return os.Environ()
@@ -445,18 +411,217 @@ func filteredEnv(dropKeys ...string) []string {
 	return env
 }
 
-func recoverStructuredOutput(outputPath string, stdout []byte, stderr []byte) ([]byte, bool) {
+func recoverModelText(outputPath string, stdout []byte, stderr []byte) ([]byte, bool) {
 	if outputPath != "" {
 		if content, err := os.ReadFile(outputPath); err == nil && len(bytes.TrimSpace(content)) > 0 {
 			return bytes.TrimSpace(content), true
 		}
 	}
 	for _, blob := range [][]byte{stdout, stderr} {
+		if content, ok := extractCodexAssistantText(blob); ok {
+			return content, true
+		}
 		if content, ok := extractJSONObjectLine(blob); ok {
 			return content, true
 		}
+		trimmed := bytes.TrimSpace(blob)
+		if len(trimmed) > 0 {
+			return trimmed, true
+		}
 	}
 	return nil, false
+}
+
+func openRouterAPIKey() string {
+	return strings.TrimSpace(os.Getenv("OPENROUTER_API_KEY"))
+}
+
+func openRouterPayload(spec RunnerSpec, prompt string) ([]byte, error) {
+	if openRouterAPIKey() == "" {
+		return nil, fmt.Errorf("OPENROUTER_API_KEY is not set")
+	}
+	payload := map[string]any{
+		"model": spec.Model,
+		"messages": []map[string]string{
+			{"role": "user", "content": prompt},
+		},
+		"max_tokens":  96,
+		"temperature": 0,
+	}
+	if openRouterUsesLogprobChoice(spec.Model) {
+		payload["max_tokens"] = 1
+		payload["logprobs"] = true
+		payload["top_logprobs"] = 20
+	}
+	if reasoning := openRouterReasoningConfig(spec.Model); reasoning != nil {
+		payload["reasoning"] = reasoning
+	}
+	if spec.ServiceTier == ServiceTierFast && !openRouterUsesLogprobChoice(spec.Model) {
+		payload["provider"] = map[string]any{"sort": "throughput"}
+	}
+	return json.Marshal(payload)
+}
+
+func openRouterReasoningConfig(model string) map[string]any {
+	model = strings.ToLower(strings.TrimSpace(model))
+	switch {
+	case strings.Contains(model, "gpt-oss"):
+		return map[string]any{
+			"exclude": true,
+		}
+	case strings.Contains(model, "qwen/qwen3"):
+		return map[string]any{
+			"effort":  "none",
+			"exclude": true,
+		}
+	default:
+		return nil
+	}
+}
+
+func openRouterUsesLogprobChoice(model string) bool {
+	model = strings.ToLower(strings.TrimSpace(model))
+	return strings.Contains(model, "openai/gpt-4o-mini")
+}
+
+func extractOpenRouterContent(raw []byte) ([]byte, error) {
+	var response struct {
+		Choices []struct {
+			Message struct {
+				Content any `json:"content"`
+			} `json:"message"`
+			Logprobs struct {
+				Content []struct {
+					Token       string `json:"token"`
+					TopLogprobs []struct {
+						Token string `json:"token"`
+					} `json:"top_logprobs"`
+				} `json:"content"`
+			} `json:"logprobs"`
+		} `json:"choices"`
+	}
+	if err := json.Unmarshal(raw, &response); err != nil {
+		return nil, err
+	}
+	if len(response.Choices) == 0 {
+		return nil, fmt.Errorf("response had no choices")
+	}
+	content := response.Choices[0].Message.Content
+	switch typed := content.(type) {
+	case string:
+		return []byte(typed), nil
+	case []any:
+		var builder strings.Builder
+		for _, part := range typed {
+			obj, ok := part.(map[string]any)
+			if !ok {
+				continue
+			}
+			text, _ := obj["text"].(string)
+			builder.WriteString(text)
+		}
+		if builder.Len() == 0 {
+			if token, ok := extractOpenRouterLogprobToken(response.Choices[0].Logprobs); ok {
+				return []byte(token), nil
+			}
+			return nil, fmt.Errorf("content parts had no text")
+		}
+		return []byte(builder.String()), nil
+	default:
+		if token, ok := extractOpenRouterLogprobToken(response.Choices[0].Logprobs); ok {
+			return []byte(token), nil
+		}
+		return nil, fmt.Errorf("unsupported content type %T", content)
+	}
+}
+
+func extractOpenRouterLogprobToken(logprobs struct {
+	Content []struct {
+		Token       string `json:"token"`
+		TopLogprobs []struct {
+			Token string `json:"token"`
+		} `json:"top_logprobs"`
+	} `json:"content"`
+}) (string, bool) {
+	for _, part := range logprobs.Content {
+		if token, ok := normalizeOpenRouterChoiceToken(part.Token); ok {
+			return token, true
+		}
+		for _, candidate := range part.TopLogprobs {
+			if token, ok := normalizeOpenRouterChoiceToken(candidate.Token); ok {
+				return token, true
+			}
+		}
+	}
+	return "", false
+}
+
+func normalizeOpenRouterChoiceToken(token string) (string, bool) {
+	token = strings.TrimSpace(token)
+	token = strings.Trim(token, "\"'`[](){}.,")
+	if len(token) != 1 {
+		return "", false
+	}
+	ch := token[0]
+	if ch >= 'A' && ch <= 'Z' {
+		return string(ch), true
+	}
+	if ch >= 'a' && ch <= 'z' {
+		return strings.ToUpper(token), true
+	}
+	if ch >= '1' && ch <= '9' {
+		return string(ch), true
+	}
+	return "", false
+}
+
+func extractCodexAssistantText(raw []byte) ([]byte, bool) {
+	lines := bytes.Split(raw, []byte{'\n'})
+	var latest string
+	for _, line := range lines {
+		line = bytes.TrimSpace(line)
+		if len(line) == 0 || !json.Valid(line) {
+			continue
+		}
+		var event map[string]any
+		if err := json.Unmarshal(line, &event); err != nil {
+			continue
+		}
+		if fmt.Sprint(event["type"]) != "response.output_item.done" {
+			continue
+		}
+		item, ok := event["item"].(map[string]any)
+		if !ok {
+			continue
+		}
+		role, _ := item["role"].(string)
+		if role != "" && role != "assistant" {
+			continue
+		}
+		content, ok := item["content"].([]any)
+		if !ok {
+			continue
+		}
+		var builder strings.Builder
+		for _, part := range content {
+			entry, ok := part.(map[string]any)
+			if !ok {
+				continue
+			}
+			if entryType, _ := entry["type"].(string); entryType != "output_text" {
+				continue
+			}
+			text, _ := entry["text"].(string)
+			builder.WriteString(text)
+		}
+		if builder.Len() > 0 {
+			latest = builder.String()
+		}
+	}
+	if strings.TrimSpace(latest) == "" {
+		return nil, false
+	}
+	return []byte(strings.TrimSpace(latest)), true
 }
 
 func (r *CLIRunner) captureCodexSession(stdout []byte) {

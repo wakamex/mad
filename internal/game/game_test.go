@@ -52,7 +52,6 @@ func TestSubmitAndScoreEpoch(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "broker",
-		Confidence: 0.80,
 	}, time.Now().UTC())
 	if err != nil {
 		t.Fatalf("submit: %v", err)
@@ -87,7 +86,6 @@ func TestRevealPublishedAfterLag(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "smuggler",
-		Confidence: 0.95,
 	}, now)
 	if err != nil {
 		t.Fatalf("submit: %v", err)
@@ -125,7 +123,6 @@ func TestWALWritten(t *testing.T) {
 	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:     current.TickID,
 		Command:    "hold",
-		Confidence: 0,
 	}, time.Now().UTC())
 	if err != nil {
 		t.Fatalf("submit: %v", err)
@@ -148,7 +145,6 @@ func TestSnapshotRoundTrip(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "broker",
-		Confidence: 0.75,
 	}, now)
 	if err != nil {
 		t.Fatalf("submit: %v", err)
@@ -174,7 +170,6 @@ func TestSubmitIdempotentRetry(t *testing.T) {
 	action := ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
-		Confidence:   0,
 		SubmissionID: "retry-1",
 	}
 
@@ -199,7 +194,6 @@ func TestSubmitRejectsMutationAfterCommit(t *testing.T) {
 	_, err := engine.Submit(engine.DevToken(1), ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
-		Confidence:   0,
 		SubmissionID: "first",
 	}, now)
 	if err != nil {
@@ -211,7 +205,6 @@ func TestSubmitRejectsMutationAfterCommit(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "broker",
-		Confidence:   0.8,
 		SubmissionID: "second",
 	}, now.Add(250*time.Millisecond))
 	if !CheckErr(err, ErrorTickAlreadyCommitted()) {
@@ -229,7 +222,6 @@ func TestSubmitRejectsConflictingSubmissionID(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "broker",
-		Confidence:   0.8,
 		SubmissionID: "same-id",
 	}, now)
 	if err != nil {
@@ -241,7 +233,6 @@ func TestSubmitRejectsConflictingSubmissionID(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "smuggler",
-		Confidence:   0.8,
 		SubmissionID: "same-id",
 	}, now.Add(250*time.Millisecond))
 	if !CheckErr(err, ErrorSubmissionIDConflict()) {
@@ -278,7 +269,6 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.ward_service.1",
 		Option:     "cleanup",
-		Confidence: 0.80,
 	}, firstActionAt); err != nil {
 		t.Fatalf("submit first action: %v", err)
 	}
@@ -291,7 +281,6 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.ward_service.1",
 		Option:     "cleanup",
-		Confidence: 0.95,
 	}, secondActionAt); err != nil {
 		t.Fatalf("submit second action: %v", err)
 	}
@@ -306,7 +295,6 @@ func TestRecoverFromSnapshotAndWAL(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "broker",
-		Confidence: 0.90,
 	}, secondTickActionAt); err != nil {
 		t.Fatalf("submit third action: %v", err)
 	}
@@ -357,7 +345,6 @@ func TestAbsentPlayerScheduledDebtInterest(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "smuggler",
-		Confidence: 0.95,
 	}, now)
 	if err != nil {
 		t.Fatalf("submit debt action: %v", err)
@@ -421,7 +408,6 @@ func BenchmarkSubmit(b *testing.B) {
 		if _, err := engine.Submit(token, ActionSubmission{
 			TickID:       current.TickID,
 			Command:      "hold",
-			Confidence:   0,
 			SubmissionID: "bench",
 		}, time.Now().UTC()); err != nil {
 			b.Fatal(err)

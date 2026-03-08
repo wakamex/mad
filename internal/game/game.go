@@ -221,7 +221,6 @@ func (e *Engine) Submit(token string, action ActionSubmission, now time.Time) (A
 			Command:      action.Command,
 			Target:       action.Target,
 			Option:       action.Option,
-			Confidence:   action.Confidence,
 			ReceivedAt:   now,
 		})
 	}
@@ -396,7 +395,6 @@ func (e *Engine) RecoverFromRecords(records []storage.ActionRecord, until time.T
 			Command:      record.Command,
 			Target:       record.Target,
 			Option:       record.Option,
-			Confidence:   record.Confidence,
 			SubmissionID: record.SubmissionID,
 		}
 		if err := validateAction(action); err != nil {
@@ -442,8 +440,6 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 	tickSeq := e.currentTickSeq
 	submissionCount := int64(0)
 	correctCount := int64(0)
-	var sumCorrectConfidence float64
-	var sumIncorrectConfidence float64
 	wrongOptions := make(map[string]int)
 
 	for _, playerID := range e.activePlayers {
@@ -458,9 +454,7 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 		e.reconcilePlayerDueStateLocked(playerID, tickSeq)
 		if correct {
 			correctCount++
-			sumCorrectConfidence += action.Confidence
 		} else {
-			sumIncorrectConfidence += action.Confidence
 			if action.Option != "" {
 				wrongOptions[action.Option]++
 			}
@@ -489,8 +483,6 @@ func (e *Engine) closeCurrentTickLocked(now time.Time) {
 			now,
 			submissionCount,
 			correctCount,
-			sumCorrectConfidence,
-			sumIncorrectConfidence,
 			mostCommonWrongOption(wrongOptions),
 		)
 	}
@@ -518,7 +510,6 @@ func actionFingerprint(action ActionSubmission) uint64 {
 		action.Command,
 		action.Target,
 		action.Option,
-		fmt.Sprintf("%.6f", action.Confidence),
 		action.Theory,
 	}, "\x1f")))
 	return binary.BigEndian.Uint64(sum[:8])
@@ -737,7 +728,7 @@ func matches(match season.ActionMatch, action ActionSubmission) bool {
 	return true
 }
 
-func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submissions, correct int64, sumCorrectConfidence, sumIncorrectConfidence float64, mostCommonWrong string) RevealPacket {
+func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submissions, correct int64, mostCommonWrong string) RevealPacket {
 	bestRule := season.Rule{}
 	var badRules []season.Rule
 	for _, rule := range tick.Scoring.Rules {
@@ -752,15 +743,6 @@ func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submi
 	correctPct := 0.0
 	if submissions > 0 {
 		correctPct = float64(correct) / float64(submissions) * 100
-	}
-	meanCorrect := 0.0
-	if correct > 0 {
-		meanCorrect = sumCorrectConfidence / float64(correct)
-	}
-	incorrect := submissions - correct
-	meanIncorrect := 0.0
-	if incorrect > 0 {
-		meanIncorrect = sumIncorrectConfidence / float64(incorrect)
 	}
 
 	bad := make([]RevealBadAction, 0, len(badRules))
@@ -792,11 +774,9 @@ func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submi
 				BadActionClasses:  bad,
 				PublicExplanation: bestRule.Label,
 				Stats: RevealStats{
-					Submissions:             submissions,
-					CorrectPct:              correctPct,
-					MeanConfidenceCorrect:   meanCorrect,
-					MeanConfidenceIncorrect: meanIncorrect,
-					MostCommonWrongOption:   mostCommonWrong,
+					Submissions:           submissions,
+					CorrectPct:            correctPct,
+					MostCommonWrongOption: mostCommonWrong,
 				},
 			},
 		},
@@ -805,9 +785,6 @@ func buildRevealPacket(tick season.TickDefinition, lag int, now time.Time, submi
 
 func validateAction(action ActionSubmission) error {
 	if action.TickID == "" || action.Command == "" {
-		return errInvalidBody
-	}
-	if action.Command != "hold" && (action.Confidence < 0 || action.Confidence > 1) {
 		return errInvalidBody
 	}
 	if len(action.Theory) > 512 {

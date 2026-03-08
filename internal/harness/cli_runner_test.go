@@ -1,6 +1,7 @@
 package harness
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"slices"
@@ -97,6 +98,105 @@ func TestParseServiceTier(t *testing.T) {
 	}
 }
 
+func TestParseRunnerSpecSupportsOpenRouter(t *testing.T) {
+	t.Parallel()
+
+	spec, err := ParseRunnerSpec("openrouter:openai/gpt-oss-20b")
+	if err != nil {
+		t.Fatalf("ParseRunnerSpec: %v", err)
+	}
+	if spec.Provider != "openrouter" || spec.Model != "openai/gpt-oss-20b" {
+		t.Fatalf("unexpected spec: %+v", spec)
+	}
+}
+
+func TestRunnerWarningsForOpenRouterModes(t *testing.T) {
+	t.Parallel()
+
+	warnings := RunnerWarnings(RunnerSpec{
+		Provider:    "openrouter",
+		Model:       "openai/gpt-oss-20b",
+		MemoryMode:  MemoryModeOn,
+		ContextMode: ContextModePersistent,
+	})
+	if len(warnings) != 2 {
+		t.Fatalf("RunnerWarnings() = %d warnings, want 2: %#v", len(warnings), warnings)
+	}
+	if !strings.Contains(warnings[0], "memory=") && !strings.Contains(warnings[1], "memory=") {
+		t.Fatalf("expected memory warning: %#v", warnings)
+	}
+	if !strings.Contains(warnings[0], "context=persistent") && !strings.Contains(warnings[1], "context=persistent") {
+		t.Fatalf("expected context warning: %#v", warnings)
+	}
+}
+
+func TestOpenRouterReasoningConfig(t *testing.T) {
+	t.Parallel()
+
+	oss := openRouterReasoningConfig("openai/gpt-oss-20b")
+	if oss == nil {
+		t.Fatalf("expected gpt-oss-20b to use reasoning config")
+	}
+	if _, ok := oss["effort"]; ok {
+		t.Fatalf("did not expect gpt-oss reasoning config to set effort=none: %#v", oss)
+	}
+	qwen := openRouterReasoningConfig("qwen/qwen3-32b")
+	if qwen == nil {
+		t.Fatalf("expected qwen3-32b to use reasoning config")
+	}
+	if got := qwen["effort"]; got != "none" {
+		t.Fatalf("expected qwen3 reasoning effort none, got %#v", qwen)
+	}
+	if openRouterReasoningConfig("meta-llama/llama-3.1-8b-instruct") != nil {
+		t.Fatalf("did not expect llama-3.1-8b-instruct to use reasoning config")
+	}
+}
+
+func TestOpenRouterUsesLogprobChoice(t *testing.T) {
+	t.Parallel()
+
+	if !openRouterUsesLogprobChoice("openai/gpt-4o-mini") {
+		t.Fatalf("expected gpt-4o-mini to use logprob choice mode")
+	}
+	if openRouterUsesLogprobChoice("openai/gpt-oss-20b") {
+		t.Fatalf("did not expect gpt-oss-20b to use logprob choice mode")
+	}
+}
+
+func TestExtractOpenRouterLogprobToken(t *testing.T) {
+	t.Parallel()
+
+	logprobs := struct {
+		Content []struct {
+			Token       string `json:"token"`
+			TopLogprobs []struct {
+				Token string `json:"token"`
+			} `json:"top_logprobs"`
+		} `json:"content"`
+	}{
+		Content: []struct {
+			Token       string `json:"token"`
+			TopLogprobs []struct {
+				Token string `json:"token"`
+			} `json:"top_logprobs"`
+		}{
+			{
+				TopLogprobs: []struct {
+					Token string `json:"token"`
+				}{
+					{Token: "A"},
+					{Token: "B"},
+				},
+			},
+		},
+	}
+
+	token, ok := extractOpenRouterLogprobToken(logprobs)
+	if !ok || token != "A" {
+		t.Fatalf("unexpected token=%q ok=%t", token, ok)
+	}
+}
+
 func TestCodexArgsIncludeMemoryConfig(t *testing.T) {
 	t.Parallel()
 
@@ -113,7 +213,7 @@ func TestCodexArgsIncludeMemoryConfig(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	args := runner.codexArgs("prompt", "/tmp/schema.json", "/tmp/out.json", false)
+	args := runner.codexArgs("prompt", "/tmp/out.json", false)
 	wantFragments := []string{
 		"-c", "model_reasoning_effort=high",
 		"-c", "features.memory_tool=true",
@@ -143,7 +243,7 @@ func TestCodexArgsIncludeServiceTier(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	args := runner.codexArgs("prompt", "/tmp/schema.json", "/tmp/out.json", false)
+	args := runner.codexArgs("prompt", "/tmp/out.json", false)
 	wantFragments := []string{
 		"-c", "service_tier=fast",
 	}
@@ -170,7 +270,7 @@ func TestCodexArgsEphemeralContextUsesEphemeralExec(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	args := runner.codexArgs("prompt", "/tmp/schema.json", "/tmp/out.json", true)
+	args := runner.codexArgs("prompt", "/tmp/out.json", true)
 	if !slices.Contains(args, "--ephemeral") {
 		t.Fatalf("codexArgs missing --ephemeral: %v", args)
 	}
@@ -235,7 +335,7 @@ func TestClaudeArgsEphemeralMemoryOnUsesNoSessionPersistence(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	args := runner.claudeArgs("prompt", `{"type":"object"}`, true)
+	args := runner.claudeArgs("prompt", true)
 	if !slices.Contains(args, "--no-session-persistence") {
 		t.Fatalf("claudeArgs missing --no-session-persistence: %v", args)
 	}
@@ -261,7 +361,7 @@ func TestClaudeArgsPersistentMemoryOffKeepsSessionPersistence(t *testing.T) {
 		_ = runner.Close()
 	})
 
-	args := runner.claudeArgs("prompt", `{"type":"object"}`, false)
+	args := runner.claudeArgs("prompt", false)
 	if slices.Contains(args, "--no-session-persistence") {
 		t.Fatalf("claudeArgs unexpectedly disabled session persistence: %v", args)
 	}
@@ -296,6 +396,60 @@ func TestClaudeRunnerUsesIsolatedHomeAndMemoryPath(t *testing.T) {
 	}
 	if !strings.Contains(info.NativeMemoryPath, filepath.Join("memory", "MEMORY.md")) {
 		t.Fatalf("NativeMemoryPath = %q, want memory/MEMORY.md suffix", info.NativeMemoryPath)
+	}
+}
+
+func TestOpenRouterPayloadMapsFastTierToThroughputSort(t *testing.T) {
+	t.Setenv("OPENROUTER_API_KEY", "test-key")
+	payload, err := openRouterPayload(
+		RunnerSpec{
+			Provider:    "openrouter",
+			Model:       "openai/gpt-oss-20b",
+			MemoryMode:  MemoryModeOff,
+			ContextMode: ContextModeEphemeral,
+			ServiceTier: ServiceTierFast,
+		},
+		"prompt",
+	)
+	if err != nil {
+		t.Fatalf("openRouterPayload: %v", err)
+	}
+	var decoded map[string]any
+	if err := json.Unmarshal(payload, &decoded); err != nil {
+		t.Fatalf("json.Unmarshal: %v", err)
+	}
+	provider, ok := decoded["provider"].(map[string]any)
+	if !ok || provider["sort"] != "throughput" {
+		t.Fatalf("payload provider sort missing: %#v", decoded["provider"])
+	}
+	if _, ok := decoded["response_format"]; ok {
+		t.Fatalf("payload unexpectedly included response_format: %#v", decoded["response_format"])
+	}
+}
+
+func TestRecoverModelTextAcceptsPrettyPrintedJSONObject(t *testing.T) {
+	t.Parallel()
+
+	raw := []byte("{\n  \"action_index\": 1,\n  \"notes\": \"\"\n}\n")
+	got, ok := recoverModelText("", raw, nil)
+	if !ok {
+		t.Fatalf("recoverModelText() did not recover valid pretty JSON")
+	}
+	if !json.Valid(got) {
+		t.Fatalf("recoverModelText() returned invalid JSON: %q", string(got))
+	}
+}
+
+func TestRecoverModelTextExtractsCodexAssistantMessage(t *testing.T) {
+	t.Parallel()
+
+	raw := []byte("{\"type\":\"thread.started\",\"thread_id\":\"t1\"}\n{\"type\":\"response.output_item.done\",\"item\":{\"type\":\"message\",\"role\":\"assistant\",\"content\":[{\"type\":\"output_text\",\"text\":\"2\\nNotes: keep relay clean\"}]}}\n")
+	got, ok := recoverModelText("", raw, nil)
+	if !ok {
+		t.Fatalf("recoverModelText() did not recover codex assistant text")
+	}
+	if string(got) != "2\nNotes: keep relay clean" {
+		t.Fatalf("recoverModelText() = %q", string(got))
 	}
 }
 

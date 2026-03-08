@@ -43,32 +43,32 @@ type SimulatedLedger struct {
 }
 
 type SimulatedRandomAudit struct {
-	Runs            int      `json:"runs"`
-	Seed            int64    `json:"seed"`
-	MeanScore       float64  `json:"mean_score"`
-	MedianScore     int64    `json:"median_score"`
-	P90Score        int64    `json:"p90_score"`
-	P99Score        int64    `json:"p99_score"`
+	Runs            int                 `json:"runs"`
+	Seed            int64               `json:"seed"`
+	MeanScore       float64             `json:"mean_score"`
+	MedianScore     int64               `json:"median_score"`
+	P90Score        int64               `json:"p90_score"`
+	P99Score        int64               `json:"p99_score"`
 	P99Run          *SimulatedRandomRun `json:"p99_run,omitempty"`
-	MinScore        int64    `json:"min_score"`
-	MaxScore        int64    `json:"max_score"`
-	PositiveRate    float64  `json:"positive_rate"`
-	NonNegativeRate float64  `json:"non_negative_rate"`
-	BeatBestRate    float64  `json:"beat_best_rate"`
-	Warnings        []string `json:"warnings,omitempty"`
+	MinScore        int64               `json:"min_score"`
+	MaxScore        int64               `json:"max_score"`
+	PositiveRate    float64             `json:"positive_rate"`
+	NonNegativeRate float64             `json:"non_negative_rate"`
+	BeatBestRate    float64             `json:"beat_best_rate"`
+	Warnings        []string            `json:"warnings,omitempty"`
 }
 
 type SimulatedRandomRun struct {
-	RunIndex   int            `json:"run_index"`
-	Score      int64          `json:"score"`
-	Breakdown  ScoreBreakdown `json:"breakdown,omitempty"`
-	BeatBest   int            `json:"beat_best"`
-	TickCount  int            `json:"tick_count"`
+	RunIndex  int            `json:"run_index"`
+	Score     int64          `json:"score"`
+	Breakdown ScoreBreakdown `json:"breakdown,omitempty"`
+	BeatBest  int            `json:"beat_best"`
+	TickCount int            `json:"tick_count"`
 }
 
 type SimulatedActionSurface struct {
-	Distribution       map[string]int `json:"distribution"`
-	PerTickCounts      map[string]int `json:"per_tick_counts"`
+	Distribution  map[string]int `json:"distribution"`
+	PerTickCounts map[string]int `json:"per_tick_counts"`
 }
 
 type SimulatedTick struct {
@@ -144,8 +144,8 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 			"`decomposition.explicit_visible` is attributed to the constrained `visible_greedy` baseline. `decomposition.hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes true cross-beat value with any hidden-label advantage still present in `greedy_best`.",
 		},
 		Baselines: map[string]SimulatedBaseline{
-			"greedy_best":   {},
-			"always_hold":   {},
+			"greedy_best":    {},
+			"always_hold":    {},
 			"visible_greedy": {},
 		},
 		ActionSurface: SimulatedActionSurface{
@@ -580,42 +580,12 @@ func simulateRandomRun(file File, rng *rand.Rand, captureBreakdown bool) (int64,
 }
 
 func randomActionForTick(tick TickDefinition, rng *rand.Rand) SimulatedAction {
-	if len(tick.Opportunities) == 0 {
-		return SimulatedAction{Command: "hold"}
-	}
-
-	opportunity := tick.Opportunities[rng.Intn(len(tick.Opportunities))]
-	command := opportunity.AllowedCommands[rng.Intn(len(opportunity.AllowedCommands))]
-	action := SimulatedAction{
-		Command: command,
-		Target:  opportunity.OpportunityID,
-	}
-	if len(opportunity.AllowedOptions) > 0 && command != "hold" {
-		action.Option = opportunity.AllowedOptions[rng.Intn(len(opportunity.AllowedOptions))]
-	}
-	return action
+	actions := EnumerateActions(tick)
+	return actions[rng.Intn(len(actions))]
 }
 
 func randomActionCountForTick(tick TickDefinition) int {
-	if len(tick.Opportunities) == 0 {
-		return 1
-	}
-
-	total := 0
-	for _, opportunity := range tick.Opportunities {
-		for _, command := range opportunity.AllowedCommands {
-			if command == "hold" {
-				total++
-				continue
-			}
-			count := 1
-			if len(opportunity.AllowedOptions) > 0 {
-				count *= len(opportunity.AllowedOptions)
-			}
-			total += count
-		}
-	}
-	return total
+	return len(EnumerateActions(tick))
 }
 
 func evaluateSimulatedAction(plan ScoringPlan, action SimulatedAction, state simulatedPlayerState) (Rule, bool) {

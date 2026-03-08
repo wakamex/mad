@@ -111,6 +111,16 @@ func main() {
 	if codexHome != "" {
 		fmt.Printf("codex_home: %s\n", codexHome)
 	}
+	for _, warning := range harness.RunnerWarnings(harness.RunnerSpec{
+		Provider:    cfg.provider,
+		Model:       cfg.model,
+		Effort:      cfg.effort,
+		MemoryMode:  cfg.memoryMode,
+		ContextMode: cfg.contextMode,
+		ServiceTier: cfg.serviceTier,
+	}) {
+		fmt.Fprintf(os.Stderr, "warning: %s\n", warning)
+	}
 
 	if cfg.detach {
 		if err := launchDetached(cmd, logPath); err != nil {
@@ -133,19 +143,20 @@ func parseConfig() (config, error) {
 
 	flag.Usage = func() {
 		out := flag.CommandLine.Output()
-		fmt.Fprintf(out, "Usage:\n  %s --provider codex|claude --model MODEL [options]\n\n", filepath.Base(os.Args[0]))
+		fmt.Fprintf(out, "Usage:\n  %s --provider codex|claude|openrouter --model MODEL [options]\n\n", filepath.Base(os.Args[0]))
 		fmt.Fprintln(out, "Start one human-friendly MAD harness run with explicit memory and context controls.")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Examples:")
 		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100")
 		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json")
 		fmt.Fprintln(out, "  mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe")
+		fmt.Fprintln(out, "  mad-run --provider openrouter --model openai/gpt-oss-20b --memory off --context ephemeral --service-tier fast --max-ticks 100")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Flags:")
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&cfg.provider, "provider", "", "Provider: codex or claude")
+	flag.StringVar(&cfg.provider, "provider", "", "Provider: codex, claude, or openrouter")
 	flag.StringVar(&cfg.model, "model", "", "Model name or alias")
 	flag.StringVar(&cfg.effort, "effort", "", "Reasoning effort")
 	flag.StringVar(&memoryRaw, "memory", "on", "Native memory mode: on, off, or inherit")
@@ -166,8 +177,8 @@ func parseConfig() (config, error) {
 	flag.BoolVar(&cfg.detach, "detach", false, "Run in background and log to launcher.log")
 	flag.Parse()
 
-	if cfg.provider != "codex" && cfg.provider != "claude" {
-		return cfg, fmt.Errorf("--provider must be codex or claude")
+	if cfg.provider != "codex" && cfg.provider != "claude" && cfg.provider != "openrouter" {
+		return cfg, fmt.Errorf("--provider must be codex, claude, or openrouter")
 	}
 	if strings.TrimSpace(cfg.model) == "" {
 		return cfg, fmt.Errorf("--model is required")

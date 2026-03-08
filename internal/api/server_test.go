@@ -33,7 +33,6 @@ func TestActionEndpoint(t *testing.T) {
 	body, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
-		Confidence:   0,
 		SubmissionID: "sub-1",
 	})
 
@@ -52,7 +51,6 @@ func TestIdempotentRetryEndpoint(t *testing.T) {
 	body, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
-		Confidence:   0,
 		SubmissionID: "retry-1",
 	})
 	handler := server.Routes()
@@ -85,7 +83,6 @@ func TestRevealEndpointAfterClose(t *testing.T) {
 		Command:    "commit",
 		Target:     "quest.glass_choir.7",
 		Option:     "broker",
-		Confidence: 0.8,
 	}, now)
 	if err != nil {
 		t.Fatalf("submit: %v", err)
@@ -106,7 +103,6 @@ func TestTickAlreadyCommittedEndpoint(t *testing.T) {
 	firstBody, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
-		Confidence:   0,
 		SubmissionID: "first",
 	})
 	secondBody, _ := json.Marshal(game.ActionSubmission{
@@ -114,7 +110,6 @@ func TestTickAlreadyCommittedEndpoint(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "broker",
-		Confidence:   0.8,
 		SubmissionID: "second",
 	})
 	handler := server.Routes()
@@ -143,7 +138,6 @@ func TestSubmissionIDConflictEndpoint(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "broker",
-		Confidence:   0.8,
 		SubmissionID: "same-id",
 	})
 	secondBody, _ := json.Marshal(game.ActionSubmission{
@@ -151,7 +145,6 @@ func TestSubmissionIDConflictEndpoint(t *testing.T) {
 		Command:      "commit",
 		Target:       "quest.glass_choir.7",
 		Option:       "smuggler",
-		Confidence:   0.8,
 		SubmissionID: "same-id",
 	})
 	handler := server.Routes()
@@ -192,7 +185,6 @@ func TestTrustProxyHeadersForIPLimit(t *testing.T) {
 	body, _ := json.Marshal(game.ActionSubmission{
 		TickID:     engine.Current().TickID,
 		Command:    "hold",
-		Confidence: 0,
 	})
 	handler := server.Routes()
 

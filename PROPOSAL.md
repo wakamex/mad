@@ -477,7 +477,7 @@ These shifts must be legible from shared public evidence:
 The skill test is not “guess whether the narrator is lying today.” The skill test is “weight sources correctly under publicly legible bias and drift.”
 ## Action Interface
 
-V1 uses a fixed action envelope. The syntax never changes. The puzzle is choosing the right action, target, option, timing, and confidence.
+V1 uses a fixed action envelope. The syntax never changes. The puzzle is choosing the right action, target, option, and timing.
 
 Canonical payload:
 
@@ -487,7 +487,6 @@ Canonical payload:
   "command": "commit",
   "target": "quest.glass_choir.7",
   "option": "broker",
-  "confidence": 0.82,
   "theory": "green rain changed glass value after the flood",
   "submission_id": "01jnh7x1yqv8x..."
 }
@@ -499,7 +498,6 @@ Field rules:
 - `command` must be one of the fixed server verbs
 - `target` must reference a valid public or private entity
 - `option` is optional but must be from the allowed set for the chosen command
-- `confidence` is a required float between `0.0` and `1.0` on all actions except `hold`
 - `theory` is ignored by resolution and logged for analysis only
 - `submission_id` should be unique per tick submission so exact retries can be accepted idempotently
 
@@ -586,17 +584,16 @@ The benchmark needs both a public headline score and granular ledgers.
 - `Aura`: visible prestige and embarrassment meter
 - `Debt`: negative compounding from bad commitments and panic play
 - `Miss Penalties`: failures to act, late actions, or repeated stale misreads
-- `Calibration`: confidence quality tracked against actual outcome quality
 - `Memory Distance`: credit for correctly exploiting evidence that first appeared far back in the public stream
 - `Faction Reputation`: tracked separately per faction and applied as modifiers
 
-### Compounding and Calibration
+### Compounding
 
 Runaway success should come from lawful compounding, not one-off jackpots.
 
 Reward multiplier for many high-value opportunities:
 
-`Reward = BaseReward x KnowledgeTier x ReputationTier x TimingBonus x StreakBonus x CalibrationModifier x MemoryDistanceBonus`
+`Reward = BaseReward x KnowledgeTier x ReputationTier x TimingBonus x StreakBonus x MemoryDistanceBonus`
 
 Suggested ranges:
 
@@ -604,7 +601,6 @@ Suggested ranges:
 - `ReputationTier`: `0.5` to `1.8`, based on faction-specific standing
 - `TimingBonus`: `0.7` to `1.5`, based on tick timing and preparedness
 - `StreakBonus`: `1.0` to `1.4`, capped, based on consecutive theory-consistent outcomes
-- `CalibrationModifier`: rewards justified confidence and punishes false certainty; high-confidence failure can multiply `Debt` and `Miss Penalties`
 - `MemoryDistanceBonus`: `1.0` to `3.0`, based on how old the materially relevant precursor evidence is
 
 Negative compounding:
@@ -634,11 +630,11 @@ Good play looks like:
 - Correctly reinterpreting old evidence after a new anomaly
 - Maintaining enough liquidity, commitment space, and reputation to exploit sudden openings
 - Acting quickly on interrupt ticks without abandoning the right long-horizon model
-- Accurately calibrating confidence when exploring ambiguous states
+- Exploring ambiguous states without overcommitting to weak theories
 
 Bad play looks like:
 
-- Rolling random actions with high confidence
+- Rolling random actions as if every visible option were equally trustworthy
 - Collapsing old clues into useless summaries
 - Overcommitting to one faction without noticing a drift
 - Chasing aura with no theory

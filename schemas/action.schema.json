@@ -9,7 +9,6 @@
     "command": {"type": "string"},
     "target": {"type": "string"},
     "option": {"type": "string"},
-    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
     "theory": {"type": "string", "maxLength": 512},
     "submission_id": {"type": "string", "maxLength": 128}
   },

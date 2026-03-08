@@ -3,6 +3,7 @@ package harness
 import (
 	"context"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/mihai/mad/internal/season"
@@ -19,7 +20,7 @@ func (r *fakeRunner) Spec() RunnerSpec { return r.spec }
 
 func (r *fakeRunner) Decide(_ context.Context, _ string) ([]byte, error) {
 	if r.index >= len(r.responses) {
-		return []byte(`{"command":"hold","confidence":0,"theory":"fallback","notes":""}`), nil
+		return []byte("1"), nil
 	}
 	response := r.responses[r.index]
 	r.index++
@@ -43,13 +44,71 @@ func TestParseRunnerSpec(t *testing.T) {
 }
 
 func TestDecodeDecisionSupportsWrappedJSON(t *testing.T) {
-	raw := []byte(`{"result":"{\"command\":\"commit\",\"target\":\"broker.1\",\"option\":\"take\",\"confidence\":0.7,\"theory\":\"try it\",\"notes\":\"remember broker\"}"}`)
+	raw := []byte(`{"result":"{\"action_index\":4,\"notes\":\"remember broker\"}"}`)
 	decision, err := decodeDecision(raw)
 	if err != nil {
 		t.Fatalf("decode decision: %v", err)
 	}
-	if decision.Command != "commit" || decision.Target != "broker.1" || decision.Option != "take" {
+	if decision.ActionIndex != 4 || decision.Notes != "remember broker" {
 		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
+func TestDecodeDecisionSupportsPlainNumberAndNotes(t *testing.T) {
+	raw := []byte("3\nNotes: watch the choir debt cap")
+	decision, err := decodeDecision(raw)
+	if err != nil {
+		t.Fatalf("decode decision: %v", err)
+	}
+	if decision.ActionIndex != 3 || decision.Notes != "watch the choir debt cap" {
+		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
+func TestDecodeDecisionSupportsLetterChoice(t *testing.T) {
+	raw := []byte("B")
+	decision, err := decodeDecision(raw)
+	if err != nil {
+		t.Fatalf("decode decision: %v", err)
+	}
+	if decision.ActionIndex != 2 {
+		t.Fatalf("unexpected decision: %#v", decision)
+	}
+}
+
+func TestBuildPromptOmitsNotesInstructionsWhenDisabled(t *testing.T) {
+	packet := PromptPacket{}
+	prompt, err := BuildPrompt(packet, 100, false, ActionLabelNumbers)
+	if err != nil {
+		t.Fatalf("build prompt: %v", err)
+	}
+	if strings.Contains(prompt, "Notes:") {
+		t.Fatalf("expected prompt to omit notes instructions, got %q", prompt)
+	}
+	if !strings.Contains(prompt, "Reply with only the action number") {
+		t.Fatalf("expected strict action-number instruction, got %q", prompt)
+	}
+}
+
+func TestBuildPromptIncludesNotesInstructionsWhenEnabled(t *testing.T) {
+	packet := PromptPacket{}
+	prompt, err := BuildPrompt(packet, 100, true, ActionLabelNumbers)
+	if err != nil {
+		t.Fatalf("build prompt: %v", err)
+	}
+	if !strings.Contains(prompt, "Notes:") {
+		t.Fatalf("expected prompt to include notes instructions, got %q", prompt)
+	}
+}
+
+func TestBuildPromptUsesLetterInstructionWhenRequested(t *testing.T) {
+	packet := PromptPacket{}
+	prompt, err := BuildPrompt(packet, 100, false, ActionLabelLetters)
+	if err != nil {
+		t.Fatalf("build prompt: %v", err)
+	}
+	if !strings.Contains(prompt, "Reply with only the action letter") {
+		t.Fatalf("expected prompt to require action letter, got %q", prompt)
 	}
 }
 
@@ -71,8 +130,8 @@ func TestRunSeasonCapturesScoreTrace(t *testing.T) {
 			NativeSessionPath: "/tmp/fake-session.jsonl",
 		},
 		responses: [][]byte{
-			[]byte(`{"command":"commit","target":"choir.offer","option":"accept","confidence":0.8,"theory":"start reputation path","notes":"accepted choir offer"}`),
-			[]byte(`{"command":"hold","confidence":0.2,"theory":"skip","notes":"accepted choir offer"}`),
+			[]byte("2\nNotes: accepted choir offer"),
+			[]byte("1\nNotes: accepted choir offer"),
 		},
 	}
 
@@ -116,8 +175,8 @@ func TestRunSeasonEphemeralContextDoesNotPersistNotes(t *testing.T) {
 	runner := &fakeRunner{
 		spec: RunnerSpec{Provider: "fake", Model: "stub", ContextMode: ContextModeEphemeral},
 		responses: [][]byte{
-			[]byte(`{"command":"commit","target":"choir.offer","option":"accept","confidence":0.8,"theory":"start reputation path","notes":"remember this"}`),
-			[]byte(`{"command":"hold","confidence":0.2,"theory":"skip","notes":"still remembering"}`),
+			[]byte("2\nNotes: remember this"),
+			[]byte("1\nNotes: still remembering"),
 		},
 	}
 

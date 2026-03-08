@@ -526,10 +526,10 @@ func TestVisibleGreedyUsesPublicRequirementsAndExplicitState(t *testing.T) {
 				Scoring: ScoringPlan{
 					Rules: []Rule{
 						{
-							Match:   ActionMatch{Command: "commit", Target: "registry", Option: "shift"},
-							Effects: StateEffects{ReputationDelta: map[string]int64{"relay_guild": 5}},
-							Delta:   ScoreDelta{Yield: 3},
-							Label:   "take registry shift",
+							Match:          ActionMatch{Command: "commit", Target: "registry", Option: "shift"},
+							Effects:        StateEffects{ReputationDelta: map[string]int64{"relay_guild": 5}},
+							Delta:          ScoreDelta{Yield: 3},
+							Label:          "take registry shift",
 							Classification: "best",
 						},
 						{
@@ -564,10 +564,10 @@ func TestVisibleGreedyUsesPublicRequirementsAndExplicitState(t *testing.T) {
 				Scoring: ScoringPlan{
 					Rules: []Rule{
 						{
-							Match:        ActionMatch{Command: "commit", Target: "audit", Option: "premium"},
-							Requirements: RuleRequirements{MinReputation: map[string]int64{"relay_guild": 5}},
-							Delta:        ScoreDelta{Yield: 20},
-							Label:        "take premium audit lane",
+							Match:          ActionMatch{Command: "commit", Target: "audit", Option: "premium"},
+							Requirements:   RuleRequirements{MinReputation: map[string]int64{"relay_guild": 5}},
+							Delta:          ScoreDelta{Yield: 20},
+							Label:          "take premium audit lane",
 							Classification: "best",
 						},
 						{

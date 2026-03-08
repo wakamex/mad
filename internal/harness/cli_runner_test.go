@@ -392,6 +392,18 @@ func TestClaudeArgsEphemeralMemoryOnUsesNoSessionPersistence(t *testing.T) {
 	if hasEnvKeyValue(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "1") {
 		t.Fatalf("claudeEnv disabled auto memory unexpectedly: %v", env)
 	}
+	if !hasEnvKeyValue(env, "HOME", runner.claudeHome) {
+		t.Fatalf("claudeEnv missing isolated HOME: %v", env)
+	}
+	if !hasEnvKeyValue(env, "XDG_CONFIG_HOME", runner.claudeXDGConfig) {
+		t.Fatalf("claudeEnv missing isolated XDG_CONFIG_HOME: %v", env)
+	}
+	if !hasEnvKeyValue(env, "XDG_DATA_HOME", runner.claudeXDGData) {
+		t.Fatalf("claudeEnv missing isolated XDG_DATA_HOME: %v", env)
+	}
+	if !hasEnvKeyValue(env, "XDG_CACHE_HOME", runner.claudeXDGCache) {
+		t.Fatalf("claudeEnv missing isolated XDG_CACHE_HOME: %v", env)
+	}
 }
 
 func TestClaudeArgsPersistentMemoryOffKeepsSessionPersistence(t *testing.T) {

@@ -312,7 +312,7 @@ func firstNonEmptyString(values ...string) string {
 	return ""
 }
 
-func BuildPrompt(packet PromptPacket, maxNotesChars int, allowNotes bool, style ActionLabelStyle) (string, error) {
+func BuildPrompt(packet PromptPacket, maxNotesChars int, allowNotes bool, allowProviderMemory bool, style ActionLabelStyle) (string, error) {
 	if maxNotesChars <= 0 {
 		maxNotesChars = defaultMaxNotesChars
 	}
@@ -333,6 +333,9 @@ func BuildPrompt(packet PromptPacket, maxNotesChars int, allowNotes bool, style 
 	builder.WriteString("Goal: maximize long-run score, not immediate reward.\n")
 	builder.WriteString("If you are uncertain, choose 1 for hold.\n")
 	builder.WriteString("Player-owned state is exact. Source regimes are public source-bias periods visible to everyone.\n")
+	if allowProviderMemory {
+		builder.WriteString("If your provider offers persistent memory, you may store short stable cross-tick facts there when they are likely to help future decisions.\n")
+	}
 	if allowNotes {
 		builder.WriteString("You may optionally add a second line starting with 'Notes:' to store a short reminder.\n")
 		builder.WriteString(fmt.Sprintf("If you add notes, keep them concise and durable; hard cap %d characters.\n", maxNotesChars))
@@ -388,7 +391,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 		if persistNotes {
 			packet.Notes = notes
 		}
-		prompt, err := BuildPrompt(packet, options.MaxNotesChars, persistNotes, actionStyle)
+		prompt, err := BuildPrompt(packet, options.MaxNotesChars, persistNotes, runner.Spec().MemoryMode == MemoryModeOn, actionStyle)
 		if err != nil {
 			return result, err
 		}

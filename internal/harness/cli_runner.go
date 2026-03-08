@@ -29,6 +29,9 @@ type CLIRunner struct {
 	nativeSessionPath string
 	nativeMemoryPath  string
 	claudeHome        string
+	claudeXDGConfig   string
+	claudeXDGData     string
+	claudeXDGCache    string
 }
 
 func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner, error) {
@@ -61,6 +64,9 @@ func NewCLIRunner(spec RunnerSpec, workdir string, tempRoot string) (*CLIRunner,
 	}
 	if spec.Provider == "claude" {
 		runner.claudeHome = filepath.Join(tempDir, "claude-home")
+		runner.claudeXDGConfig = filepath.Join(runner.claudeHome, ".config")
+		runner.claudeXDGData = filepath.Join(runner.claudeHome, ".local", "share")
+		runner.claudeXDGCache = filepath.Join(runner.claudeHome, ".cache")
 		if err := prepareClaudeHome(runner.claudeHome); err != nil {
 			return nil, err
 		}
@@ -274,9 +280,27 @@ func (r *CLIRunner) claudeArgs(prompt string, ephemeral bool) []string {
 }
 
 func (r *CLIRunner) claudeEnv() []string {
-	env := filteredEnv("CLAUDECODE", "CLAUDE_CODE_DISABLE_AUTO_MEMORY", "CLAUDE_CODE_DISABLE_CLAUDE_MDS")
+	env := filteredEnv(
+		"CLAUDECODE",
+		"CLAUDE_CODE_ENTRYPOINT",
+		"CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+		"CLAUDE_CODE_DISABLE_CLAUDE_MDS",
+		"HOME",
+		"XDG_CONFIG_HOME",
+		"XDG_DATA_HOME",
+		"XDG_CACHE_HOME",
+	)
 	if r.claudeHome != "" {
 		env = append(env, "HOME="+r.claudeHome)
+	}
+	if r.claudeXDGConfig != "" {
+		env = append(env, "XDG_CONFIG_HOME="+r.claudeXDGConfig)
+	}
+	if r.claudeXDGData != "" {
+		env = append(env, "XDG_DATA_HOME="+r.claudeXDGData)
+	}
+	if r.claudeXDGCache != "" {
+		env = append(env, "XDG_CACHE_HOME="+r.claudeXDGCache)
 	}
 	if r.spec.MemoryMode == MemoryModeOff {
 		env = append(env, "CLAUDE_CODE_DISABLE_AUTO_MEMORY=1")

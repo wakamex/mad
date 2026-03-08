@@ -111,7 +111,7 @@ func TestDecodeDecisionSupportsLetterWithColon(t *testing.T) {
 
 func TestBuildPromptOmitsNotesInstructionsWhenDisabled(t *testing.T) {
 	packet := PromptPacket{}
-	prompt, err := BuildPrompt(packet, 100, false, ActionLabelNumbers)
+	prompt, err := BuildPrompt(packet, 100, false, false, ActionLabelNumbers)
 	if err != nil {
 		t.Fatalf("build prompt: %v", err)
 	}
@@ -125,7 +125,7 @@ func TestBuildPromptOmitsNotesInstructionsWhenDisabled(t *testing.T) {
 
 func TestBuildPromptIncludesNotesInstructionsWhenEnabled(t *testing.T) {
 	packet := PromptPacket{}
-	prompt, err := BuildPrompt(packet, 100, true, ActionLabelNumbers)
+	prompt, err := BuildPrompt(packet, 100, true, false, ActionLabelNumbers)
 	if err != nil {
 		t.Fatalf("build prompt: %v", err)
 	}
@@ -134,9 +134,20 @@ func TestBuildPromptIncludesNotesInstructionsWhenEnabled(t *testing.T) {
 	}
 }
 
+func TestBuildPromptIncludesProviderMemoryHintWhenEnabled(t *testing.T) {
+	packet := PromptPacket{}
+	prompt, err := BuildPrompt(packet, 100, false, true, ActionLabelNumbers)
+	if err != nil {
+		t.Fatalf("build prompt: %v", err)
+	}
+	if !strings.Contains(prompt, "provider offers persistent memory") {
+		t.Fatalf("expected prompt to include provider memory hint, got %q", prompt)
+	}
+}
+
 func TestBuildPromptUsesLetterInstructionWhenRequested(t *testing.T) {
 	packet := PromptPacket{}
-	prompt, err := BuildPrompt(packet, 100, false, ActionLabelLetters)
+	prompt, err := BuildPrompt(packet, 100, false, false, ActionLabelLetters)
 	if err != nil {
 		t.Fatalf("build prompt: %v", err)
 	}

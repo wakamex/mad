@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"hash/fnv"
 	"math/rand"
-	"sort"
 	"slices"
+	"sort"
 )
 
 type SimulationReport struct {
@@ -18,6 +18,7 @@ type SimulationReport struct {
 	Baselines     map[string]SimulatedBaseline `json:"baselines"`
 	Decomposition ScoreDecomposition           `json:"decomposition,omitempty"`
 	HazardAudit   *HazardTimingAudit           `json:"hazard_audit,omitempty"`
+	HazardAccess  *HazardAccessAudit           `json:"hazard_access,omitempty"`
 	RandomAudit   *SimulatedRandomAudit        `json:"random_audit,omitempty"`
 	ActionSurface SimulatedActionSurface       `json:"action_surface"`
 	Ticks         []SimulatedTick              `json:"ticks"`
@@ -69,20 +70,60 @@ type SimulatedRandomRun struct {
 }
 
 type HazardTimingAudit struct {
-	Family                  string                     `json:"family"`
-	Count                   int                        `json:"count"`
-	ShareOfTicks            float64                    `json:"share_of_ticks"`
-	DistinctElements        int                        `json:"distinct_elements"`
-	DistinctSourceTypes     int                        `json:"distinct_source_types"`
-	RepeatingElements       int                        `json:"repeating_elements"`
-	GlobalGapSummary        *SimulatedIntSummary       `json:"global_gap_summary,omitempty"`
-	SameElementGapSummary   *SimulatedIntSummary       `json:"same_element_gap_summary,omitempty"`
-	BeatCountPerElement     *SimulatedIntSummary       `json:"beat_count_per_element,omitempty"`
-	TopElements             []SimulatedKeyCount        `json:"top_elements,omitempty"`
-	SourceTypeCounts        []SimulatedKeyCount        `json:"source_type_counts,omitempty"`
-	TopGlobalGaps           []SimulatedIntCount        `json:"top_global_gaps,omitempty"`
-	TopSameElementGaps      []SimulatedIntCount        `json:"top_same_element_gaps,omitempty"`
-	LagSignal               []SimulatedLagSignal       `json:"lag_signal,omitempty"`
+	Family                string               `json:"family"`
+	Count                 int                  `json:"count"`
+	ShareOfTicks          float64              `json:"share_of_ticks"`
+	DistinctElements      int                  `json:"distinct_elements"`
+	DistinctSourceTypes   int                  `json:"distinct_source_types"`
+	RepeatingElements     int                  `json:"repeating_elements"`
+	GlobalGapSummary      *SimulatedIntSummary `json:"global_gap_summary,omitempty"`
+	SameElementGapSummary *SimulatedIntSummary `json:"same_element_gap_summary,omitempty"`
+	BeatCountPerElement   *SimulatedIntSummary `json:"beat_count_per_element,omitempty"`
+	TopElements           []SimulatedKeyCount  `json:"top_elements,omitempty"`
+	SourceTypeCounts      []SimulatedKeyCount  `json:"source_type_counts,omitempty"`
+	TopGlobalGaps         []SimulatedIntCount  `json:"top_global_gaps,omitempty"`
+	TopSameElementGaps    []SimulatedIntCount  `json:"top_same_element_gaps,omitempty"`
+	LagSignal             []SimulatedLagSignal `json:"lag_signal,omitempty"`
+}
+
+type HazardAccessAudit struct {
+	Family                  string                    `json:"family"`
+	Policy                  string                    `json:"policy"`
+	TickCount               int                       `json:"tick_count"`
+	AnyPremiumEligibleTicks int                       `json:"any_premium_eligible_ticks"`
+	AllPremiumBlockedTicks  int                       `json:"all_premium_blocked_ticks"`
+	LaneSummaries           []HazardLaneAccessSummary `json:"lane_summaries,omitempty"`
+	BlockReasons            []SimulatedKeyCount       `json:"block_reasons,omitempty"`
+	FactionBlockReasons     []HazardAccessBreakdown   `json:"faction_block_reasons,omitempty"`
+	LaneBlockReasons        []HazardAccessBreakdown   `json:"lane_block_reasons,omitempty"`
+}
+
+type HazardLaneAccessSummary struct {
+	FactionID        string  `json:"faction_id"`
+	Lane             string  `json:"lane"`
+	CandidateCount   int     `json:"candidate_count"`
+	EligibleCount    int     `json:"eligible_count"`
+	ChosenCount      int     `json:"chosen_count"`
+	EligibilityRate  float64 `json:"eligibility_rate"`
+	SelectionRate    float64 `json:"selection_rate"`
+	AverageBestScore float64 `json:"average_best_score"`
+}
+
+type HazardAccessBreakdown struct {
+	Key     string              `json:"key"`
+	Reasons []SimulatedKeyCount `json:"reasons,omitempty"`
+}
+
+type hazardLaneKey struct {
+	FactionID string
+	Lane      string
+}
+
+type hazardLaneSummary struct {
+	CandidateCount int
+	EligibleCount  int
+	ChosenCount    int
+	BestScoreSum   int64
 }
 
 type SimulatedIntSummary struct {
@@ -275,6 +316,7 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		visibleBaseline.Ledger.Score,
 	)
 	report.HazardAudit = deriveHazardTimingAudit(file)
+	report.HazardAccess = deriveHazardAccessAudit(file)
 	if options.RandomRuns > 0 {
 		report.RandomAudit = simulateRandomAudit(file, options)
 	}
@@ -843,6 +885,263 @@ func deriveHazardTimingAudit(file File) *HazardTimingAudit {
 		TopSameElementGaps:    topIntCounts(sameElementGaps, 10),
 		LagSignal:             computeLagSignal(hazardIndices, hazardSet, len(file.Ticks), 32),
 	}
+}
+
+func deriveHazardAccessAudit(file File) *HazardAccessAudit {
+	const targetFamily = "hazard_interrupt"
+
+	state := newSimulatedPlayerState()
+	laneStats := make(map[hazardLaneKey]*hazardLaneSummary)
+	blockReasons := make(map[string]int)
+	factionReasons := make(map[string]map[string]int)
+	laneReasons := make(map[string]map[string]int)
+
+	audit := &HazardAccessAudit{
+		Family: targetFamily,
+		Policy: "greedy_best",
+	}
+
+	for tickIndex, tick := range file.Ticks {
+		advanceSimulatedStateToTick(&state, tickIndex)
+		if tick.Annotations.Family == targetFamily {
+			audit.TickCount++
+
+			bestRules := collectHazardPremiumRules(tick, state)
+			anyEligible := false
+			for _, premium := range bestRules {
+				key := hazardLaneKey{FactionID: premium.FactionID, Lane: premium.Lane}
+				summary := laneStats[key]
+				if summary == nil {
+					summary = &hazardLaneSummary{}
+					laneStats[key] = summary
+				}
+				summary.CandidateCount++
+				if premium.Eligible {
+					anyEligible = true
+					summary.EligibleCount++
+					summary.BestScoreSum += scalarScore(premium.Rule.Delta)
+				} else {
+					for _, reason := range premium.BlockReasons {
+						blockReasons[reason]++
+						if factionReasons[premium.FactionID] == nil {
+							factionReasons[premium.FactionID] = make(map[string]int)
+						}
+						factionReasons[premium.FactionID][reason]++
+						laneLabel := fmt.Sprintf("%s:%s", premium.FactionID, premium.Lane)
+						if laneReasons[laneLabel] == nil {
+							laneReasons[laneLabel] = make(map[string]int)
+						}
+						laneReasons[laneLabel][reason]++
+					}
+				}
+			}
+			if anyEligible {
+				audit.AnyPremiumEligibleTicks++
+			} else {
+				audit.AllPremiumBlockedTicks++
+			}
+
+			chosen := chooseGreedyRule(tick, state)
+			if chosen.Classification == "best" {
+				if factionID, lane, ok := hazardRuleIdentity(tick, chosen); ok {
+					key := hazardLaneKey{FactionID: factionID, Lane: lane}
+					summary := laneStats[key]
+					if summary == nil {
+						summary = &hazardLaneSummary{}
+						laneStats[key] = summary
+					}
+					summary.ChosenCount++
+				}
+			}
+
+			applyRuleToSimulatedState(&state, chosen)
+			continue
+		}
+
+		applyRuleToSimulatedState(&state, chooseGreedyRule(tick, state))
+	}
+
+	audit.BlockReasons = topKeyCounts(blockReasons, 10)
+	audit.FactionBlockReasons = materializeHazardReasonBreakdowns(factionReasons)
+	audit.LaneBlockReasons = materializeHazardReasonBreakdowns(laneReasons)
+	audit.LaneSummaries = materializeHazardLaneSummaries(laneStats)
+	return audit
+}
+
+type hazardPremiumRule struct {
+	FactionID    string
+	Lane         string
+	Rule         Rule
+	Eligible     bool
+	BlockReasons []string
+}
+
+func collectHazardPremiumRules(tick TickDefinition, state simulatedPlayerState) []hazardPremiumRule {
+	if tick.Annotations.Family != "hazard_interrupt" {
+		return nil
+	}
+
+	bestRules := make([]hazardPremiumRule, 0, 2)
+	for _, rule := range tick.Scoring.Rules {
+		if rule.Classification != "best" {
+			continue
+		}
+		factionID, lane, ok := hazardRuleIdentity(tick, rule)
+		if !ok {
+			continue
+		}
+		reasons := requirementBlockReasons(rule.Requirements, state)
+		bestRules = append(bestRules, hazardPremiumRule{
+			FactionID:    factionID,
+			Lane:         lane,
+			Rule:         rule,
+			Eligible:     len(reasons) == 0,
+			BlockReasons: reasons,
+		})
+	}
+	return bestRules
+}
+
+func hazardRuleIdentity(tick TickDefinition, rule Rule) (factionID string, lane string, ok bool) {
+	if tick.Annotations.Family != "hazard_interrupt" {
+		return "", "", false
+	}
+
+	switch rule.Match.Option {
+	case "stabilize":
+		lane = "stabilize"
+	case "exploit":
+		lane = "exploit"
+	default:
+		return "", "", false
+	}
+
+	// Hazard ticks always have a faction-specific stabilize lane; use that faction for both lanes.
+	for _, opportunity := range tick.Opportunities {
+		for _, requirement := range opportunity.PublicRequirements {
+			if requirement.Metric == "reputation" && requirement.Scope != "" {
+				return requirement.Scope, lane, lane != ""
+			}
+		}
+	}
+	return "", "", false
+}
+
+func requirementBlockReasons(requirements RuleRequirements, state simulatedPlayerState) []string {
+	reasons := make([]string, 0, 6)
+	for _, tag := range requirements.RequiresAllTags {
+		if _, ok := state.Tags[tag]; !ok {
+			reasons = append(reasons, "tag")
+			break
+		}
+	}
+	if len(requirements.RequiresAnyTags) > 0 {
+		any := false
+		for _, tag := range requirements.RequiresAnyTags {
+			if _, ok := state.Tags[tag]; ok {
+				any = true
+				break
+			}
+		}
+		if !any {
+			reasons = append(reasons, "tag")
+		}
+	}
+	for _, tag := range requirements.ForbidsTags {
+		if _, ok := state.Tags[tag]; ok {
+			reasons = append(reasons, "tag")
+			break
+		}
+	}
+	if len(requirements.RequiresAvailability) > 0 && !contains(requirements.RequiresAvailability, state.Availability) {
+		reasons = append(reasons, "availability")
+	}
+	if len(requirements.ForbidsAvailability) > 0 && contains(requirements.ForbidsAvailability, state.Availability) {
+		reasons = append(reasons, "availability")
+	}
+	for _, cooldownName := range requirements.RequiresCooldownReady {
+		if readyTick, ok := state.CooldownReadyTickByName[cooldownName]; ok && state.CurrentTick < readyTick {
+			reasons = append(reasons, "cooldown")
+			break
+		}
+	}
+	if requirements.MaxDebt != 0 && state.Ledger.Debt > requirements.MaxDebt {
+		reasons = append(reasons, "debt")
+	}
+	if requirements.MinAura != 0 && state.Ledger.Aura < requirements.MinAura {
+		reasons = append(reasons, "aura")
+	}
+	for faction, minimum := range requirements.MinReputation {
+		if state.Reputation[faction] < minimum {
+			reasons = append(reasons, "reputation")
+			break
+		}
+	}
+	return dedupeStrings(reasons)
+}
+
+func materializeHazardLaneSummaries(stats map[hazardLaneKey]*hazardLaneSummary) []HazardLaneAccessSummary {
+	if len(stats) == 0 {
+		return nil
+	}
+	summaries := make([]HazardLaneAccessSummary, 0, len(stats))
+	for key, stat := range stats {
+		summary := HazardLaneAccessSummary{
+			FactionID:      key.FactionID,
+			Lane:           key.Lane,
+			CandidateCount: stat.CandidateCount,
+			EligibleCount:  stat.EligibleCount,
+			ChosenCount:    stat.ChosenCount,
+		}
+		if stat.CandidateCount > 0 {
+			summary.EligibilityRate = float64(stat.EligibleCount) / float64(stat.CandidateCount)
+			summary.SelectionRate = float64(stat.ChosenCount) / float64(stat.CandidateCount)
+		}
+		if stat.EligibleCount > 0 {
+			summary.AverageBestScore = float64(stat.BestScoreSum) / float64(stat.EligibleCount)
+		}
+		summaries = append(summaries, summary)
+	}
+	sort.Slice(summaries, func(i, j int) bool {
+		if summaries[i].FactionID != summaries[j].FactionID {
+			return summaries[i].FactionID < summaries[j].FactionID
+		}
+		return summaries[i].Lane < summaries[j].Lane
+	})
+	return summaries
+}
+
+func materializeHazardReasonBreakdowns(group map[string]map[string]int) []HazardAccessBreakdown {
+	if len(group) == 0 {
+		return nil
+	}
+	breakdowns := make([]HazardAccessBreakdown, 0, len(group))
+	for key, reasons := range group {
+		breakdowns = append(breakdowns, HazardAccessBreakdown{
+			Key:     key,
+			Reasons: topKeyCounts(reasons, 10),
+		})
+	}
+	sort.Slice(breakdowns, func(i, j int) bool {
+		return breakdowns[i].Key < breakdowns[j].Key
+	})
+	return breakdowns
+}
+
+func dedupeStrings(values []string) []string {
+	if len(values) == 0 {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(values))
+	out := make([]string, 0, len(values))
+	for _, value := range values {
+		if _, ok := seen[value]; ok {
+			continue
+		}
+		seen[value] = struct{}{}
+		out = append(out, value)
+	}
+	return out
 }
 
 func summarizeInts(values []int) *SimulatedIntSummary {

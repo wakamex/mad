@@ -143,6 +143,18 @@ func TestSimulateDev1000IncludesHazardAudit(t *testing.T) {
 	if len(report.HazardAudit.LagSignal) == 0 {
 		t.Fatalf("expected hazard lag signal")
 	}
+	if report.HazardAccess == nil {
+		t.Fatalf("expected hazard access audit")
+	}
+	if report.HazardAccess.TickCount != report.HazardAudit.Count {
+		t.Fatalf("expected hazard access tick count to match hazard audit: got %d want %d", report.HazardAccess.TickCount, report.HazardAudit.Count)
+	}
+	if len(report.HazardAccess.LaneSummaries) == 0 {
+		t.Fatalf("expected hazard access lane summaries")
+	}
+	if len(report.HazardAccess.BlockReasons) == 0 {
+		t.Fatalf("expected hazard access block reasons")
+	}
 }
 
 func TestHazardTimingAuditCapturesRepeatStructure(t *testing.T) {
@@ -319,6 +331,15 @@ func TestHazardTimingAuditCapturesRepeatStructure(t *testing.T) {
 	}
 	if len(report.HazardAudit.LagSignal) < 3 || report.HazardAudit.LagSignal[0].Lag != 1 || report.HazardAudit.LagSignal[0].PairCount != 2 || report.HazardAudit.LagSignal[1].Lag != 2 || report.HazardAudit.LagSignal[1].PairCount != 2 {
 		t.Fatalf("unexpected lag signal: %+v", report.HazardAudit.LagSignal)
+	}
+	if report.HazardAccess == nil {
+		t.Fatalf("expected hazard access audit")
+	}
+	if report.HazardAccess.TickCount != 5 {
+		t.Fatalf("unexpected hazard access tick count: got %d want 5", report.HazardAccess.TickCount)
+	}
+	if report.HazardAccess.AnyPremiumEligibleTicks != 0 {
+		t.Fatalf("expected no eligible premium hazard lanes, got %d", report.HazardAccess.AnyPremiumEligibleTicks)
 	}
 }
 

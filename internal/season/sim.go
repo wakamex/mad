@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"math/rand"
+	"sort"
 	"slices"
 )
 
@@ -16,6 +17,7 @@ type SimulationReport struct {
 	Notes         []string                     `json:"notes,omitempty"`
 	Baselines     map[string]SimulatedBaseline `json:"baselines"`
 	Decomposition ScoreDecomposition           `json:"decomposition,omitempty"`
+	HazardAudit   *HazardTimingAudit           `json:"hazard_audit,omitempty"`
 	RandomAudit   *SimulatedRandomAudit        `json:"random_audit,omitempty"`
 	ActionSurface SimulatedActionSurface       `json:"action_surface"`
 	Ticks         []SimulatedTick              `json:"ticks"`
@@ -64,6 +66,48 @@ type SimulatedRandomRun struct {
 	Breakdown ScoreBreakdown `json:"breakdown,omitempty"`
 	BeatBest  int            `json:"beat_best"`
 	TickCount int            `json:"tick_count"`
+}
+
+type HazardTimingAudit struct {
+	Family                  string                     `json:"family"`
+	Count                   int                        `json:"count"`
+	ShareOfTicks            float64                    `json:"share_of_ticks"`
+	DistinctElements        int                        `json:"distinct_elements"`
+	DistinctSourceTypes     int                        `json:"distinct_source_types"`
+	RepeatingElements       int                        `json:"repeating_elements"`
+	GlobalGapSummary        *SimulatedIntSummary       `json:"global_gap_summary,omitempty"`
+	SameElementGapSummary   *SimulatedIntSummary       `json:"same_element_gap_summary,omitempty"`
+	BeatCountPerElement     *SimulatedIntSummary       `json:"beat_count_per_element,omitempty"`
+	TopElements             []SimulatedKeyCount        `json:"top_elements,omitempty"`
+	SourceTypeCounts        []SimulatedKeyCount        `json:"source_type_counts,omitempty"`
+	TopGlobalGaps           []SimulatedIntCount        `json:"top_global_gaps,omitempty"`
+	TopSameElementGaps      []SimulatedIntCount        `json:"top_same_element_gaps,omitempty"`
+	LagSignal               []SimulatedLagSignal       `json:"lag_signal,omitempty"`
+}
+
+type SimulatedIntSummary struct {
+	Count int     `json:"count"`
+	Mean  float64 `json:"mean"`
+	Min   int     `json:"min"`
+	P50   int     `json:"p50"`
+	P90   int     `json:"p90"`
+	Max   int     `json:"max"`
+}
+
+type SimulatedKeyCount struct {
+	Key   string `json:"key"`
+	Count int    `json:"count"`
+}
+
+type SimulatedIntCount struct {
+	Value int `json:"value"`
+	Count int `json:"count"`
+}
+
+type SimulatedLagSignal struct {
+	Lag             int     `json:"lag"`
+	PairCount       int     `json:"pair_count"`
+	ConditionalRate float64 `json:"conditional_rate"`
 }
 
 type SimulatedActionSurface struct {
@@ -230,6 +274,7 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		bestBaseline.Ledger.Score,
 		visibleBaseline.Ledger.Score,
 	)
+	report.HazardAudit = deriveHazardTimingAudit(file)
 	if options.RandomRuns > 0 {
 		report.RandomAudit = simulateRandomAudit(file, options)
 	}
@@ -735,6 +780,167 @@ func applyRuleToSimulatedState(state *simulatedPlayerState, rule Rule) {
 	}
 }
 
+func deriveHazardTimingAudit(file File) *HazardTimingAudit {
+	const targetFamily = "hazard_interrupt"
+	hazardIndices := make([]int, 0)
+	elementIndices := make(map[string][]int)
+	elementCounts := make(map[string]int)
+	sourceTypeCounts := make(map[string]int)
+	hazardSet := make(map[int]struct{})
+
+	for idx, tick := range file.Ticks {
+		if tick.Annotations.Family != targetFamily {
+			continue
+		}
+		hazardIndices = append(hazardIndices, idx)
+		hazardSet[idx] = struct{}{}
+		if tick.Annotations.ElementID != "" {
+			elementIndices[tick.Annotations.ElementID] = append(elementIndices[tick.Annotations.ElementID], idx)
+			elementCounts[tick.Annotations.ElementID]++
+		}
+		for _, source := range tick.Sources {
+			if source.SourceType == "" {
+				continue
+			}
+			sourceTypeCounts[source.SourceType]++
+		}
+	}
+	if len(hazardIndices) == 0 {
+		return nil
+	}
+
+	globalGaps := make([]int, 0, len(hazardIndices)-1)
+	for i := 1; i < len(hazardIndices); i++ {
+		globalGaps = append(globalGaps, hazardIndices[i]-hazardIndices[i-1])
+	}
+
+	sameElementGaps := make([]int, 0)
+	beatCounts := make([]int, 0, len(elementCounts))
+	repeatingElements := 0
+	for _, indices := range elementIndices {
+		beatCounts = append(beatCounts, len(indices))
+		if len(indices) > 1 {
+			repeatingElements++
+		}
+		for i := 1; i < len(indices); i++ {
+			sameElementGaps = append(sameElementGaps, indices[i]-indices[i-1])
+		}
+	}
+
+	return &HazardTimingAudit{
+		Family:                targetFamily,
+		Count:                 len(hazardIndices),
+		ShareOfTicks:          float64(len(hazardIndices)) / float64(len(file.Ticks)),
+		DistinctElements:      len(elementCounts),
+		DistinctSourceTypes:   len(sourceTypeCounts),
+		RepeatingElements:     repeatingElements,
+		GlobalGapSummary:      summarizeInts(globalGaps),
+		SameElementGapSummary: summarizeInts(sameElementGaps),
+		BeatCountPerElement:   summarizeInts(beatCounts),
+		TopElements:           topKeyCounts(elementCounts, 10),
+		SourceTypeCounts:      topKeyCounts(sourceTypeCounts, 10),
+		TopGlobalGaps:         topIntCounts(globalGaps, 10),
+		TopSameElementGaps:    topIntCounts(sameElementGaps, 10),
+		LagSignal:             computeLagSignal(hazardIndices, hazardSet, len(file.Ticks), 32),
+	}
+}
+
+func summarizeInts(values []int) *SimulatedIntSummary {
+	if len(values) == 0 {
+		return nil
+	}
+	sorted := append([]int(nil), values...)
+	sort.Ints(sorted)
+	sum := 0
+	for _, value := range sorted {
+		sum += value
+	}
+	return &SimulatedIntSummary{
+		Count: len(sorted),
+		Mean:  float64(sum) / float64(len(sorted)),
+		Min:   sorted[0],
+		P50:   quantileInt(sorted, 0.50),
+		P90:   quantileInt(sorted, 0.90),
+		Max:   sorted[len(sorted)-1],
+	}
+}
+
+func topKeyCounts(counts map[string]int, limit int) []SimulatedKeyCount {
+	if len(counts) == 0 {
+		return nil
+	}
+	entries := make([]SimulatedKeyCount, 0, len(counts))
+	for key, count := range counts {
+		entries = append(entries, SimulatedKeyCount{Key: key, Count: count})
+	}
+	sort.Slice(entries, func(i, j int) bool {
+		if entries[i].Count != entries[j].Count {
+			return entries[i].Count > entries[j].Count
+		}
+		return entries[i].Key < entries[j].Key
+	})
+	if limit > 0 && len(entries) > limit {
+		entries = entries[:limit]
+	}
+	return entries
+}
+
+func topIntCounts(values []int, limit int) []SimulatedIntCount {
+	if len(values) == 0 {
+		return nil
+	}
+	counts := make(map[int]int)
+	for _, value := range values {
+		counts[value]++
+	}
+	entries := make([]SimulatedIntCount, 0, len(counts))
+	for value, count := range counts {
+		entries = append(entries, SimulatedIntCount{Value: value, Count: count})
+	}
+	sort.Slice(entries, func(i, j int) bool {
+		if entries[i].Count != entries[j].Count {
+			return entries[i].Count > entries[j].Count
+		}
+		return entries[i].Value < entries[j].Value
+	})
+	if limit > 0 && len(entries) > limit {
+		entries = entries[:limit]
+	}
+	return entries
+}
+
+func computeLagSignal(hazardIndices []int, hazardSet map[int]struct{}, tickCount int, maxLag int) []SimulatedLagSignal {
+	if len(hazardIndices) == 0 || tickCount <= 1 || maxLag <= 0 {
+		return nil
+	}
+	if maxLag > tickCount-1 {
+		maxLag = tickCount - 1
+	}
+	signals := make([]SimulatedLagSignal, 0, maxLag)
+	for lag := 1; lag <= maxLag; lag++ {
+		pairCount := 0
+		possibleStarts := 0
+		for _, idx := range hazardIndices {
+			if idx+lag >= tickCount {
+				continue
+			}
+			possibleStarts++
+			if _, ok := hazardSet[idx+lag]; ok {
+				pairCount++
+			}
+		}
+		if possibleStarts == 0 {
+			continue
+		}
+		signals = append(signals, SimulatedLagSignal{
+			Lag:             lag,
+			PairCount:       pairCount,
+			ConditionalRate: float64(pairCount) / float64(possibleStarts),
+		})
+	}
+	return signals
+}
+
 func quantileScore(sortedScores []int64, q float64) int64 {
 	if len(sortedScores) == 0 {
 		return 0
@@ -754,4 +960,11 @@ func quantileIndex(length int, q float64) int {
 		return length - 1
 	}
 	return int(float64(length-1) * q)
+}
+
+func quantileInt(sortedValues []int, q float64) int {
+	if len(sortedValues) == 0 {
+		return 0
+	}
+	return sortedValues[quantileIndex(len(sortedValues), q)]
 }

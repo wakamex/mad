@@ -118,6 +118,210 @@ func TestSimulateDevSeason(t *testing.T) {
 	}
 }
 
+func TestSimulateDev1000IncludesHazardAudit(t *testing.T) {
+	loaded, err := LoadFile(filepath.Join("..", "..", "seasons", "dev1000", "season.json"))
+	if err != nil {
+		t.Fatalf("load dev1000 season: %v", err)
+	}
+
+	report, err := Simulate(loaded)
+	if err != nil {
+		t.Fatalf("simulate season: %v", err)
+	}
+	if report.HazardAudit == nil {
+		t.Fatalf("expected hazard audit")
+	}
+	if report.HazardAudit.Count <= 0 {
+		t.Fatalf("expected hazard audit to count hazard ticks")
+	}
+	if report.HazardAudit.GlobalGapSummary == nil {
+		t.Fatalf("expected hazard global gap summary")
+	}
+	if len(report.HazardAudit.SourceTypeCounts) == 0 {
+		t.Fatalf("expected hazard source type counts")
+	}
+	if len(report.HazardAudit.LagSignal) == 0 {
+		t.Fatalf("expected hazard lag signal")
+	}
+}
+
+func TestHazardTimingAuditCapturesRepeatStructure(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "hazard-audit",
+		Title:           "hazard audit",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "T1",
+				ClockClass: "interrupt",
+				DurationMS: 1000,
+				Sources:    []Source{{SourceType: "critical_broadcast"}},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "hazard.alpha.t1", AllowedCommands: []string{"hold"}}},
+				Annotations: Annotations{
+					Family:    "hazard_interrupt",
+					ElementID: "hazard.alpha",
+				},
+			},
+			{
+				TickID:     "T2",
+				ClockClass: "interrupt",
+				DurationMS: 1000,
+				Sources:    []Source{{SourceType: "critical_broadcast"}},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "hazard.beta.t2", AllowedCommands: []string{"hold"}}},
+				Annotations: Annotations{
+					Family:    "hazard_interrupt",
+					ElementID: "hazard.beta",
+				},
+			},
+			{
+				TickID:     "T3",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "noop.t3", AllowedCommands: []string{"hold"}}},
+			},
+			{
+				TickID:     "T4",
+				ClockClass: "interrupt",
+				DurationMS: 1000,
+				Sources:    []Source{{SourceType: "critical_broadcast"}},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "hazard.alpha.t4", AllowedCommands: []string{"hold"}}},
+				Annotations: Annotations{
+					Family:    "hazard_interrupt",
+					ElementID: "hazard.alpha",
+				},
+			},
+			{
+				TickID:     "T5",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "noop.t5", AllowedCommands: []string{"hold"}}},
+			},
+			{
+				TickID:     "T6",
+				ClockClass: "interrupt",
+				DurationMS: 1000,
+				Sources:    []Source{{SourceType: "critical_broadcast"}},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "hazard.alpha.t6", AllowedCommands: []string{"hold"}}},
+				Annotations: Annotations{
+					Family:    "hazard_interrupt",
+					ElementID: "hazard.alpha",
+				},
+			},
+			{
+				TickID:     "T7",
+				ClockClass: "interrupt",
+				DurationMS: 1000,
+				Sources:    []Source{{SourceType: "public_notice"}},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "hold",
+						Classification: "miss",
+					},
+				}},
+				Opportunities: []Opportunity{{OpportunityID: "hazard.beta.t7", AllowedCommands: []string{"hold"}}},
+				Annotations: Annotations{
+					Family:    "hazard_interrupt",
+					ElementID: "hazard.beta",
+				},
+			},
+		},
+	}
+
+	report, err := Simulate(file)
+	if err != nil {
+		t.Fatalf("simulate: %v", err)
+	}
+	if report.HazardAudit == nil {
+		t.Fatalf("expected hazard audit")
+	}
+	if report.HazardAudit.Count != 5 {
+		t.Fatalf("unexpected hazard count: got %d want 5", report.HazardAudit.Count)
+	}
+	if report.HazardAudit.DistinctElements != 2 {
+		t.Fatalf("unexpected distinct elements: got %d want 2", report.HazardAudit.DistinctElements)
+	}
+	if report.HazardAudit.RepeatingElements != 2 {
+		t.Fatalf("unexpected repeating elements: got %d want 2", report.HazardAudit.RepeatingElements)
+	}
+	if report.HazardAudit.GlobalGapSummary == nil || report.HazardAudit.GlobalGapSummary.Min != 1 || report.HazardAudit.GlobalGapSummary.Max != 2 {
+		t.Fatalf("unexpected global gap summary: %+v", report.HazardAudit.GlobalGapSummary)
+	}
+	if report.HazardAudit.SameElementGapSummary == nil || report.HazardAudit.SameElementGapSummary.P50 != 3 {
+		t.Fatalf("unexpected same-element gap summary: %+v", report.HazardAudit.SameElementGapSummary)
+	}
+	if report.HazardAudit.BeatCountPerElement == nil || report.HazardAudit.BeatCountPerElement.Max != 3 {
+		t.Fatalf("unexpected beat count summary: %+v", report.HazardAudit.BeatCountPerElement)
+	}
+	if len(report.HazardAudit.TopElements) == 0 || report.HazardAudit.TopElements[0].Key != "hazard.alpha" || report.HazardAudit.TopElements[0].Count != 3 {
+		t.Fatalf("unexpected top elements: %+v", report.HazardAudit.TopElements)
+	}
+	if len(report.HazardAudit.TopGlobalGaps) == 0 || report.HazardAudit.TopGlobalGaps[0].Value != 1 || report.HazardAudit.TopGlobalGaps[0].Count != 2 {
+		t.Fatalf("unexpected top global gaps: %+v", report.HazardAudit.TopGlobalGaps)
+	}
+	if len(report.HazardAudit.TopSameElementGaps) == 0 || report.HazardAudit.TopSameElementGaps[0].Count != 1 {
+		t.Fatalf("unexpected top same-element gaps: %+v", report.HazardAudit.TopSameElementGaps)
+	}
+	if len(report.HazardAudit.SourceTypeCounts) == 0 || report.HazardAudit.SourceTypeCounts[0].Key != "critical_broadcast" || report.HazardAudit.SourceTypeCounts[0].Count != 4 {
+		t.Fatalf("unexpected source type counts: %+v", report.HazardAudit.SourceTypeCounts)
+	}
+	if len(report.HazardAudit.LagSignal) < 3 || report.HazardAudit.LagSignal[0].Lag != 1 || report.HazardAudit.LagSignal[0].PairCount != 2 || report.HazardAudit.LagSignal[1].Lag != 2 || report.HazardAudit.LagSignal[1].PairCount != 2 {
+		t.Fatalf("unexpected lag signal: %+v", report.HazardAudit.LagSignal)
+	}
+}
+
 func TestEvaluateSimulatedActionSkipsIneligibleBestRule(t *testing.T) {
 	plan := ScoringPlan{
 		Rules: []Rule{

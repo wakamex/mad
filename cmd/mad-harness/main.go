@@ -34,7 +34,7 @@ func main() {
 	workdir := flag.String("workdir", ".", "Working directory for external runner CLIs")
 	startTick := flag.Int("start-tick", 0, "Tick index to start from")
 	maxTicks := flag.Int("max-ticks", 25, "Maximum ticks to play; 0 means entire season")
-	recentReveals := flag.Int("recent-reveals", 6, "Number of recent public reveals to include in prompts")
+	recentReveals := flag.Int("recent-reveals", -1, "Number of recent public reveals to include in prompts; -1 means auto")
 	maxNotesChars := flag.Int("max-notes-chars", 1600, "Maximum persisted notes length")
 	decisionTimeout := flag.Duration("decision-timeout", 90*time.Second, "Timeout per model decision")
 	runCount := flag.Int("runs", 1, "Number of independent runs per runner")
@@ -57,6 +57,10 @@ func main() {
 	serviceTier, err := harness.ParseServiceTier(*serviceTierRaw)
 	if err != nil {
 		log.Fatalf("parse service tier: %v", err)
+	}
+	recentRevealCount := *recentReveals
+	if recentRevealCount < 0 {
+		recentRevealCount = defaultRecentReveals(memoryMode, contextMode)
 	}
 	if *runCount <= 0 {
 		log.Fatalf("parse runs: must be >= 1")
@@ -126,7 +130,7 @@ func main() {
 	runOptions := harness.RunOptions{
 		StartTick:         *startTick,
 		MaxTicks:          *maxTicks,
-		RecentRevealCount: *recentReveals,
+		RecentRevealCount: recentRevealCount,
 		MaxNotesChars:     *maxNotesChars,
 		DecisionTimeout:   *decisionTimeout,
 	}
@@ -186,6 +190,13 @@ func main() {
 		log.Printf("multi_run_summary %s", summarizeRunGroup(group))
 	}
 	log.Printf("run_report runners=%d out=%s", len(report.Runs), *outPath)
+}
+
+func defaultRecentReveals(memoryMode harness.MemoryMode, contextMode harness.ContextMode) int {
+	if memoryMode == harness.MemoryModeOff && contextMode == harness.ContextModeEphemeral {
+		return 0
+	}
+	return 6
 }
 
 type progressPrinter struct {

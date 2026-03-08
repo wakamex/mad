@@ -28,6 +28,7 @@ type config struct {
 	maxTicks        int
 	runs            int
 	recentReveals   int
+	recentRevealsSet bool
 	maxNotesChars   int
 	decisionTimeout time.Duration
 	name            string
@@ -167,7 +168,7 @@ func parseConfig() (config, error) {
 	flag.IntVar(&cfg.startTick, "start-tick", 0, "Tick index to start from")
 	flag.IntVar(&cfg.maxTicks, "max-ticks", 25, "Maximum ticks to play; 0 means entire season")
 	flag.IntVar(&cfg.runs, "runs", 1, "Number of independent runs per runner")
-	flag.IntVar(&cfg.recentReveals, "recent-reveals", 6, "Number of recent public reveals in prompts")
+	flag.IntVar(&cfg.recentReveals, "recent-reveals", -1, "Number of recent public reveals in prompts; -1 means auto")
 	flag.IntVar(&cfg.maxNotesChars, "max-notes-chars", 1600, "Maximum persisted notes length")
 	flag.DurationVar(&cfg.decisionTimeout, "decision-timeout", 90*time.Second, "Timeout per model decision")
 	flag.StringVar(&cfg.name, "name", "", "Optional run name suffix")
@@ -176,6 +177,11 @@ func parseConfig() (config, error) {
 	flag.BoolVar(&cfg.probeOnly, "probe", false, "Probe model availability only")
 	flag.BoolVar(&cfg.detach, "detach", false, "Run in background and log to launcher.log")
 	flag.Parse()
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "recent-reveals" {
+			cfg.recentRevealsSet = true
+		}
+	})
 
 	if cfg.provider != "codex" && cfg.provider != "claude" && cfg.provider != "openrouter" {
 		return cfg, fmt.Errorf("--provider must be codex, claude, or openrouter")
@@ -202,7 +208,17 @@ func parseConfig() (config, error) {
 	cfg.memoryMode = memoryMode
 	cfg.contextMode = contextMode
 	cfg.serviceTier = serviceTier
+	if !cfg.recentRevealsSet {
+		cfg.recentReveals = defaultRecentReveals(cfg.memoryMode, cfg.contextMode)
+	}
 	return cfg, nil
+}
+
+func defaultRecentReveals(memoryMode harness.MemoryMode, contextMode harness.ContextMode) int {
+	if memoryMode == harness.MemoryModeOff && contextMode == harness.ContextModeEphemeral {
+		return 0
+	}
+	return 6
 }
 
 func finalizeConfig(repoRoot string, cfg config) (config, error) {

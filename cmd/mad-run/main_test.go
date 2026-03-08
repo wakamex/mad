@@ -85,3 +85,21 @@ func TestPrepareCodexHomeCopiesAuthAndConfig(t *testing.T) {
 		}
 	}
 }
+
+func TestDefaultRecentRevealsForMinimumHistoryBaseline(t *testing.T) {
+	t.Parallel()
+
+	got := defaultRecentReveals(harness.MemoryModeOff, harness.ContextModeEphemeral)
+	if got != 0 {
+		t.Fatalf("defaultRecentReveals(off, ephemeral) = %d, want 0", got)
+	}
+}
+
+func TestDefaultRecentRevealsForPersistentModes(t *testing.T) {
+	t.Parallel()
+
+	got := defaultRecentReveals(harness.MemoryModeOn, harness.ContextModePersistent)
+	if got != 6 {
+		t.Fatalf("defaultRecentReveals(on, persistent) = %d, want 6", got)
+	}
+}

@@ -649,6 +649,11 @@ func advanceSimulatedStateToTick(state *simulatedPlayerState, tickIndex int) {
 		state.AvailabilityBeforeLock = ""
 		state.AvailabilityResetTick = 0
 	}
+	for cooldownName, readyTick := range state.CooldownReadyTickByName {
+		if tickIndex >= readyTick {
+			delete(state.CooldownReadyTickByName, cooldownName)
+		}
+	}
 }
 
 func requirementsMet(requirements RuleRequirements, state simulatedPlayerState) bool {

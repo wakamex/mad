@@ -42,7 +42,9 @@ func (h *HarnessState) Snapshot() HarnessStateSnapshot {
 	}
 	cooldowns := make(map[string]int, len(h.sim.CooldownReadyTickByName))
 	for name, tick := range h.sim.CooldownReadyTickByName {
-		cooldowns[name] = tick
+		if tick > h.sim.CurrentTick {
+			cooldowns[name] = tick
+		}
 	}
 	tags := make([]string, 0, len(h.sim.Tags))
 	for tag := range h.sim.Tags {

@@ -420,6 +420,21 @@ func TestGreedyBaselineRespectsCooldownReadiness(t *testing.T) {
 	}
 }
 
+func TestAdvanceSimulatedStatePrunesExpiredCooldowns(t *testing.T) {
+	state := newSimulatedPlayerState()
+	state.CooldownReadyTickByName["expired"] = 3
+	state.CooldownReadyTickByName["active"] = 6
+
+	advanceSimulatedStateToTick(&state, 3)
+
+	if _, ok := state.CooldownReadyTickByName["expired"]; ok {
+		t.Fatalf("expected expired cooldown to be pruned")
+	}
+	if _, ok := state.CooldownReadyTickByName["active"]; !ok {
+		t.Fatalf("expected active cooldown to remain")
+	}
+}
+
 func TestVisibleGreedyPrefersInspectOverBlindMultiOptionCommit(t *testing.T) {
 	file := File{
 		SchemaVersion:   "v1alpha1",

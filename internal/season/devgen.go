@@ -34,12 +34,12 @@ type devRegime struct {
 }
 
 var devFactions = []devFaction{
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 14, ExploitBonus: 0, StabilizeDebtRelief: 10, StabilizeRepThreshold: 16, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraThreshold: 20, ExploitAuraSpend: 10, ExploitDebtCap: 30},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 10, ExploitBonus: 2, StabilizeDebtRelief: 12, StabilizeRepThreshold: 10, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraThreshold: 18, ExploitAuraSpend: 8, ExploitDebtCap: 30},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 6, ExploitBonus: 10, StabilizeDebtRelief: 6, StabilizeRepThreshold: 8, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraThreshold: 12, ExploitAuraSpend: 6, ExploitDebtCap: 36},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 8, ExploitBonus: 6, StabilizeDebtRelief: 8, StabilizeRepThreshold: 18, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraThreshold: 18, ExploitAuraSpend: 5, ExploitDebtCap: 34},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 4, ExploitBonus: 14, StabilizeDebtRelief: 4, StabilizeRepThreshold: 7, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraThreshold: 10, ExploitAuraSpend: 7, ExploitDebtCap: 38},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 12, ExploitBonus: 4, StabilizeDebtRelief: 9, StabilizeRepThreshold: 14, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraThreshold: 22, ExploitAuraSpend: 9, ExploitDebtCap: 32},
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 40, ExploitBonus: -8, StabilizeDebtRelief: 14, StabilizeRepThreshold: 16, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraThreshold: 22, ExploitAuraSpend: 12, ExploitDebtCap: 28},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 28, ExploitBonus: -2, StabilizeDebtRelief: 13, StabilizeRepThreshold: 10, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraThreshold: 20, ExploitAuraSpend: 9, ExploitDebtCap: 30},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 4, ExploitBonus: 18, StabilizeDebtRelief: 5, StabilizeRepThreshold: 8, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraThreshold: 12, ExploitAuraSpend: 5, ExploitDebtCap: 38},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 22, ExploitBonus: 4, StabilizeDebtRelief: 11, StabilizeRepThreshold: 18, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraThreshold: 18, ExploitAuraSpend: 6, ExploitDebtCap: 34},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 0, ExploitBonus: 22, StabilizeDebtRelief: 3, StabilizeRepThreshold: 7, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraThreshold: 10, ExploitAuraSpend: 6, ExploitDebtCap: 40},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 34, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepThreshold: 14, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraThreshold: 24, ExploitAuraSpend: 10, ExploitDebtCap: 30},
 }
 
 var devRegimes = []devRegime{
@@ -214,11 +214,20 @@ func buildStandingWorkElement(cluster int, theme devTheme, plan devClusterPlan) 
 		if i >= 3 {
 			repDelta = 1
 		}
+		debtDelta := int64(0)
+		switch {
+		case i == 1:
+			// Entering a standing-work lane should cost a little.
+			debtDelta = 1
+		case plan.Standing >= 4 && i == plan.Standing:
+			// Completing a longer routine loop helps settle minor obligations.
+			debtDelta = -1
+		}
 		delta := ScoreDelta{
 			Yield:         0,
 			Insight:       int64((i + 1) % 2),
 			Aura:          int64(i % 2),
-			Debt:          2 + int64((i-1)/3),
+			Debt:          debtDelta,
 			MissPenalties: 0,
 		}
 		beats = append(beats, StoryBeat{
@@ -389,7 +398,7 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 					MinReputation:        map[string]int64{theme.Faction.ID: thresholdRep},
 					MaxDebt:              thresholdDebt,
 				},
-				Delta:          ScoreDelta{Yield: 115 + int64(i*35), Insight: 24 + int64(i*6), Aura: 8 + int64(i), Debt: 0, MissPenalties: 0},
+				Delta:          ScoreDelta{Yield: 115 + int64(i*35), Insight: 24 + int64(i*6), Aura: 8 + int64(i), Debt: -(4 + int64(i/2)), MissPenalties: 0},
 				Label:          "Your earlier standing unlocked the premium tier.",
 				Classification: "best",
 			})
@@ -400,7 +409,7 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 				Requirements: RuleRequirements{
 					RequiresAvailability: []string{defaultAvailability},
 				},
-				Delta:          ScoreDelta{Yield: 70 + int64(i*18), Insight: 14 + int64(i*4), Aura: 5 + int64(i/2), Debt: 0, MissPenalties: 0},
+				Delta:          ScoreDelta{Yield: 70 + int64(i*18), Insight: 14 + int64(i*4), Aura: 5 + int64(i/2), Debt: -(2 + int64(i/3)), MissPenalties: 0},
 				Label:          fmt.Sprintf("%s was the correct social read for the public regime.", theme.Regime.OfferBestOption),
 				Classification: "best",
 			},
@@ -694,7 +703,7 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 					Requirements: RuleRequirements{
 						RequiresAvailability: []string{defaultAvailability},
 					},
-					Delta:          ScoreDelta{Yield: 40, Insight: 220, Aura: 12, Debt: 0, MissPenalties: 0},
+					Delta:          ScoreDelta{Yield: 40, Insight: 220, Aura: 12, Debt: -12, MissPenalties: 0},
 					Label:          "The dossier choice bound the whole clue chain together.",
 					Classification: "best",
 				},
@@ -733,7 +742,7 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 					Requirements: RuleRequirements{
 						RequiresAvailability: []string{defaultAvailability},
 					},
-					Delta:          ScoreDelta{Yield: 80 + int64(i*20), Insight: 20 + int64(i*4), Aura: 5 + int64(i/2), Debt: 0, MissPenalties: 0},
+					Delta:          ScoreDelta{Yield: 80 + int64(i*20), Insight: 20 + int64(i*4), Aura: 5 + int64(i/2), Debt: -(3 + int64(i/2)), MissPenalties: 0},
 					Label:          fmt.Sprintf("%s was the correct conversion of the clue pair into immediate value.", theme.Regime.MarketBestOption),
 					Classification: "best",
 				},

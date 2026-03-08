@@ -712,6 +712,9 @@ func applyLedgerDelta(ledger *SimulatedLedger, delta ScoreDelta) {
 	ledger.Insight += delta.Insight
 	ledger.Aura += delta.Aura
 	ledger.Debt += delta.Debt
+	if ledger.Debt < 0 {
+		ledger.Debt = 0
+	}
 	ledger.MissPenalties += delta.MissPenalties
 	ledger.Score = ledger.Yield + ledger.Insight + ledger.Aura - ledger.Debt - ledger.MissPenalties
 }

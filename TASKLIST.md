@@ -150,6 +150,15 @@ Current execution:
   - `hazard_interrupt` itself contributes the vast majority of greedy-path debt
   - once premium lanes are missed, hazard penalties generate the debt that blocks later hazard lanes
 - next balance pass should target the debt / standing economy before doing more threshold retuning
+- after reducing standing-work debt and adding debt relief to positive ladder/payoff routes, the premium lanes are now broadly reachable:
+  - `any_premium_eligible_ticks = 219 / 244`
+  - remaining blockers are mostly `availability` and faction `reputation`, not `debt`
+  - `hazard_interrupt` is now net positive for `greedy_best` again
+- after sharpening faction profiles, hazard specialization is now partially real:
+  - `harbor_union` and `silt_exchange` strongly prefer `exploit`
+  - `glass_choir`, `civic_ward`, and `relay_guild` now sometimes choose `stabilize`
+  - `archive_office` still leans too hard toward `exploit`
+- next hazard tuning pass should improve the `threshold x spend x payoff` spread further so faction lanes are more cleanly distinct without collapsing back into a debt gate
 
 ## 9. Generator Prototype
 

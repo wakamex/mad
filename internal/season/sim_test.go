@@ -377,6 +377,17 @@ func TestEvaluateSimulatedActionSkipsIneligibleBestRule(t *testing.T) {
 	}
 }
 
+func TestApplyLedgerDeltaClampsDebtAtZero(t *testing.T) {
+	ledger := SimulatedLedger{Debt: 5}
+	applyLedgerDelta(&ledger, ScoreDelta{Debt: -12, Yield: 3})
+	if ledger.Debt != 0 {
+		t.Fatalf("expected debt to clamp at zero, got %d", ledger.Debt)
+	}
+	if ledger.Score != 3 {
+		t.Fatalf("expected score to reflect clamped debt, got %d want 3", ledger.Score)
+	}
+}
+
 func TestGreedyBaselineRespectsRequirementsAndEffects(t *testing.T) {
 	file := File{
 		SchemaVersion:   "v1alpha1",

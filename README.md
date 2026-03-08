@@ -109,30 +109,18 @@ For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-ru
 
 For unambiguous experiment labels, use the canonical mode definitions in [CONFIG.md](/code/mad/CONFIG.md). Forecast ranges for common model/mode permutations live in [FORECAST.md](/code/mad/FORECAST.md).
 
-## OpenRouter Fast-Baseline Shortlist
+## OpenRouter Baselines
 
-If we add an OpenRouter-backed harness provider, it should accept any
-`openrouter:<model-slug>` runner and also ship a small preset shortlist for the
-canonical fast baselines.
+The harness should accept any `openrouter:<model-slug>` runner so the baseline
+matrix stays future-proof.
 
-Recommended presets:
+Measured practical results, including:
+- which models actually return non-null `top_logprobs` on the `1-token`
+  logprob-choice path
+- advertised throughput versus actual short-output latency
+- current default / fastest / cheapest working candidates
 
-- `openai/gpt-oss-20b`: default fast winner
-- `openai/gpt-oss-120b`: bigger / stronger fast model
-- `qwen/qwen3-32b`: non-OpenAI comparison
-- `meta-llama/llama-3.1-8b-instruct`: cheap weak floor
-
-Excluded for now:
-
-- `google/gemini-2.5-flash-lite-preview-09-2025`: does not add much beyond the
-  four models above
-- specialized apply / safeguard models: not fair general MAD baselines
-
-Design rule:
-
-- allow any OpenRouter slug so the harness stays future-proof
-- keep the four models above as named benchmark presets so plots and docs stay
-  comparable over time
+live in [OPENROUTER_BASELINES.md](/code/mad/OPENROUTER_BASELINES.md).
 
 Memory and context semantics are explicit:
 

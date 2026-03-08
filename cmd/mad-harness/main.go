@@ -41,6 +41,7 @@ func main() {
 	memoryModeRaw := flag.String("memory", string(harness.MemoryModeInherit), "Native memory mode for runners: inherit, on, or off")
 	contextModeRaw := flag.String("context", string(harness.ContextModePersistent), "Context continuity mode for runners: persistent or ephemeral")
 	serviceTierRaw := flag.String("service-tier", string(harness.ServiceTierInherit), "Codex service tier for runners: inherit, fast, or flex")
+	textModeRaw := flag.String("text-mode", string(harness.TextModeFull), "Prompt text mode: full, source-types, or redacted")
 	probeOnly := flag.Bool("probe", false, "Probe runner/model availability without playing a season")
 	var runnerSpecs runnerListFlag
 	flag.Var(&runnerSpecs, "runner", "Runner spec provider:model[@effort]; may be repeated")
@@ -57,6 +58,10 @@ func main() {
 	serviceTier, err := harness.ParseServiceTier(*serviceTierRaw)
 	if err != nil {
 		log.Fatalf("parse service tier: %v", err)
+	}
+	textMode, err := harness.ParseTextMode(*textModeRaw)
+	if err != nil {
+		log.Fatalf("parse text mode: %v", err)
 	}
 	recentRevealCount := *recentReveals
 	if recentRevealCount < 0 {
@@ -133,6 +138,7 @@ func main() {
 		RecentRevealCount: recentRevealCount,
 		MaxNotesChars:     *maxNotesChars,
 		DecisionTimeout:   *decisionTimeout,
+		TextMode:          textMode,
 	}
 	for _, spec := range specs {
 		for runNumber := 1; runNumber <= *runCount; runNumber++ {

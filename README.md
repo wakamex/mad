@@ -133,6 +133,7 @@ Memory and context semantics are explicit:
 - `openrouter`: requires `OPENROUTER_API_KEY` in the environment. The current harness path is intended for fast baseline runs, especially `--memory off --context ephemeral`. It uses direct OpenRouter chat completions and asks the model to return a numbered action choice, which the harness validates locally. Unlike Codex and Claude, it does not currently have a provider-native session or memory layer inside the harness.
 - `--context persistent`: keep thread/session continuity and let the harness carry forward the model's own `notes` field across ticks.
 - `--context ephemeral`: run each tick as a one-shot baseline. Provider-native session continuity is disabled, and the harness does not carry prior `notes` into later prompts.
+- `--text-mode full|source-types|redacted`: ablate how much prose the model sees while keeping the same actions, explicit player state, and scoring. Use this for local semantic leakage audits.
 
 Continuity is provider-native:
 

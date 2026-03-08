@@ -98,6 +98,35 @@ func TestParseServiceTier(t *testing.T) {
 	}
 }
 
+func TestParseTextMode(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		raw  string
+		want TextMode
+		ok   bool
+	}{
+		{raw: "", want: TextModeFull, ok: true},
+		{raw: "full", want: TextModeFull, ok: true},
+		{raw: "source-types", want: TextModeSourceTypes, ok: true},
+		{raw: "redacted", want: TextModeRedacted, ok: true},
+		{raw: "bad", ok: false},
+	}
+
+	for _, tc := range cases {
+		got, err := ParseTextMode(tc.raw)
+		if tc.ok && err != nil {
+			t.Fatalf("ParseTextMode(%q) unexpected error: %v", tc.raw, err)
+		}
+		if !tc.ok && err == nil {
+			t.Fatalf("ParseTextMode(%q) expected error", tc.raw)
+		}
+		if tc.ok && got != tc.want {
+			t.Fatalf("ParseTextMode(%q) = %q, want %q", tc.raw, got, tc.want)
+		}
+	}
+}
+
 func TestParseRunnerSpecSupportsOpenRouter(t *testing.T) {
 	t.Parallel()
 
@@ -439,9 +468,9 @@ func TestClaudeRunnerUsesIsolatedHomeAndMemoryPath(t *testing.T) {
 	t.Parallel()
 
 	runner, err := NewCLIRunner(RunnerSpec{
-		Provider:  "claude",
-		Model:     "haiku",
-		Effort:    "low",
+		Provider:   "claude",
+		Model:      "haiku",
+		Effort:     "low",
 		MemoryMode: MemoryModeOn,
 	}, ".", "")
 	if err != nil {

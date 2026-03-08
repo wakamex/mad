@@ -16,26 +16,27 @@ import (
 )
 
 type config struct {
-	provider        string
-	model           string
-	effort          string
-	memoryMode      harness.MemoryMode
-	contextMode     harness.ContextMode
-	serviceTier     harness.ServiceTier
-	seasonPath      string
-	workdir         string
-	startTick       int
-	maxTicks        int
-	runs            int
-	recentReveals   int
+	provider         string
+	model            string
+	effort           string
+	memoryMode       harness.MemoryMode
+	contextMode      harness.ContextMode
+	serviceTier      harness.ServiceTier
+	textMode         harness.TextMode
+	seasonPath       string
+	workdir          string
+	startTick        int
+	maxTicks         int
+	runs             int
+	recentReveals    int
 	recentRevealsSet bool
-	maxNotesChars   int
-	decisionTimeout time.Duration
-	name            string
-	runDir          string
-	outPath         string
-	probeOnly       bool
-	detach          bool
+	maxNotesChars    int
+	decisionTimeout  time.Duration
+	name             string
+	runDir           string
+	outPath          string
+	probeOnly        bool
+	detach           bool
 }
 
 func main() {
@@ -77,6 +78,7 @@ func main() {
 		MemoryMode:  string(cfg.memoryMode),
 		ContextMode: string(cfg.contextMode),
 		ServiceTier: string(cfg.serviceTier),
+		TextMode:    string(cfg.textMode),
 		SeasonPath:  cfg.seasonPath,
 		Workdir:     cfg.workdir,
 		OutPath:     cfg.outPath,
@@ -141,6 +143,7 @@ func parseConfig() (config, error) {
 	var memoryRaw string
 	var contextRaw string
 	var serviceTierRaw string
+	var textModeRaw string
 
 	flag.Usage = func() {
 		out := flag.CommandLine.Output()
@@ -152,6 +155,7 @@ func parseConfig() (config, error) {
 		fmt.Fprintln(out, "  mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json")
 		fmt.Fprintln(out, "  mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe")
 		fmt.Fprintln(out, "  mad-run --provider openrouter --model openai/gpt-oss-20b --memory off --context ephemeral --service-tier fast --max-ticks 100")
+		fmt.Fprintln(out, "  mad-run --provider claude --model haiku --memory off --context ephemeral --text-mode redacted --max-ticks 100")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Flags:")
 		flag.PrintDefaults()
@@ -163,6 +167,7 @@ func parseConfig() (config, error) {
 	flag.StringVar(&memoryRaw, "memory", "on", "Native memory mode: on, off, or inherit")
 	flag.StringVar(&contextRaw, "context", string(harness.ContextModePersistent), "Context continuity mode: persistent or ephemeral")
 	flag.StringVar(&serviceTierRaw, "service-tier", string(harness.ServiceTierInherit), "Codex service tier: inherit, fast, or flex")
+	flag.StringVar(&textModeRaw, "text-mode", string(harness.TextModeFull), "Prompt text mode: full, source-types, or redacted")
 	flag.StringVar(&cfg.seasonPath, "season", filepath.Join("seasons", "dev1000", "season.json"), "Path to compiled season JSON")
 	flag.StringVar(&cfg.workdir, "workdir", ".", "Working directory passed to provider CLIs")
 	flag.IntVar(&cfg.startTick, "start-tick", 0, "Tick index to start from")
@@ -204,10 +209,15 @@ func parseConfig() (config, error) {
 	if err != nil {
 		return cfg, err
 	}
+	textMode, err := harness.ParseTextMode(textModeRaw)
+	if err != nil {
+		return cfg, err
+	}
 
 	cfg.memoryMode = memoryMode
 	cfg.contextMode = contextMode
 	cfg.serviceTier = serviceTier
+	cfg.textMode = textMode
 	if !cfg.recentRevealsSet {
 		cfg.recentReveals = defaultRecentReveals(cfg.memoryMode, cfg.contextMode)
 	}
@@ -236,13 +246,14 @@ func finalizeConfig(repoRoot string, cfg config) (config, error) {
 
 	timestamp := time.Now().UTC().Format("20060102T150405Z")
 	label := slugify(fmt.Sprintf(
-		"%s-%s%s-mem-%s-ctx-%s-tier-%s%s",
+		"%s-%s%s-mem-%s-ctx-%s-tier-%s%s%s",
 		cfg.provider,
 		cfg.model,
 		withPrefix(cfg.effort, "-"),
 		cfg.memoryMode,
 		cfg.contextMode,
 		cfg.serviceTier,
+		withPrefix(textModeSuffix(cfg.textMode), "-"),
 		withPrefix(cfg.name, "-"),
 	))
 	if cfg.runDir == "" {
@@ -266,6 +277,7 @@ type runMetadata struct {
 	MemoryMode  string
 	ContextMode string
 	ServiceTier string
+	TextMode    string
 	SeasonPath  string
 	Workdir     string
 	OutPath     string
@@ -284,6 +296,7 @@ func (m runMetadata) render() string {
 		"MAD_RUN_MEMORY=" + m.MemoryMode,
 		"MAD_RUN_CONTEXT=" + m.ContextMode,
 		"MAD_RUN_SERVICE_TIER=" + m.ServiceTier,
+		"MAD_RUN_TEXT_MODE=" + m.TextMode,
 		"MAD_RUN_SEASON=" + m.SeasonPath,
 		"MAD_RUN_WORKDIR=" + m.Workdir,
 		"MAD_RUN_OUT=" + m.OutPath,
@@ -317,6 +330,7 @@ func buildHarnessCommand(repoRoot string, cfg config, codexHome string) (*exec.C
 		"-memory", string(cfg.memoryMode),
 		"-context", string(cfg.contextMode),
 		"-service-tier", string(cfg.serviceTier),
+		"-text-mode", string(cfg.textMode),
 		"-runner", runner,
 	}
 	if cfg.probeOnly {
@@ -601,6 +615,13 @@ func withPrefix(value string, prefix string) string {
 		return ""
 	}
 	return prefix + value
+}
+
+func textModeSuffix(mode harness.TextMode) string {
+	if mode == "" || mode == harness.TextModeFull {
+		return ""
+	}
+	return "text-" + string(mode)
 }
 
 func userHomeDir() string {

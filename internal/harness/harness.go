@@ -42,6 +42,14 @@ const (
 	ServiceTierFlex    ServiceTier = "flex"
 )
 
+type TextMode string
+
+const (
+	TextModeFull        TextMode = "full"
+	TextModeSourceTypes TextMode = "source-types"
+	TextModeRedacted    TextMode = "redacted"
+)
+
 type RunnerSpec struct {
 	Provider    string      `json:"provider"`
 	Model       string      `json:"model"`
@@ -106,6 +114,18 @@ func ParseServiceTier(raw string) (ServiceTier, error) {
 	}
 }
 
+func ParseTextMode(raw string) (TextMode, error) {
+	mode := TextMode(strings.ToLower(strings.TrimSpace(raw)))
+	switch mode {
+	case "", TextModeFull:
+		return TextModeFull, nil
+	case TextModeSourceTypes, TextModeRedacted:
+		return mode, nil
+	default:
+		return "", fmt.Errorf("unsupported text mode %q", raw)
+	}
+}
+
 type Runner interface {
 	Spec() RunnerSpec
 	Decide(ctx context.Context, prompt string) ([]byte, error)
@@ -120,6 +140,7 @@ type RunOptions struct {
 	RecentRevealCount int                   `json:"recent_reveal_count,omitempty"`
 	MaxNotesChars     int                   `json:"max_notes_chars,omitempty"`
 	DecisionTimeout   time.Duration         `json:"decision_timeout,omitempty"`
+	TextMode          TextMode              `json:"text_mode,omitempty"`
 	StepCallback      func(RunResult) error `json:"-"`
 }
 
@@ -180,6 +201,7 @@ type StepTrace struct {
 
 type RunResult struct {
 	Runner         RunnerSpec                  `json:"runner"`
+	TextMode       TextMode                    `json:"text_mode,omitempty"`
 	RunNumber      int                         `json:"run_number,omitempty"`
 	RunCount       int                         `json:"run_count,omitempty"`
 	Session        SessionInfo                 `json:"session,omitempty"`
@@ -352,6 +374,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 
 	result := RunResult{
 		Runner:         runner.Spec(),
+		TextMode:       options.TextMode,
 		Session:        runner.SessionInfo(),
 		SeasonID:       file.SeasonID,
 		SeasonTitle:    file.Title,
@@ -383,10 +406,10 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			SeasonTitle:   file.Title,
 			TickIndex:     tickIndex,
 			TickCount:     len(file.Ticks),
-			CurrentTick:   tick.Public(),
+			CurrentTick:   applyTextModeTick(tick.Public(), options.TextMode),
 			ActionChoices: buildActionChoices(runner.Spec(), tick, actionStyle),
 			CurrentState:  state.Snapshot(),
-			RecentReveals: cloneReveals(visibleReveals),
+			RecentReveals: applyTextModeReveals(cloneReveals(visibleReveals), options.TextMode),
 		}
 		if persistNotes {
 			packet.Notes = notes
@@ -481,6 +504,9 @@ func normalizeRunOptions(options RunOptions) RunOptions {
 	if options.MaxNotesChars <= 0 {
 		options.MaxNotesChars = defaultMaxNotesChars
 	}
+	if options.TextMode == "" {
+		options.TextMode = TextModeFull
+	}
 	return options
 }
 
@@ -524,6 +550,50 @@ func cloneReveals(input []season.SimulatedReveal) []season.SimulatedReveal {
 	out := make([]season.SimulatedReveal, len(input))
 	copy(out, input)
 	return out
+}
+
+func applyTextModeTick(tick season.PublicTick, mode TextMode) season.PublicTick {
+	if mode == TextModeFull {
+		return tick
+	}
+	out := tick
+	out.Sources = make([]season.Source, len(tick.Sources))
+	for i, source := range tick.Sources {
+		out.Sources[i] = source
+		out.Sources[i].Text = transformTextByMode(source.SourceType, source.Text, mode)
+	}
+	return out
+}
+
+func applyTextModeReveals(reveals []season.SimulatedReveal, mode TextMode) []season.SimulatedReveal {
+	if mode == TextModeFull || len(reveals) == 0 {
+		return reveals
+	}
+	out := make([]season.SimulatedReveal, len(reveals))
+	for i, reveal := range reveals {
+		out[i] = reveal
+		if reveal.ResolutionPreview == nil {
+			continue
+		}
+		preview := *reveal.ResolutionPreview
+		preview.PublicExplanation = transformTextByMode("reveal", preview.PublicExplanation, mode)
+		out[i].ResolutionPreview = &preview
+	}
+	return out
+}
+
+func transformTextByMode(sourceType, text string, mode TextMode) string {
+	switch mode {
+	case TextModeSourceTypes:
+		if sourceType == "" {
+			return "[source text omitted; source type unavailable]"
+		}
+		return fmt.Sprintf("[%s text omitted]", sourceType)
+	case TextModeRedacted:
+		return "[text redacted]"
+	default:
+		return text
+	}
 }
 
 func runDecision(ctx context.Context, runner Runner, prompt string, tick season.TickDefinition, priorNotes string, options RunOptions) (string, Decision, error) {

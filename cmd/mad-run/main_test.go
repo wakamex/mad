@@ -30,6 +30,7 @@ func TestBuildHarnessCommandIncludesCodexHomeAndFlags(t *testing.T) {
 		memoryMode:      harness.MemoryModeOff,
 		contextMode:     harness.ContextModeEphemeral,
 		serviceTier:     harness.ServiceTierFast,
+		textMode:        harness.TextModeRedacted,
 		seasonPath:      filepath.Join(tmp, "season.json"),
 		workdir:         tmp,
 		startTick:       1,
@@ -57,6 +58,9 @@ func TestBuildHarnessCommandIncludesCodexHomeAndFlags(t *testing.T) {
 	}
 	if !strings.Contains(strings.Join(cmd.Args, " "), "-runs 3") {
 		t.Fatalf("args missing runs: %v", cmd.Args)
+	}
+	if !strings.Contains(strings.Join(cmd.Args, " "), "-text-mode redacted") {
+		t.Fatalf("args missing text mode: %v", cmd.Args)
 	}
 }
 

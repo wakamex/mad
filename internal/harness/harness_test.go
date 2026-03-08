@@ -156,6 +156,42 @@ func TestBuildPromptUsesLetterInstructionWhenRequested(t *testing.T) {
 	}
 }
 
+func TestApplyTextModeTick(t *testing.T) {
+	tick := season.PublicTick{
+		Sources: []season.Source{
+			{SourceType: "critical_broadcast", Text: "hazard text"},
+			{SourceType: "market_gossip", Text: "market text"},
+		},
+	}
+	sourceTypes := applyTextModeTick(tick, TextModeSourceTypes)
+	if got := sourceTypes.Sources[0].Text; got != "[critical_broadcast text omitted]" {
+		t.Fatalf("unexpected source-types text: %q", got)
+	}
+	redacted := applyTextModeTick(tick, TextModeRedacted)
+	if got := redacted.Sources[1].Text; got != "[text redacted]" {
+		t.Fatalf("unexpected redacted text: %q", got)
+	}
+}
+
+func TestApplyTextModeReveals(t *testing.T) {
+	reveals := []season.SimulatedReveal{
+		{
+			TickID: "S1-T0001",
+			ResolutionPreview: &season.SimulatedResolution{
+				PublicExplanation: "the dossier confirmed the broker route",
+			},
+		},
+	}
+	sourceTypes := applyTextModeReveals(reveals, TextModeSourceTypes)
+	if got := sourceTypes[0].ResolutionPreview.PublicExplanation; got != "[reveal text omitted]" {
+		t.Fatalf("unexpected source-types reveal text: %q", got)
+	}
+	redacted := applyTextModeReveals(reveals, TextModeRedacted)
+	if got := redacted[0].ResolutionPreview.PublicExplanation; got != "[text redacted]" {
+		t.Fatalf("unexpected redacted reveal text: %q", got)
+	}
+}
+
 func TestBuildActionChoicesPermutesOpenRouterLogprobOrder(t *testing.T) {
 	tick := season.TickDefinition{
 		TickID: "S1-T0001",

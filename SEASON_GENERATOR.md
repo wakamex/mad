@@ -137,6 +137,7 @@ What they test:
 Purpose:
 
 - create recurring faction relationships that compound over time
+- force specialization because standing should be scarce enough that maxing every faction is impossible
 
 Typical beats:
 
@@ -149,6 +150,21 @@ What they test:
 - long-horizon planning
 - opportunity cost
 - strategic specialization versus overcommitment
+
+Hard constraints:
+
+- the total season-wide standing budget must be scarce enough that a player cannot maintain top-tier access in every faction simultaneously
+- factions should have asymmetric ROI so some are better long-run investments than others
+- the generator should prefer `threshold + spend` over endlessly rising thresholds
+- the player should be able to learn stable faction profiles, not chase arbitrary numeric drift
+- the standing economy should be calibrated on aggregate, not per faction in isolation:
+  - total expected standing income across all factions should be materially lower than the amount required to keep all premium faction lanes open
+  - diminishing returns, cooldowns, and opportunity costs should prevent brute-force cross-faction farming from closing that gap
+- faction profiles should span multiple meaningful axes rather than collapsing onto a single “higher threshold = better reward” ladder:
+  - high threshold, low spend, strong long-term faction to cultivate
+  - low threshold, high spend, opportunistic faction that burns fast
+  - medium threshold, high safety, reliable stabilizer faction
+  - medium threshold, high upside, volatile exploit faction
 
 ### 4. Standing Work Loops
 
@@ -212,6 +228,21 @@ What they test:
 - interruption handling
 - explicit-state planning under pressure
 - whether the player can trade safety against upside using visible state rather than hidden prep flags
+
+Preferred redesign direction:
+
+- hazards should have stable archetypes, most naturally by faction
+- the lane thresholds should be relatively stable and publicly learnable
+- successful `stabilize` or `exploit` actions should spend some standing or aura rather than requiring ever-rising thresholds
+- faction profiles should differ enough that some hazard families are worth cultivating and others are not
+- it should be impossible to keep every faction lane comfortably open all season, so hazard play becomes a real specialization problem
+- the redesign should intentionally cover the full `threshold x spend x payoff` space:
+  - some factions should be expensive to unlock but cheap to sustain
+  - some should be easy to unlock but expensive to use repeatedly
+  - some should be safe but low-ceiling
+  - some should be volatile but high-ROI if managed well
+- the economy should be tuned so that overspecializing has real blind spots, but broad shallow investment also leaves premium lanes inaccessible
+- if this cannot produce a meaningful skill ceiling, the family should be cut rather than kept as ambient score tax
 
 Authoring rule:
 

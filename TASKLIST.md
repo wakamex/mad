@@ -129,12 +129,19 @@ Needed:
 - if they stay, make them reward smart visible-state planning without turning into free local EV
 - ensure `greedy_best` can recover net positive value from the family while `visible_greedy` stays near-neutral or negative
 - verify that any remaining interrupt difficulty comes from meaningful tradeoffs, not arbitrary punishment
+- redesign hazard lanes around stable, learnable faction archetypes
+- replace endlessly rising hazard thresholds with `stable threshold + spend`
+- make faction standing scarce enough that a player cannot keep all hazard lanes open at once
+- bias generator tuning toward asymmetric faction ROI so some factions are intentionally more worth grinding than others
+- calibrate hazard factions across the full `threshold x spend x payoff` matrix instead of only scaling one axis upward
+- add an aggregate standing-budget audit proving that expected total faction income is insufficient to sustain all premium lanes simultaneously
 
 Current execution:
 
 - old `preparedness_hazard` leak was removed
 - current `hazard_interrupt` rewrite fixed the visible-state leak but is likely overcorrected and too punitive overall
-- defer further balancing until the family is reconsidered at the design level
+- first-pass timing audit shows hazards recur heavily but do not currently have a strong payoff-vs-distance relationship
+- next redesign pass should treat hazards as a specialization/resource-allocation family, not as a prep-memory family
 
 ## 9. Generator Prototype
 

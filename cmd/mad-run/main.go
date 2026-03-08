@@ -64,7 +64,7 @@ func main() {
 	codexHome := ""
 	if cfg.provider == "codex" {
 		codexHome = filepath.Join(runDir, "codex-home")
-		if err := prepareCodexHome(codexHome); err != nil {
+		if err := prepareCodexHome(codexHome, cfg.memoryMode); err != nil {
 			log.Fatalf("prepare codex home: %v", err)
 		}
 	}
@@ -422,7 +422,7 @@ func launchDetached(cmd *exec.Cmd, logPath string) error {
 	return nil
 }
 
-func prepareCodexHome(codexHome string) error {
+func prepareCodexHome(codexHome string, memoryMode harness.MemoryMode) error {
 	for _, dir := range []string{
 		codexHome,
 		filepath.Join(codexHome, "memories"),
@@ -440,7 +440,82 @@ func prepareCodexHome(codexHome string) error {
 	if err := copyIfExists(filepath.Join(userHomeDir(), ".codex", "config.toml"), filepath.Join(codexHome, "config.toml")); err != nil {
 		return err
 	}
+	if err := configureCodexMemory(filepath.Join(codexHome, "config.toml"), memoryMode); err != nil {
+		return err
+	}
 	return nil
+}
+
+func configureCodexMemory(configPath string, memoryMode harness.MemoryMode) error {
+	if memoryMode != harness.MemoryModeOn {
+		return nil
+	}
+	content, err := os.ReadFile(configPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			content = nil
+		} else {
+			return err
+		}
+	}
+	updated := ensureTomlMemoriesSetting(string(content), "min_rollout_idle_hours", "0")
+	return os.WriteFile(configPath, []byte(updated), 0o644)
+}
+
+func ensureTomlMemoriesSetting(content string, key string, value string) string {
+	lines := strings.Split(content, "\n")
+	inMemories := false
+	foundSection := false
+	foundKey := false
+	out := make([]string, 0, len(lines)+4)
+
+	writeKey := func() {
+		out = append(out, fmt.Sprintf("%s = %s", key, value))
+		foundKey = true
+	}
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "[") && strings.HasSuffix(trimmed, "]") {
+			if inMemories && !foundKey {
+				writeKey()
+			}
+			inMemories = trimmed == "[memories]"
+			if inMemories {
+				foundSection = true
+			}
+			out = append(out, line)
+			continue
+		}
+		if inMemories {
+			if strings.HasPrefix(trimmed, key) {
+				writeKey()
+				continue
+			}
+		}
+		out = append(out, line)
+	}
+
+	if foundSection {
+		if !foundKey {
+			if len(out) > 0 && strings.TrimSpace(out[len(out)-1]) != "" {
+				out = append(out, "")
+			}
+			out = append(out, fmt.Sprintf("%s = %s", key, value))
+		}
+	} else {
+		if len(out) > 0 && strings.TrimSpace(out[len(out)-1]) != "" {
+			out = append(out, "")
+		}
+		out = append(out, "[memories]")
+		out = append(out, fmt.Sprintf("%s = %s", key, value))
+	}
+
+	result := strings.Join(out, "\n")
+	if !strings.HasSuffix(result, "\n") {
+		result += "\n"
+	}
+	return result
 }
 
 func copyIfExists(src string, dst string) error {

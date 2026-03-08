@@ -124,7 +124,7 @@ live in [OPENROUTER_BASELINES.md](/code/mad/OPENROUTER_BASELINES.md).
 
 Memory and context semantics are explicit:
 
-- `codex --memory on`: create an isolated writable `CODEX_HOME` inside the run directory, preserve provider-native session continuity there, and explicitly enable Codex memory features.
+- `codex --memory on`: create an isolated writable `CODEX_HOME` inside the run directory, preserve provider-native session continuity there, explicitly enable Codex memory features, and set the run-local Codex memory idle gate to `0` hours by default so memory is usable during benchmark runs.
 - `codex --memory off`: use the same isolated writable `CODEX_HOME`, but explicitly disable Codex memory features while keeping normal session continuity.
 - `codex --service-tier fast`: request Codex fast mode (`service_tier=fast`). This is the quickest way to get a Codex no-context baseline, especially when combined with `--context ephemeral`.
 - `codex --service-tier flex`: request the normal flex tier explicitly.

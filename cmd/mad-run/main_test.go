@@ -76,13 +76,50 @@ func TestPrepareCodexHomeCopiesAuthAndConfig(t *testing.T) {
 	}
 
 	dst := filepath.Join(t.TempDir(), "codex-home")
-	if err := prepareCodexHome(dst); err != nil {
+	if err := prepareCodexHome(dst, harness.MemoryModeOff); err != nil {
 		t.Fatalf("prepareCodexHome: %v", err)
 	}
 	for _, name := range []string{"auth.json", "config.toml"} {
 		if _, err := os.Stat(filepath.Join(dst, name)); err != nil {
 			t.Fatalf("expected %s to exist: %v", name, err)
 		}
+	}
+}
+
+func TestPrepareCodexHomeSetsZeroIdleGateWhenMemoryOn(t *testing.T) {
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+
+	srcRoot := filepath.Join(tmpHome, ".codex")
+	if err := os.MkdirAll(srcRoot, 0o755); err != nil {
+		t.Fatalf("mkdir source root: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(srcRoot, "config.toml"), []byte("model = \"x\"\n"), 0o644); err != nil {
+		t.Fatalf("write config: %v", err)
+	}
+
+	dst := filepath.Join(t.TempDir(), "codex-home")
+	if err := prepareCodexHome(dst, harness.MemoryModeOn); err != nil {
+		t.Fatalf("prepareCodexHome: %v", err)
+	}
+	content, err := os.ReadFile(filepath.Join(dst, "config.toml"))
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+	text := string(content)
+	if !strings.Contains(text, "[memories]") || !strings.Contains(text, "min_rollout_idle_hours = 0") {
+		t.Fatalf("expected zero idle gate config, got %q", text)
+	}
+}
+
+func TestEnsureTomlMemoriesSettingReplacesExistingValue(t *testing.T) {
+	input := "model = \"x\"\n\n[memories]\nmin_rollout_idle_hours = 6\nuse_memories = true\n"
+	got := ensureTomlMemoriesSetting(input, "min_rollout_idle_hours", "0")
+	if strings.Count(got, "min_rollout_idle_hours") != 1 {
+		t.Fatalf("expected exactly one idle gate entry, got %q", got)
+	}
+	if !strings.Contains(got, "min_rollout_idle_hours = 0") {
+		t.Fatalf("expected replaced idle gate value, got %q", got)
 	}
 }
 

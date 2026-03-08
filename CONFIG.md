@@ -126,7 +126,8 @@ If `memory=on`:
 - native session/state persistence is possible
 - Codex memory readback is possible
 - Codex memory generation is possible
-- idle gate applies
+- the harness now sets the run-local Codex memory idle gate to `0` hours by
+  default, so prior sessions become memory candidates immediately
 
 If `memory=off`:
 

@@ -155,28 +155,25 @@ type devClusterPlan struct {
 }
 
 func buildDevTheme(cluster int) devTheme {
-	color := devColors[cluster%len(devColors)]
-	phenomenon := devPhenomena[(cluster*3+1)%len(devPhenomena)]
-	role := devRoles[(cluster*5+2)%len(devRoles)]
-	// ProseVariant must NOT correlate with the regime index (cluster%3).
-	// Use an offset that is coprime to 3 so prose skeletons rotate
-	// independently of the regime assignment.
-	proseVariant := (cluster*7 + 2) % 3
-
+	// Linear modular assignment with multipliers coprime to each field size.
+	// With 7 factions, 11 colors, 13 districts: LCM = 1001.
+	// No fill-word tuple collisions for seasons up to 1001 clusters (~200h).
+	// For longer seasons, the weaver should add a constraint to avoid
+	// interleaving beats from clusters that share the same binding key.
 	return devTheme{
 		ClusterIndex: cluster,
-		ProseVariant: proseVariant,
+		ProseVariant: (cluster*7 + 2) % 3,
 		Faction:      devFactions[cluster%len(devFactions)],
 		Regime:       devRegimes[cluster%len(devRegimes)],
-		Color:        color,
-		Phenomenon:   phenomenon,
-		Role:         role,
+		Color:        devColors[(cluster*3+1)%len(devColors)],
+		Phenomenon:   devPhenomena[(cluster*5+2)%len(devPhenomena)],
+		Role:         devRoles[(cluster*3+1)%len(devRoles)],
 		Material:     devMaterials[(cluster*7+3)%len(devMaterials)],
 		Alias:        devAliases[(cluster*11+4)%len(devAliases)],
 		District:     devDistricts[(cluster*9+5)%len(devDistricts)],
 		WorkA:        devWorkTypes[cluster%len(devWorkTypes)],
 		WorkB:        devWorkTypes[(cluster+3)%len(devWorkTypes)],
-		Hazard:       devHazards[(cluster*17+6)%len(devHazards)],
+		Hazard:       devHazards[(cluster*7+6)%len(devHazards)],
 		RepTier:      4 + int64((cluster/len(devFactions))%4)*2,
 		AuraTier:     6 + int64(cluster%3)*2,
 		DebtCap:      36 + int64((cluster/len(devRegimes))%5)*4,
@@ -506,11 +503,11 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		// state (reputation, aura, debt) and faction profile learned over time.
 		//
 		// Single template so skeleton is identical across all factions/regimes.
-		// Includes (faction, color, district) cluster signature for cross-beat binding.
+		sig := clusterSignature(theme)
 		sourceText := fmt.Sprintf(
-			"%s struck the %s %s %s sector. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
+			"%s struck the %s sector. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
 			theme.Hazard,
-			theme.Faction.Name, theme.Color, theme.District,
+			sig,
 			theme.Faction.Name,
 		)
 
@@ -904,10 +901,18 @@ func clueEliminatedDomain(theme devTheme, beat int) int {
 	return na2
 }
 
+// clusterSignature returns a string that uniquely identifies a cluster
+// across all beats for cross-beat binding. With 7 factions, 11 colors,
+// 13 districts (all coprime), LCM = 1001 unique tuples — sufficient for
+// dev1000's 50 clusters. For longer seasons, the weaver should prevent
+// interleaving beats from clusters that share the same binding key.
+func clusterSignature(theme devTheme) string {
+	return fmt.Sprintf("%s %s %s",
+		theme.Faction.Name, theme.Color, theme.District)
+}
+
 func clueText(theme devTheme, beat int) string {
-	// Cluster signature: (faction, color, district) appears in all beats
-	// for unambiguous binding across interleaved clusters.
-	sig := fmt.Sprintf("%s %s %s", theme.Faction.Name, theme.Color, theme.District)
+	sig := clusterSignature(theme)
 
 	switch beat {
 	case 1:
@@ -915,27 +920,24 @@ func clueText(theme devTheme, beat int) string {
 		// After this beat alone, 2 of 3 regimes remain possible.
 		cleared := domainLabels[clueEliminatedDomain(theme, 1)]
 		return fmt.Sprintf(
-			"Channel audit for the %s sector: %s are routing normally through the %s. No disruption detected in that area.",
-			sig, cleared, theme.District)
+			"Channel audit for the %s sector: %s are routing normally. No disruption detected in that area.",
+			sig, cleared)
 	case 2:
 		// Complementary reveal: clears the other non-active domain.
 		// Combined with beat 1, uniquely identifies the active regime.
 		cleared := domainLabels[clueEliminatedDomain(theme, 2)]
 		return fmt.Sprintf(
-			"Follow-up for the %s sector: %s have also been verified as standard. Remaining channels in the %s should be treated as potentially affected.",
-			sig, cleared, theme.District)
+			"Follow-up for the %s sector: %s have also been verified as standard. Remaining channels should be treated as potentially affected.",
+			sig, cleared)
 	case 3:
-		// Reinforcement: reminds the model of the cluster's fill-word constellation
-		// and hints that earlier analysis matters for upcoming decisions.
 		return fmt.Sprintf(
-			"Market gossip ties the %s %s line to the %s suffix through the %s, not to literal cargo shape.",
+			"Market gossip ties the %s %s line to the %s suffix through the %s sector, not to literal cargo shape.",
 			theme.Color, theme.Material, theme.Role, sig)
 	case 4:
 		return fmt.Sprintf(
 			"Console note: the %s docket for the %s sector only clears when the %s lineage is treated as the same asset family.",
 			theme.Alias, sig, theme.Material)
 	default:
-		// Late beats: remind without revealing. Never names the regime label.
 		return fmt.Sprintf(
 			"Faction note: operators in the %s sector who recall the %s/%s signals from earlier analysis continue to be rewarded.",
 			sig, theme.Color, theme.Phenomenon)
@@ -972,10 +974,10 @@ func ladderPrompt(theme devTheme, trustedTier bool) string {
 	// identical across all regimes. This ensures skeleton accuracy = random.
 	// Instance-level template accuracy will be high (fill words identify
 	// clusters, each with a fixed answer) — that is the intended learning target.
-	// Includes (faction, color, district) cluster signature for cross-beat binding.
+	sig := clusterSignature(theme)
 	return fmt.Sprintf(
-		"%s %s %s offer for the %s sector: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime.",
-		theme.Faction.Name, theme.Color, tier, theme.District)
+		"%s %s offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime.",
+		sig, tier)
 }
 
 func marketPrompt(theme devTheme) string {
@@ -985,10 +987,10 @@ func marketPrompt(theme devTheme) string {
 	// clue chain beats. The model must remember the regime to choose correctly.
 	//
 	// IMPORTANT: Single template so skeleton is identical across all regimes.
-	// Includes (faction, color, district) cluster signature for cross-beat binding.
+	sig := clusterSignature(theme)
 	return fmt.Sprintf(
-		"Market brief for the %s %s %s sector: the %s %s line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles.",
-		theme.Faction.Name, theme.Color, theme.District, theme.Color, theme.Material)
+		"Market brief for the %s sector: the %s %s line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles.",
+		sig, theme.Color, theme.Material)
 }
 
 func otherOptions(options []string, best string) (string, string) {

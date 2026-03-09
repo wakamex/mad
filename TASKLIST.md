@@ -233,6 +233,39 @@ Current execution:
   - `oracle_h64_b32 = 124160`
 - that means the main current benchmark pressure is still local semantic/structural inference, not long-horizon planning
 - the text-ablation runs now matter more, not less, because they will tell us whether Haiku's strong no-history scores are coming from prose semantics or the structured action surface
+- the ablation result is now decisive on the current balanced `dev1000`:
+  - `full prose = 24025`
+  - `source-types only = -2800`
+  - `text redacted = -3293`
+- interpretation:
+  - the structured action surface by itself is not carrying the strong Haiku no-history score
+  - source-family labels alone contribute little
+  - the bulk of the local leak is in the actual prose
+- the leak is concentrated in:
+  - `payoff_gate`
+    - `26857` under `full`
+    - `1429` under `source-types`
+    - `116` under `redacted`
+  - secondarily `reputation_ladder`
+    - `1366` under `full`
+    - `-133` under `source-types`
+    - `698` under `redacted`
+- by source, the main leak is:
+  - `market_gossip`
+    - `27878` under `full`
+    - `2254` under `source-types`
+    - `553` under `redacted`
+- families that did not move much under ablation:
+  - `seed_clue_chain`
+  - `hazard_interrupt`
+- next content task from this result:
+  - rewrite `market_gossip` / `payoff_gate` prose so local wording does not leak the right choice to a strong no-history model
+  - keep the underlying structured opportunities and explicit-state gates intact while reducing prose-side answer cues
+  - specifically move from prescriptive same-tick prose to conjunctive evidence:
+    - no single current tick should name the winning lane
+    - each clue should constrain only one axis
+    - the correct lane should only emerge from combining multiple earlier signals plus current explicit feasibility
+  - a good redesign should make `source-types` and `redacted` both stay weak while `full prose` only helps when the model can connect current evidence to older clues
 
 ## 12. Hazard Learnability Audit
 

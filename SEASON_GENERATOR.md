@@ -15,6 +15,32 @@ The season generator should:
 - generate multiple distinct routes to success so the benchmark is not a single hidden-password puzzle
 - ensure the difficulty comes from interaction between elements, not from arbitrary obscurity
 
+## Benchmark Mapping
+
+Each family should justify itself as a benchmark target, not merely as story flavor.
+
+Good benchmark pressure:
+
+- long-range retrieval and recomposition
+- opportunity-cost planning under explicit state
+- provenance weighting under public source-bias regimes
+- specialization under scarcity
+- lawful reinterpretation of old evidence
+
+Weak benchmark pressure:
+
+- local prose that directly names the right lane
+- hidden hard gates with no public inspection path
+- parser trivia or wording traps
+- ambient score tax with no distinctive skill ceiling
+
+Design rule:
+
+- prose should provide evidence, not instructions
+- the current tick should tell the player what actions are available
+- old clues, public source behavior, and explicit resource state should determine which available action is actually best
+- if removing current-tick prose collapses a strong no-history model from highly positive to negative, that family is leaking too much local semantic signal
+
 ## Element Contract
 
 Every story element template should declare at least:
@@ -125,6 +151,9 @@ What they should require:
 
 - at least one earlier precursor
 - ideally a conjunction of two signals, not a single remembered token
+- no single current-tick source line should name or plainly paraphrase the winning option
+- current-tick prose should describe a contradiction or state of the world, not act as an English answer key
+- if removing current-tick prose leaves the beat mostly solvable from the structured surface alone, the family is still too local
 
 What they test:
 
@@ -150,6 +179,11 @@ What they test:
 - long-horizon planning
 - opportunity cost
 - strategic specialization versus overcommitment
+
+Authoring rule:
+
+- faction offer prose should signal the kind of world pressure currently active, not directly name the right option class
+- if a no-history language model can map current offer prose straight to the winning action, the ladder is leaking local semantic signal instead of rewarding accumulated faction understanding
 
 Hard constraints:
 

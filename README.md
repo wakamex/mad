@@ -21,6 +21,11 @@ The tractability-focused implementation plan, including the single-box scaling a
 The content-architecture map for story-element families, dependency rules, and skill-ceiling levers can be found here:
 **[SEASON_GENERATOR.md](./SEASON_GENERATOR.md)**
 
+## Handoff
+
+The current benchmark state, empirical findings, open problems, and recommended next steps are summarized in:
+**[HANDOFF.md](./HANDOFF.md)**
+
 ## Running Locally
 
 Weave the sample story-element IR into a compiled season:
@@ -58,8 +63,23 @@ The generated `seasons/dev1000` fixture is the current long-form dev season. At 
 - `1000` ticks
 - about `14.3` hours total runtime
 - `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, hazard interrupts, and payoff gates
-- baseline snapshot around `greedy_best=77628`, `visible_greedy=2047`, `always_hold=-8772`
-- random-play audit around `mean=-1760`, `p90=299`, `p99=1925`, `positive_rate≈14.2%` using `1000` runs and seed `11`
+- current sim snapshot around `greedy_best=115919`, `visible_greedy=-5456`, `oracle_h16_b8=122534`, `always_hold≈-9500`
+- random-play audit around `mean=-6145`, `p90=-3907`, `p99=-2312`, `positive_rate=0` using `1000` runs and seed `11`
+
+Current empirical findings:
+
+- the main remaining difficulty problem is local semantic leakage, not random legal play
+- Haiku `ephemeral + mem-off + recent-reveals 0` scored strongly positive on the full season
+- text ablations show the leak is in prose, not in the structured action surface:
+  - `full prose = 24025`
+  - `source-types only = -2800`
+  - `text redacted = -3293`
+- the largest local leak is currently in `payoff_gate`, especially `market_gossip` prose
+- the planning oracle gap is real but modest:
+  - `greedy_best = 115919`
+  - `oracle_h16_b8 = 122534`
+  - `oracle_h64_b32 = 124160`
+- that means the current benchmark pressure is dominated by local semantic/structural inference, with long-horizon planning as a secondary gap on `dev1000`
 
 For CI or release gating, fail the run if the random-play audit says the season is too easy to luck through:
 
@@ -84,6 +104,7 @@ For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic a
 
 The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
 The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful. `visible_greedy` is the cheap constrained baseline: it only uses the current public action surface, clock class, public requirements, and explicit player state, with no source-text parsing and no hidden scoring labels. The report's `decomposition` section is an approximation: `explicit_visible` comes from `visible_greedy`, while `hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes real cross-beat value with any hidden-label advantage still present in `greedy_best`.
+For a tighter upper bound, use the bounded forward-search oracle baselines. On the current `dev1000`, `oracle_h16_b8` is a cheap fast oracle, while the sweep plateaus at `oracle_h64_b32`, which is the current strong offline upper bound.
 
 Run the external-agent harness against a compiled season. The harness keeps a single conversation thread per runner, records every action/response, and saves a per-tick `score_trace` so the result can be plotted like VendingBench:
 

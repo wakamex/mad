@@ -907,22 +907,22 @@ func ladderPrompt(theme devTheme, trustedTier bool) string {
 	}
 	switch theme.Regime.OfferBestOption {
 	case "penitent":
-		return fmt.Sprintf("%s %s offer: the %s circuit wants visible contrition and audited hands. Quiet profit is being punished this cycle.", theme.Faction.Name, tier, theme.Color)
+		return fmt.Sprintf("%s %s offer: public ledgers and witness accounts keep disagreeing about the %s circuit. The office is rechecking operators whose paperwork survives side-by-side comparison.", theme.Faction.Name, tier, theme.Color)
 	case "auditor":
-		return fmt.Sprintf("%s %s offer: only verified custody and careful auditors are being rewarded while checksum disputes spread through the %s.", theme.Faction.Name, tier, theme.District)
+		return fmt.Sprintf("%s %s offer: custody ledgers around the %s no longer reconcile. The office is escalating cases with clean provenance and sending the rest back into review.", theme.Faction.Name, tier, theme.District)
 	default:
-		return fmt.Sprintf("%s %s offer: discreet brokers are being favored while official notices keep pretending the %s line does not exist.", theme.Faction.Name, tier, theme.Alias)
+		return fmt.Sprintf("%s %s offer: the public notices and private manifests still diverge around the %s line. Intermediaries keep moving volume, but the official record is lagging behind.", theme.Faction.Name, tier, theme.Alias)
 	}
 }
 
 func marketPrompt(theme devTheme) string {
 	switch theme.Regime.MarketBestOption {
 	case "quarantine":
-		return fmt.Sprintf("Market brief: buyers will pay for controlled quarantine chains on %s %s touched by %s exposure.", theme.Color, theme.Material, theme.Phenomenon)
+		return fmt.Sprintf("Market brief: %s exposure split the bid on %s %s lots. Public handlers and side-channel buyers are no longer clearing the same route.", theme.Phenomenon, theme.Color, theme.Material)
 	case "auction":
-		return fmt.Sprintf("Market brief: certified lots from the %s are moving best through public auction, not quiet side deals.", theme.District)
+		return fmt.Sprintf("Market brief: certified lots from the %s are settling on one lane while the whisper market keeps quoting another. The contradiction is visible; the mapping is not.", theme.District)
 	default:
-		return fmt.Sprintf("Market brief: the suppressed %s line is still richest when moved through discreet brokers.", theme.Alias)
+		return fmt.Sprintf("Market brief: the suppressed %s line is now clearing through two incompatible routes. Public record and side-channel spread no longer agree.", theme.Alias)
 	}
 }
 

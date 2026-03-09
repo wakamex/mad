@@ -331,9 +331,8 @@ func buildClueChainElement(cluster int, theme devTheme, plan devClusterPlan) Sto
 				},
 			},
 		}
-		if i == 1 {
-			beat.ActiveSourceRegimes = []SourceRegime{buildSourceRegime(theme.Regime)}
-		}
+		// No ActiveSourceRegimes — regime must be inferred from conjunctive
+		// evidence across beats 1 and 2, not from structured metadata.
 		beats = append(beats, beat)
 	}
 
@@ -469,9 +468,8 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 			},
 			Scoring: ScoringPlan{Rules: rules},
 		}
-		if i == 1 {
-			beat.ActiveSourceRegimes = []SourceRegime{buildSourceRegime(theme.Regime)}
-		}
+		// No ActiveSourceRegimes — regime must be remembered from clue chain,
+		// not handed to the model as structured metadata at decision time.
 		beats = append(beats, beat)
 	}
 
@@ -502,10 +500,11 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		// state (reputation, aura, debt) and faction profile learned over time.
 		//
 		// Single template so skeleton is identical across all factions/regimes.
+		// Includes (faction, color, district) cluster signature for cross-beat binding.
 		sourceText := fmt.Sprintf(
-			"%s struck the %s. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
+			"%s struck the %s %s %s sector. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
 			theme.Hazard,
-			theme.District,
+			theme.Faction.Name, theme.Color, theme.District,
 			theme.Faction.Name,
 		)
 
@@ -872,18 +871,68 @@ func clueSourceType(beat int) string {
 	}
 }
 
+// domainLabels describes the three source-type domains, one per regime.
+// Index must match devRegimes order.
+var domainLabels = []string{
+	"institutional filings and faction dispatches",  // regime 0: suppression_window
+	"public postings and civilian broadcasts",       // regime 1: atonement_drive
+	"archive fragments and historical records",      // regime 2: archive_audit
+}
+
+// clueEliminatedDomain returns the domain index (into domainLabels) that
+// the given clue beat should "clear" (declare as normal). For the active
+// regime R, beats 1 and 2 clear the two non-active domains in an order
+// that is decorrelated from R using cluster parity.
+func clueEliminatedDomain(theme devTheme, beat int) int {
+	regimeIdx := theme.ClusterIndex % len(devRegimes)
+	// Two non-active domain indices.
+	na1 := (regimeIdx + 1) % 3
+	na2 := (regimeIdx + 2) % 3
+	// Swap order based on cluster parity (decorrelated from regime since 2 and 3 are coprime).
+	if theme.ClusterIndex%2 == 1 {
+		na1, na2 = na2, na1
+	}
+	if beat == 1 {
+		return na1
+	}
+	return na2
+}
+
 func clueText(theme devTheme, beat int) string {
+	// Cluster signature: (faction, color, district) appears in all beats
+	// for unambiguous binding across interleaved clusters.
+	sig := fmt.Sprintf("%s %s %s", theme.Faction.Name, theme.Color, theme.District)
+
 	switch beat {
 	case 1:
-		return fmt.Sprintf("Official bulletin: no %s %s crossed the %s under %s conditions.", theme.Color, theme.Material, theme.District, theme.Phenomenon)
+		// Partial reveal: clears one non-active domain.
+		// After this beat alone, 2 of 3 regimes remain possible.
+		cleared := domainLabels[clueEliminatedDomain(theme, 1)]
+		return fmt.Sprintf(
+			"Channel audit for the %s sector: %s are routing normally through the %s. No disruption detected in that area.",
+			sig, cleared, theme.District)
 	case 2:
-		return fmt.Sprintf("Archive fragment: older ledgers call the %s consignment a %s, and the verified authorization retained the %s suffix.", theme.Material, theme.Alias, theme.Role)
+		// Complementary reveal: clears the other non-active domain.
+		// Combined with beat 1, uniquely identifies the active regime.
+		cleared := domainLabels[clueEliminatedDomain(theme, 2)]
+		return fmt.Sprintf(
+			"Follow-up for the %s sector: %s have also been verified as standard. Remaining channels in the %s should be treated as potentially affected.",
+			sig, cleared, theme.District)
 	case 3:
-		return fmt.Sprintf("Market gossip ties the %s %s line to the %s suffix, not to literal cargo shape.", theme.Color, theme.Material, theme.Role)
+		// Reinforcement: reminds the model of the cluster's fill-word constellation
+		// and hints that earlier analysis matters for upcoming decisions.
+		return fmt.Sprintf(
+			"Market gossip ties the %s %s line to the %s suffix through the %s, not to literal cargo shape.",
+			theme.Color, theme.Material, theme.Role, sig)
 	case 4:
-		return fmt.Sprintf("Console note: the %s docket only clears when the %s lineage is treated as the same asset family.", theme.Alias, theme.Material)
+		return fmt.Sprintf(
+			"Console note: the %s docket for the %s sector only clears when the %s lineage is treated as the same asset family.",
+			theme.Alias, sig, theme.Material)
 	default:
-		return fmt.Sprintf("Faction note: the %s regime keeps rewarding operators who remember the %s/%s pairing.", theme.Regime.Label, theme.Color, theme.Phenomenon)
+		// Late beats: remind without revealing. Never names the regime label.
+		return fmt.Sprintf(
+			"Faction note: operators in the %s sector who recall the %s/%s signals from earlier analysis continue to be rewarded.",
+			sig, theme.Color, theme.Phenomenon)
 	}
 }
 
@@ -902,14 +951,6 @@ func clueInspectLabel(beat int) string {
 	}
 }
 
-func buildSourceRegime(regime devRegime) SourceRegime {
-	return SourceRegime{
-		RegimeID:            regime.ID,
-		Label:               regime.Label,
-		Description:         regime.Description,
-		AffectedSourceTypes: append([]string(nil), regime.AffectedSources...),
-	}
-}
 
 func ladderPrompt(theme devTheme, trustedTier bool) string {
 	tier := "initial"
@@ -925,9 +966,10 @@ func ladderPrompt(theme devTheme, trustedTier bool) string {
 	// identical across all regimes. This ensures skeleton accuracy = random.
 	// Instance-level template accuracy will be high (fill words identify
 	// clusters, each with a fixed answer) — that is the intended learning target.
+	// Includes (faction, color, district) cluster signature for cross-beat binding.
 	return fmt.Sprintf(
-		"%s %s offer: the %s %s situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime.",
-		theme.Faction.Name, tier, theme.District, theme.Faction.Name)
+		"%s %s %s offer for the %s sector: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime.",
+		theme.Faction.Name, theme.Color, tier, theme.District)
 }
 
 func marketPrompt(theme devTheme) string {
@@ -937,9 +979,10 @@ func marketPrompt(theme devTheme) string {
 	// clue chain beats. The model must remember the regime to choose correctly.
 	//
 	// IMPORTANT: Single template so skeleton is identical across all regimes.
+	// Includes (faction, color, district) cluster signature for cross-beat binding.
 	return fmt.Sprintf(
-		"Market brief: the %s %s line has fractured into incompatible clearing routes. The public record and side-channel prices diverge, but the regime posted earlier this cycle determines which lane settles.",
-		theme.Color, theme.Material)
+		"Market brief for the %s %s %s sector: the %s %s line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles.",
+		theme.Faction.Name, theme.Color, theme.District, theme.Color, theme.Material)
 }
 
 func otherOptions(options []string, best string) (string, string) {

@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-03-08T23:20:07-04:00",
+  "season_path": "./seasons/dev1000/season.json",
+  "season_id": "dev-season-1000tick",
+  "title": "The Latent Labyrinth (1000-Tick Dev)",
+  "tick_count": 1000,
+  "configs": [
+    {
+      "horizon": 16,
+      "beam": 8
+    },
+    {
+      "horizon": 32,
+      "beam": 8
+    },
+    {
+      "horizon": 32,
+      "beam": 16
+    },
+    {
+      "horizon": 64,
+      "beam": 8
+    },
+    {
+      "horizon": 64,
+      "beam": 16
+    },
+    {
+      "horizon": 64,
+      "beam": 32
+    },
+    {
+      "horizon": 96,
+      "beam": 16
+    },
+    {
+      "horizon": 96,
+      "beam": 32
+    },
+    {
+      "horizon": 128,
+      "beam": 16
+    },
+    {
+      "horizon": 128,
+      "beam": 32
+    }
+  ],
+  "runs": [
+    {
+      "horizon": 16,
+      "beam": 8,
+      "oracle_name": "oracle_h16_b8",
+      "oracle_score": 122534,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 6615,
+      "gain_over_visible": 127990,
+      "wall_ms": 944,
+      "ticks_per_second": 1059.3037665190518,
+      "pareto_optimal": true
+    },
+    {
+      "horizon": 32,
+      "beam": 8,
+      "oracle_name": "oracle_h32_b8",
+      "oracle_score": 123006,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7087,
+      "gain_over_visible": 128462,
+      "wall_ms": 1942,
+      "ticks_per_second": 514.7998649733494,
+      "pareto_optimal": true
+    },
+    {
+      "horizon": 32,
+      "beam": 16,
+      "oracle_name": "oracle_h32_b16",
+      "oracle_score": 123006,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7087,
+      "gain_over_visible": 128462,
+      "wall_ms": 4022,
+      "ticks_per_second": 248.57193842940498
+    },
+    {
+      "horizon": 64,
+      "beam": 8,
+      "oracle_name": "oracle_h64_b8",
+      "oracle_score": 123006,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7087,
+      "gain_over_visible": 128462,
+      "wall_ms": 3890,
+      "ticks_per_second": 257.06261600941843
+    },
+    {
+      "horizon": 64,
+      "beam": 16,
+      "oracle_name": "oracle_h64_b16",
+      "oracle_score": 123532,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7613,
+      "gain_over_visible": 128988,
+      "wall_ms": 8354,
+      "ticks_per_second": 119.68922854585419,
+      "pareto_optimal": true
+    },
+    {
+      "horizon": 64,
+      "beam": 32,
+      "oracle_name": "oracle_h64_b32",
+      "oracle_score": 124160,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 8241,
+      "gain_over_visible": 129616,
+      "wall_ms": 16389,
+      "ticks_per_second": 61.01389076404914,
+      "pareto_optimal": true
+    },
+    {
+      "horizon": 96,
+      "beam": 16,
+      "oracle_name": "oracle_h96_b16",
+      "oracle_score": 123532,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7613,
+      "gain_over_visible": 128988,
+      "wall_ms": 11318,
+      "ticks_per_second": 88.3486801225178
+    },
+    {
+      "horizon": 96,
+      "beam": 32,
+      "oracle_name": "oracle_h96_b32",
+      "oracle_score": 124160,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 8241,
+      "gain_over_visible": 129616,
+      "wall_ms": 24846,
+      "ticks_per_second": 40.24749310115729
+    },
+    {
+      "horizon": 128,
+      "beam": 16,
+      "oracle_name": "oracle_h128_b16",
+      "oracle_score": 123532,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 7613,
+      "gain_over_visible": 128988,
+      "wall_ms": 16550,
+      "ticks_per_second": 60.42293467932229
+    },
+    {
+      "horizon": 128,
+      "beam": 32,
+      "oracle_name": "oracle_h128_b32",
+      "oracle_score": 124160,
+      "greedy_score": 115919,
+      "visible_greedy_score": -5456,
+      "always_hold_score": -9528,
+      "gain_over_greedy": 8241,
+      "gain_over_visible": 129616,
+      "wall_ms": 34059,
+      "ticks_per_second": 29.36063317529725
+    }
+  ]
+}

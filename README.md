@@ -47,6 +47,12 @@ Dry-run the compiled season to inspect final tick order, reveal timing, derived 
 env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
 ```
 
+Sweep stronger bounded lookahead oracle settings and save a publishable score-vs-wallclock artifact:
+
+```bash
+env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-oracle-sweep -season ./seasons/dev1000/season.json -out ./benchmarks/oracle-sweep/dev1000-$(date +%Y%m%d).json
+```
+
 The generated `seasons/dev1000` fixture is the current long-form dev season. At the moment it compiles to:
 
 - `1000` ticks

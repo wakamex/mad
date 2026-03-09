@@ -45,6 +45,9 @@ func TestSimulateDevSeason(t *testing.T) {
 	if len(report.Baselines["visible_greedy"].ScoreTrace) != len(loaded.Ticks) {
 		t.Fatalf("unexpected visible greedy baseline trace length")
 	}
+	if len(report.Baselines["oracle_h16_b8"].ScoreTrace) != len(loaded.Ticks) {
+		t.Fatalf("unexpected oracle baseline trace length")
+	}
 	if len(report.Baselines["greedy_best"].Breakdown.ByFamily) == 0 {
 		t.Fatalf("expected greedy baseline family breakdown")
 	}
@@ -56,6 +59,9 @@ func TestSimulateDevSeason(t *testing.T) {
 	}
 	if report.Baselines["greedy_best"].Ledger.Score <= report.Baselines["always_hold"].Ledger.Score {
 		t.Fatalf("expected greedy_best baseline to outperform always_hold")
+	}
+	if report.Baselines["oracle_h16_b8"].Ledger.Score < report.Baselines["greedy_best"].Ledger.Score {
+		t.Fatalf("expected oracle baseline not to underperform greedy_best")
 	}
 	if len(report.Notes) == 0 {
 		t.Fatalf("expected simulation notes")
@@ -115,6 +121,87 @@ func TestSimulateDevSeason(t *testing.T) {
 	}
 	if reveal.ResolutionPreview == nil || reveal.ResolutionPreview.BestKnownAction.Command == "" {
 		t.Fatalf("expected reveal resolution preview")
+	}
+}
+
+func TestLookaheadOracleBeatsTickLocalGreedyOnDelayedPayoff(t *testing.T) {
+	file := File{
+		SchemaVersion:   "v1alpha1",
+		SeasonID:        "oracle-delayed",
+		Title:           "oracle delayed",
+		ScoreEpochTicks: 2,
+		RevealLagTicks:  1,
+		ShardCount:      1,
+		Ticks: []TickDefinition{
+			{
+				TickID:     "T1",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Opportunities: []Opportunity{
+					{OpportunityID: "setup", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"prep"}},
+				},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{Yield: 5},
+						Label:          "Take the easy payout.",
+						Classification: "best",
+					},
+					{
+						Match:          ActionMatch{Command: "commit", Target: "setup", Option: "prep"},
+						Effects:        StateEffects{AddTags: []string{"prepared"}},
+						Delta:          ScoreDelta{Yield: 1},
+						Label:          "Prepare for the vault.",
+						Classification: "best",
+					},
+				}},
+			},
+			{
+				TickID:     "T2",
+				ClockClass: "standard",
+				DurationMS: 1000,
+				Opportunities: []Opportunity{
+					{OpportunityID: "vault", AllowedCommands: []string{"commit", "hold"}, AllowedOptions: []string{"open"}},
+				},
+				Scoring: ScoringPlan{Rules: []Rule{
+					{
+						Match:          ActionMatch{Command: "commit", Target: "vault", Option: "open"},
+						Requirements:   RuleRequirements{RequiresAllTags: []string{"prepared"}},
+						Delta:          ScoreDelta{Yield: 100},
+						Label:          "Open the prepared vault.",
+						Classification: "best",
+					},
+					{
+						Match:          ActionMatch{Command: "hold"},
+						Delta:          ScoreDelta{},
+						Label:          "Miss the vault.",
+						Classification: "miss",
+					},
+				}},
+			},
+		},
+	}
+
+	report, err := SimulateWithOptions(file, SimulationOptions{
+		RandomRuns:      10,
+		RandomSeed:      7,
+		OracleHorizon:   2,
+		OracleBeamWidth: 4,
+	})
+	if err != nil {
+		t.Fatalf("simulate season: %v", err)
+	}
+
+	greedy := report.Baselines["greedy_best"].Ledger.Score
+	oracle := report.Baselines["oracle_h2_b4"].Ledger.Score
+	if oracle <= greedy {
+		t.Fatalf("expected oracle to beat greedy on delayed payoff: oracle=%d greedy=%d", oracle, greedy)
+	}
+	if greedy != 5 {
+		t.Fatalf("unexpected greedy score: got %d want 5", greedy)
+	}
+	if oracle != 101 {
+		t.Fatalf("unexpected oracle score: got %d want 101", oracle)
 	}
 }
 

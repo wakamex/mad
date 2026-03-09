@@ -14,6 +14,8 @@ func main() {
 	outPath := flag.String("out", filepath.Join("build", "simulation.json"), "Path to simulation report JSON")
 	randomRuns := flag.Int("random-runs", 10000, "Number of deterministic random legal-play simulations to run")
 	randomSeed := flag.Int64("random-seed", 1, "Seed for deterministic random legal-play simulations")
+	oracleHorizon := flag.Int("oracle-horizon", 16, "Lookahead horizon for the bounded oracle baseline")
+	oracleBeamWidth := flag.Int("oracle-beam", 8, "Beam width for the bounded oracle baseline")
 	failOnRandomWarnings := flag.Bool("fail-on-random-warnings", false, "Exit non-zero if the random-play audit produces warnings")
 	flag.Parse()
 
@@ -23,8 +25,10 @@ func main() {
 	}
 
 	report, err := season.SimulateWithOptions(loadedSeason, season.SimulationOptions{
-		RandomRuns: *randomRuns,
-		RandomSeed: *randomSeed,
+		RandomRuns:      *randomRuns,
+		RandomSeed:      *randomSeed,
+		OracleHorizon:   *oracleHorizon,
+		OracleBeamWidth: *oracleBeamWidth,
 	})
 	if err != nil {
 		log.Fatalf("simulate season: %v", err)

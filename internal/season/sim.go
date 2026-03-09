@@ -26,8 +26,10 @@ type SimulationReport struct {
 }
 
 type SimulationOptions struct {
-	RandomRuns int   `json:"random_runs,omitempty"`
-	RandomSeed int64 `json:"random_seed,omitempty"`
+	RandomRuns      int   `json:"random_runs,omitempty"`
+	RandomSeed      int64 `json:"random_seed,omitempty"`
+	OracleHorizon   int   `json:"oracle_horizon,omitempty"`
+	OracleBeamWidth int   `json:"oracle_beam_width,omitempty"`
 }
 
 type SimulatedBaseline struct {
@@ -209,6 +211,19 @@ type simulatedPlayerState struct {
 
 const defaultAvailability = "available"
 
+const (
+	defaultOracleHorizon   = 16
+	defaultOracleBeamWidth = 8
+)
+
+type oracleBeamNode struct {
+	State          simulatedPlayerState
+	CumulativeGain int64
+	FirstAction    SimulatedAction
+	FirstRule      Rule
+	FirstTieBreak  uint64
+}
+
 func Simulate(file File) (SimulationReport, error) {
 	return SimulateWithOptions(file, SimulationOptions{})
 }
@@ -218,6 +233,16 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		return SimulationReport{}, err
 	}
 
+	oracleHorizon := options.OracleHorizon
+	if oracleHorizon <= 0 {
+		oracleHorizon = defaultOracleHorizon
+	}
+	oracleBeamWidth := options.OracleBeamWidth
+	if oracleBeamWidth <= 0 {
+		oracleBeamWidth = defaultOracleBeamWidth
+	}
+	oracleBaselineName := fmt.Sprintf("oracle_h%d_b%d", oracleHorizon, oracleBeamWidth)
+
 	report := SimulationReport{
 		SchemaVersion: file.SchemaVersion,
 		SeasonID:      file.SeasonID,
@@ -226,12 +251,14 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		Notes: []string{
 			"`greedy_best` is a tick-local baseline derived from rules classified as `best`; it is not a globally optimal season policy once lock-ins, opportunity costs, or stateful commitments exist.",
 			"`visible_greedy` is a constrained non-LLM baseline that only uses the public action surface, clock class, public requirements, and exact player state. It does not parse source text or inspect hidden scoring labels.",
+			fmt.Sprintf("`%s` is a bounded forward-search oracle over the exact offline simulator. It uses mechanically encoded history already present in state (tags, reputation, cooldowns, ledger) plus future tick knowledge, but it is not a globally optimal dynamic-programming solution.", oracleBaselineName),
 			"`decomposition.explicit_visible` is attributed to the constrained `visible_greedy` baseline. `decomposition.hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes true cross-beat value with any hidden-label advantage still present in `greedy_best`.",
 		},
 		Baselines: map[string]SimulatedBaseline{
-			"greedy_best":    {},
-			"always_hold":    {},
-			"visible_greedy": {},
+			"greedy_best":      {},
+			"always_hold":      {},
+			"visible_greedy":   {},
+			oracleBaselineName: {},
 		},
 		ActionSurface: SimulatedActionSurface{
 			Distribution:  make(map[string]int),
@@ -243,14 +270,17 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	greedyState := newSimulatedPlayerState()
 	holdState := newSimulatedPlayerState()
 	visibleState := newSimulatedPlayerState()
+	oracleState := newSimulatedPlayerState()
 	greedyBreakdown := NewScoreBreakdownAccumulator()
 	holdBreakdown := NewScoreBreakdownAccumulator()
 	visibleBreakdown := NewScoreBreakdownAccumulator()
+	oracleBreakdown := NewScoreBreakdownAccumulator()
 	var nowMS int64
 	for i, tick := range file.Ticks {
 		advanceSimulatedStateToTick(&greedyState, i)
 		advanceSimulatedStateToTick(&holdState, i)
 		advanceSimulatedStateToTick(&visibleState, i)
+		advanceSimulatedStateToTick(&oracleState, i)
 		resolution := simulateResolution(tick, greedyState)
 
 		greedyRule := chooseGreedyRule(tick, greedyState)
@@ -271,6 +301,15 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		advanceBaseline(&visibleBaseline, &visibleState, visibleRule)
 		report.Baselines["visible_greedy"] = visibleBaseline
 		visibleBreakdown.Add(tick, visibleRule)
+
+		oracleAction, oracleRule := chooseLookaheadOracleAction(file, i, oracleState, oracleHorizon, oracleBeamWidth)
+		if oracleRule.Match.Command == "" {
+			oracleRule, _ = evaluateSimulatedAction(tick.Scoring, oracleAction, oracleState)
+		}
+		oracleBaseline := report.Baselines[oracleBaselineName]
+		advanceBaseline(&oracleBaseline, &oracleState, oracleRule)
+		report.Baselines[oracleBaselineName] = oracleBaseline
+		oracleBreakdown.Add(tick, oracleRule)
 
 		simTick := SimulatedTick{
 			Index:             i,
@@ -309,6 +348,9 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 	visibleBaseline := report.Baselines["visible_greedy"]
 	visibleBaseline.Breakdown = visibleBreakdown.Materialize()
 	report.Baselines["visible_greedy"] = visibleBaseline
+	oracleBaseline := report.Baselines[oracleBaselineName]
+	oracleBaseline.Breakdown = oracleBreakdown.Materialize()
+	report.Baselines[oracleBaselineName] = oracleBaseline
 	report.Decomposition = DeriveScoreDecomposition(
 		bestBaseline.Breakdown,
 		visibleBaseline.Breakdown,
@@ -430,6 +472,90 @@ func chooseVisibleGreedyAction(tick TickDefinition, state simulatedPlayerState) 
 		}
 	}
 	return bestAction
+}
+
+func chooseLookaheadOracleAction(file File, startTick int, state simulatedPlayerState, horizon int, beamWidth int) (SimulatedAction, Rule) {
+	if startTick < 0 || startTick >= len(file.Ticks) {
+		return SimulatedAction{Command: "hold"}, Rule{}
+	}
+	if horizon <= 0 {
+		horizon = defaultOracleHorizon
+	}
+	if beamWidth <= 0 {
+		beamWidth = defaultOracleBeamWidth
+	}
+
+	rootState := cloneSimulatedPlayerState(state)
+	advanceSimulatedStateToTick(&rootState, startTick)
+	nodes := []oracleBeamNode{{State: rootState}}
+	endTick := minInt(len(file.Ticks), startTick+horizon)
+
+	for tickIndex := startTick; tickIndex < endTick; tickIndex++ {
+		tick := file.Ticks[tickIndex]
+		next := make([]oracleBeamNode, 0, len(nodes)*maxInt(1, len(EnumerateActions(tick))))
+		for _, node := range nodes {
+			workingState := cloneSimulatedPlayerState(node.State)
+			advanceSimulatedStateToTick(&workingState, tickIndex)
+			for _, action := range EnumerateActions(tick) {
+				childState := cloneSimulatedPlayerState(workingState)
+				before := childState.Ledger.Score
+				rule, _ := evaluateSimulatedAction(tick.Scoring, action, childState)
+				applyRuleToSimulatedState(&childState, rule)
+				child := oracleBeamNode{
+					State:          childState,
+					CumulativeGain: node.CumulativeGain + (childState.Ledger.Score - before),
+					FirstAction:    node.FirstAction,
+					FirstRule:      node.FirstRule,
+					FirstTieBreak:  node.FirstTieBreak,
+				}
+				if tickIndex == startTick {
+					child.FirstAction = action
+					child.FirstRule = rule
+					child.FirstTieBreak = visibleActionTieBreak(action)
+				}
+				next = append(next, child)
+			}
+		}
+		if len(next) == 0 {
+			break
+		}
+		pruneOracleBeam(next, beamWidth)
+		nodes = next[:minInt(len(next), beamWidth)]
+	}
+	if len(nodes) == 0 {
+		return SimulatedAction{Command: "hold"}, chooseHoldRule(file.Ticks[startTick], state)
+	}
+	best := nodes[0]
+	for _, node := range nodes[1:] {
+		if oracleNodeBetter(node, best) {
+			best = node
+		}
+	}
+	if best.FirstRule.Match.Command == "" {
+		return SimulatedAction{Command: "hold"}, chooseHoldRule(file.Ticks[startTick], state)
+	}
+	return best.FirstAction, best.FirstRule
+}
+
+func pruneOracleBeam(nodes []oracleBeamNode, beamWidth int) {
+	sort.SliceStable(nodes, func(i, j int) bool {
+		return oracleNodeBetter(nodes[i], nodes[j])
+	})
+}
+
+func oracleNodeBetter(a, b oracleBeamNode) bool {
+	if a.CumulativeGain != b.CumulativeGain {
+		return a.CumulativeGain > b.CumulativeGain
+	}
+	aFirst := scalarScore(a.FirstRule.Delta)
+	bFirst := scalarScore(b.FirstRule.Delta)
+	if aFirst != bFirst {
+		return aFirst > bFirst
+	}
+	if a.FirstTieBreak != b.FirstTieBreak {
+		return a.FirstTieBreak < b.FirstTieBreak
+	}
+	return false
 }
 
 func visibleActionScore(clockClass string, opportunity Opportunity, action SimulatedAction, state simulatedPlayerState) int {
@@ -726,6 +852,29 @@ func newSimulatedPlayerState() simulatedPlayerState {
 		Availability:            defaultAvailability,
 		CooldownReadyTickByName: make(map[string]int),
 	}
+}
+
+func cloneSimulatedPlayerState(state simulatedPlayerState) simulatedPlayerState {
+	cloned := simulatedPlayerState{
+		CurrentTick:             state.CurrentTick,
+		Ledger:                  state.Ledger,
+		Availability:            state.Availability,
+		AvailabilityResetTick:   state.AvailabilityResetTick,
+		AvailabilityBeforeLock:  state.AvailabilityBeforeLock,
+		Tags:                    make(map[string]struct{}, len(state.Tags)),
+		Reputation:              make(map[string]int64, len(state.Reputation)),
+		CooldownReadyTickByName: make(map[string]int, len(state.CooldownReadyTickByName)),
+	}
+	for tag := range state.Tags {
+		cloned.Tags[tag] = struct{}{}
+	}
+	for faction, value := range state.Reputation {
+		cloned.Reputation[faction] = value
+	}
+	for name, readyTick := range state.CooldownReadyTickByName {
+		cloned.CooldownReadyTickByName[name] = readyTick
+	}
+	return cloned
 }
 
 func advanceSimulatedStateToTick(state *simulatedPlayerState, tickIndex int) {

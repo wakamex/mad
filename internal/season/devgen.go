@@ -34,12 +34,15 @@ type devRegime struct {
 }
 
 var devFactions = []devFaction{
+	// 7 factions. LCM(7, 11 colors, 13 districts) = 1001 > 250 clusters,
+	// so every cluster gets a unique (faction, color, district) binding key.
 	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 40, ExploitBonus: -8, StabilizeDebtRelief: 14, StabilizeRepThreshold: 16, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraThreshold: 22, ExploitAuraSpend: 12, ExploitDebtCap: 28},
 	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 28, ExploitBonus: -2, StabilizeDebtRelief: 13, StabilizeRepThreshold: 10, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraThreshold: 20, ExploitAuraSpend: 9, ExploitDebtCap: 30},
 	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 4, ExploitBonus: 18, StabilizeDebtRelief: 5, StabilizeRepThreshold: 8, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraThreshold: 12, ExploitAuraSpend: 5, ExploitDebtCap: 38},
 	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 22, ExploitBonus: 4, StabilizeDebtRelief: 11, StabilizeRepThreshold: 18, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraThreshold: 18, ExploitAuraSpend: 6, ExploitDebtCap: 34},
 	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 0, ExploitBonus: 22, StabilizeDebtRelief: 3, StabilizeRepThreshold: 7, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraThreshold: 10, ExploitAuraSpend: 6, ExploitDebtCap: 40},
 	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 34, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepThreshold: 14, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraThreshold: 24, ExploitAuraSpend: 10, ExploitDebtCap: 30},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 16, ExploitBonus: 12, StabilizeDebtRelief: 7, StabilizeRepThreshold: 12, StabilizeRepSpend: 4, StabilizeDebtCap: 42, ExploitAuraThreshold: 14, ExploitAuraSpend: 5, ExploitDebtCap: 36},
 }
 
 var devRegimes = []devRegime{
@@ -69,14 +72,17 @@ var devRegimes = []devRegime{
 	},
 }
 
-var devColors = []string{"green", "amber", "saffron", "ivory", "cobalt", "scarlet", "silver", "ashen"}
-var devPhenomena = []string{"rain", "fog", "dust", "static", "hail", "glow", "drift", "mire"}
-var devRoles = []string{"broker", "warden", "auditor", "carrier", "scribe", "factor", "porter", "binder"}
-var devMaterials = []string{"glass", "salt", "wire", "resin", "silk", "amber", "basalt", "signal"}
-var devAliases = []string{"anchor", "choirmark", "ledger-key", "veil-token", "resonance seal", "relay shard", "storm docket", "proof reed"}
-var devDistricts = []string{"southern ward", "north quay", "mirror steps", "relay row", "silt exchange", "archive annex", "ember causeway", "river stairs"}
-var devWorkTypes = []string{"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry"}
-var devHazards = []string{"containment wash", "archive firebreak", "quarantine bloom", "signal spill", "relay fracture", "silt collapse", "fog surge", "glass quake"}
+// Vocabulary sizes are chosen so the binding key (faction=7, color=11, district=13)
+// has LCM = 1001 > 250 clusters, making every cluster's key unique.
+// Other fields use coprime sizes to maximize overall tuple diversity.
+var devColors = []string{"green", "amber", "saffron", "ivory", "cobalt", "scarlet", "silver", "ashen", "vermilion", "cerulean", "ochre"}                                       // 11
+var devPhenomena = []string{"rain", "fog", "dust", "static", "hail", "glow", "drift", "mire", "tremor", "vapor", "ash", "frost", "flux"}                                       // 13
+var devRoles = []string{"broker", "warden", "auditor", "carrier", "scribe", "factor", "porter", "binder"}                                                                       // 8 (option labels, keep fixed)
+var devMaterials = []string{"glass", "salt", "wire", "resin", "silk", "amber", "basalt", "signal", "copper", "bone", "lacquer"}                                                 // 11
+var devAliases = []string{"anchor", "choirmark", "ledger-key", "veil-token", "resonance seal", "relay shard", "storm docket", "proof reed", "ghost ledger", "writ marker", "ember tag", "tide cipher", "route seal", "blind receipt", "vault echo", "line proof", "trace bond"} // 17
+var devDistricts = []string{"southern ward", "north quay", "mirror steps", "relay row", "silt exchange", "archive annex", "ember causeway", "river stairs", "tide gate", "fog basin", "salt flat", "chimney court", "blind alley"}                                              // 13
+var devWorkTypes = []string{"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry", "survey", "dispatch", "stocktake"}                          // 11
+var devHazards = []string{"containment wash", "archive firebreak", "spore bloom", "signal spill", "relay fracture", "silt collapse", "fog cascade", "glass quake", "copper burn", "tide breach", "frost lock"}                                                                  // 11
 
 func BuildGeneratedDevSeasonIR(tickCount int) (IRFile, error) {
 	if tickCount <= 0 {
@@ -167,7 +173,7 @@ func buildDevTheme(cluster int) devTheme {
 		Role:         role,
 		Material:     devMaterials[(cluster*7+3)%len(devMaterials)],
 		Alias:        devAliases[(cluster*11+4)%len(devAliases)],
-		District:     devDistricts[(cluster*13+5)%len(devDistricts)],
+		District:     devDistricts[(cluster*9+5)%len(devDistricts)],
 		WorkA:        devWorkTypes[cluster%len(devWorkTypes)],
 		WorkB:        devWorkTypes[(cluster+3)%len(devWorkTypes)],
 		Hazard:       devHazards[(cluster*17+6)%len(devHazards)],

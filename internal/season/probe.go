@@ -482,26 +482,28 @@ func normalizeProsePattern(texts []string) string {
 var skeletonStripWords = func() map[string]struct{} {
 	words := make(map[string]struct{})
 	for _, w := range []string{
-		// colors
-		"green", "amber", "saffron", "ivory", "cobalt", "scarlet", "silver", "ashen",
-		// phenomena
-		"rain", "fog", "dust", "static", "hail", "glow", "drift", "mire",
-		// roles
+		// colors (11)
+		"green", "amber", "saffron", "ivory", "cobalt", "scarlet", "silver", "ashen", "vermilion", "cerulean", "ochre",
+		// phenomena (13)
+		"rain", "fog", "dust", "static", "hail", "glow", "drift", "mire", "tremor", "vapor", "ash", "frost", "flux",
+		// roles (8)
 		"broker", "warden", "auditor", "carrier", "scribe", "factor", "porter", "binder",
-		// materials
-		"glass", "salt", "wire", "resin", "silk", "amber", "basalt", "signal",
-		// aliases
-		"anchor", "choirmark", "ledger-key", "veil-token", "resonance", "seal", "relay", "shard", "storm", "docket", "proof", "reed",
-		// districts
-		"southern", "ward", "north", "quay", "mirror", "steps", "relay", "row", "silt", "exchange", "archive", "annex", "ember", "causeway", "river", "stairs",
-		// factions
-		"choir", "civic", "harbor", "union", "office", "guild",
-		// hazards
-		"containment", "wash", "firebreak", "quarantine", "bloom", "spill", "fracture", "collapse", "surge", "quake",
-		// work types
-		"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry",
+		// materials (11)
+		"glass", "salt", "wire", "resin", "silk", "amber", "basalt", "signal", "copper", "bone", "lacquer",
+		// aliases (individual words from compound aliases)
+		"anchor", "choirmark", "resonance", "seal", "relay", "shard", "storm", "docket", "proof", "reed",
+		"ghost", "writ", "marker", "tide", "cipher", "route", "blind", "receipt", "vault", "echo", "line", "trace", "bond",
+		// districts (individual words from compound districts)
+		"southern", "ward", "north", "quay", "mirror", "steps", "row", "silt", "exchange", "archive", "annex", "ember", "causeway", "river", "stairs",
+		"gate", "basin", "flat", "chimney", "court", "alley",
+		// factions (individual words from compound names)
+		"choir", "civic", "harbor", "union", "office", "guild", "terrace",
+		// hazards (individual words from compound names)
+		"containment", "wash", "firebreak", "spore", "bloom", "spill", "fracture", "collapse", "cascade", "quake", "burn", "breach", "lock",
+		// work types (11)
+		"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry", "survey", "dispatch", "stocktake",
 		// protocols
-		"curtain", "cordon", "brace", "checksum", "lock", "divert",
+		"curtain", "cordon", "brace", "checksum", "divert",
 	} {
 		words[w] = struct{}{}
 	}

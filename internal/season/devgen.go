@@ -123,6 +123,7 @@ func BuildGeneratedDevSeasonIR(tickCount int) (IRFile, error) {
 
 type devTheme struct {
 	ClusterIndex int
+	ProseVariant int // decorrelated from Regime for template selection
 	Faction      devFaction
 	Regime       devRegime
 	Color        string
@@ -151,8 +152,14 @@ func buildDevTheme(cluster int) devTheme {
 	color := devColors[cluster%len(devColors)]
 	phenomenon := devPhenomena[(cluster*3+1)%len(devPhenomena)]
 	role := devRoles[(cluster*5+2)%len(devRoles)]
+	// ProseVariant must NOT correlate with the regime index (cluster%3).
+	// Use an offset that is coprime to 3 so prose skeletons rotate
+	// independently of the regime assignment.
+	proseVariant := (cluster*7 + 2) % 3
+
 	return devTheme{
 		ClusterIndex: cluster,
+		ProseVariant: proseVariant,
 		Faction:      devFactions[cluster%len(devFactions)],
 		Regime:       devRegimes[cluster%len(devRegimes)],
 		Color:        color,
@@ -490,12 +497,16 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 		exploitAura := theme.Faction.ExploitAuraThreshold
 		exploitAuraSpend := theme.Faction.ExploitAuraSpend
 		exploitDebtCap := theme.Faction.ExploitDebtCap
+		// Answer-neutral: describe the hazard event without hinting at
+		// stabilize vs exploit. The right choice depends on visible player
+		// state (reputation, aura, debt) and faction profile learned over time.
+		//
+		// Single template so skeleton is identical across all factions/regimes.
 		sourceText := fmt.Sprintf(
-			"%s struck the %s. %s is offering %s to trusted operators, while risk-takers can still try to exploit the surge if their aura and debt stay within public limits.",
+			"%s struck the %s. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
 			theme.Hazard,
 			theme.District,
 			theme.Faction.Name,
-			theme.Faction.Protocol,
 		)
 
 		precursors := []string{fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))}
@@ -905,25 +916,30 @@ func ladderPrompt(theme devTheme, trustedTier bool) string {
 	if trustedTier {
 		tier = "trusted"
 	}
-	switch theme.Regime.OfferBestOption {
-	case "penitent":
-		return fmt.Sprintf("%s %s offer: public ledgers and witness accounts keep disagreeing about the %s circuit. The office is rechecking operators whose paperwork survives side-by-side comparison.", theme.Faction.Name, tier, theme.Color)
-	case "auditor":
-		return fmt.Sprintf("%s %s offer: custody ledgers around the %s no longer reconcile. The office is escalating cases with clean provenance and sending the rest back into review.", theme.Faction.Name, tier, theme.District)
-	default:
-		return fmt.Sprintf("%s %s offer: the public notices and private manifests still diverge around the %s line. Intermediaries keep moving volume, but the official record is lagging behind.", theme.Faction.Name, tier, theme.Alias)
-	}
+	// Answer-neutral: the prose describes the faction situation without hinting
+	// at which option (broker/penitent/auditor) is correct. The correct option
+	// depends on the active source regime, which was established in the earlier
+	// clue chain beats. The model must remember the regime to choose correctly.
+	//
+	// IMPORTANT: We use a single template so that the prose skeleton is
+	// identical across all regimes. This ensures skeleton accuracy = random.
+	// Instance-level template accuracy will be high (fill words identify
+	// clusters, each with a fixed answer) — that is the intended learning target.
+	return fmt.Sprintf(
+		"%s %s offer: the %s %s situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime.",
+		theme.Faction.Name, tier, theme.District, theme.Faction.Name)
 }
 
 func marketPrompt(theme devTheme) string {
-	switch theme.Regime.MarketBestOption {
-	case "quarantine":
-		return fmt.Sprintf("Market brief: %s exposure split the bid on %s %s lots. Public handlers and side-channel buyers are no longer clearing the same route.", theme.Phenomenon, theme.Color, theme.Material)
-	case "auction":
-		return fmt.Sprintf("Market brief: certified lots from the %s are settling on one lane while the whisper market keeps quoting another. The contradiction is visible; the mapping is not.", theme.District)
-	default:
-		return fmt.Sprintf("Market brief: the suppressed %s line is now clearing through two incompatible routes. Public record and side-channel spread no longer agree.", theme.Alias)
-	}
+	// Answer-neutral: the prose describes the market disruption without hinting
+	// at which option (broker/auction/quarantine) is correct. The correct option
+	// depends on the active source regime, which was established in the earlier
+	// clue chain beats. The model must remember the regime to choose correctly.
+	//
+	// IMPORTANT: Single template so skeleton is identical across all regimes.
+	return fmt.Sprintf(
+		"Market brief: the %s %s line has fractured into incompatible clearing routes. The public record and side-channel prices diverge, but the regime posted earlier this cycle determines which lane settles.",
+		theme.Color, theme.Material)
 }
 
 func otherOptions(options []string, best string) (string, string) {

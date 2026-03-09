@@ -226,6 +226,13 @@ Current execution:
 
 - Haiku `ephemeral + memory off + recent_reveals 0` scored far above `visible_greedy`
 - this is now treated as a benchmark-design warning, not as evidence that `visible_greedy` is the no-history ceiling
+- first bounded oracle results on the balanced `dev1000` suggest the planning gap is currently smaller than the local-semantic gap:
+  - `visible_greedy = -5456`
+  - `greedy_best = 115919`
+  - `oracle_h16_b8 = 122534`
+  - `oracle_h64_b32 = 124160`
+- that means the main current benchmark pressure is still local semantic/structural inference, not long-horizon planning
+- the text-ablation runs now matter more, not less, because they will tell us whether Haiku's strong no-history scores are coming from prose semantics or the structured action surface
 
 ## 12. Hazard Learnability Audit
 
@@ -274,8 +281,22 @@ Needed:
 
 Current execution:
 
-- `greedy_best` is still only a local hidden-label baseline
-- we have no tighter non-LLM upper bound yet
+- `oracle_h16_b8` is now implemented as the default bounded forward-search oracle
+- a stronger sweep is now recorded under `benchmarks/oracle-sweep/dev1000-20260308.*`
+- current balanced `dev1000` results:
+  - `greedy_best = 115919`
+  - `oracle_h16_b8 = 122534` (`+6615`, about `+5.7%`)
+  - `oracle_h64_b32 = 124160` (`+8241`, about `+7.1%`)
+- the sweep plateaus at `h64_b32`; `h96_b32` and `h128_b32` add no score, so the effective planning horizon of the current season appears to be around `64` ticks
+- oracle premium over `greedy_best` is currently concentrated in:
+  - `payoff_gate` (`+2418`)
+  - `reputation_ladder` (`+2020`)
+  - `hazard_interrupt` (`+1929`)
+- important interpretation note:
+  - the first review pass overstated the planning gap because it compared the new oracle scores to an old pre-rebalance `greedy_best`
+  - on the current season, the planning gap is real but modest; the larger gap remains between no-history LLM play and `greedy_best`
+- next likely improvement if reviewers push on oracle omniscience:
+  - add a future-blind stateful planner that only uses currently visible information, so we can separate planning depth from full future-tick omniscience
 
 ## 14. Memory-Write Telemetry
 

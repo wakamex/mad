@@ -289,6 +289,7 @@ func buildStandingWorkElement(cluster int, theme devTheme, plan devClusterPlan) 
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_standing", cluster+1),
 		Family:          "standing_work_loop",
+		BindingKey:      clusterSignature(theme),
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_optional_standing", cluster+1)},
 		ResourceTouches: []string{"reputation", "availability", "debt", "cooldowns"},
 		Beats:           beats,
@@ -342,6 +343,7 @@ func buildClueChainElement(cluster int, theme devTheme, plan devClusterPlan) Sto
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_clues", cluster+1),
 		Family:          "seed_clue_chain",
+		BindingKey:      clusterSignature(theme),
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_suffix", cluster+1), fmt.Sprintf("cluster_%03d_bias", cluster+1)},
 		ResourceTouches: []string{"insight"},
 		Beats:           beats,
@@ -479,6 +481,7 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_reputation", cluster+1),
 		Family:          "reputation_ladder",
+		BindingKey:      clusterSignature(theme),
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_social_read", cluster+1)},
 		ResourceTouches: []string{"reputation", "debt", "availability"},
 		Beats:           beats,
@@ -653,6 +656,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_hazard", cluster+1),
 		Family:          "hazard_interrupt",
+		BindingKey:      clusterSignature(theme),
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_hazard_bias", cluster+1)},
 		ResourceTouches: []string{"availability", "aura", "debt", "reputation"},
 		Beats:           beats,
@@ -801,6 +805,7 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 	return StoryElement{
 		ElementID:       fmt.Sprintf("cluster_%03d_payoff", cluster+1),
 		Family:          "payoff_gate",
+		BindingKey:      clusterSignature(theme),
 		LatentVars:      []string{fmt.Sprintf("cluster_%03d_payoff", cluster+1)},
 		ResourceTouches: []string{"insight", "aura", "debt", "availability"},
 		Beats:           beats,

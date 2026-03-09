@@ -457,6 +457,109 @@ func TestValidateIRRejectsConditionalTagProducerAsGuaranteed(t *testing.T) {
 	}
 }
 
+func TestCompileIRBindingKeyPreventsInterleaving(t *testing.T) {
+	// Two elements share binding key "shared-key" and each have 3 beats.
+	// A third element has no binding key and should interleave freely.
+	// The constraint: beats from the two shared-key elements must not
+	// interleave — one must fully complete before the other starts.
+	// Test across 20 seeds to cover different random orderings.
+	for seed := int64(0); seed < 20; seed++ {
+		ir := IRFile{
+			SeasonID:    "binding-key-dev",
+			Title:       "Binding Key Dev",
+			CompileSeed: seed,
+			Elements: []StoryElement{
+				{
+					ElementID:  "alpha",
+					Family:     "seed_clue_chain",
+					BindingKey: "shared-key",
+					Beats: []StoryBeat{
+						testStoryBeat("alpha.1", "alpha.op.1"),
+						testStoryBeat("alpha.2", "alpha.op.2"),
+						testStoryBeat("alpha.3", "alpha.op.3"),
+					},
+				},
+				{
+					ElementID:  "beta",
+					Family:     "seed_clue_chain",
+					BindingKey: "shared-key",
+					Beats: []StoryBeat{
+						testStoryBeat("beta.1", "beta.op.1"),
+						testStoryBeat("beta.2", "beta.op.2"),
+						testStoryBeat("beta.3", "beta.op.3"),
+					},
+				},
+				{
+					ElementID: "gamma",
+					Family:    "payoff_gate",
+					Beats: []StoryBeat{
+						testStoryBeat("gamma.1", "gamma.op.1"),
+						testStoryBeat("gamma.2", "gamma.op.2"),
+					},
+				},
+			},
+		}
+
+		compiled, err := CompileIR(ir)
+		if err != nil {
+			t.Fatalf("seed %d: compile ir: %v", seed, err)
+		}
+
+		alphaFirst, _ := findBeat(t, compiled, "alpha.1")
+		alphaLast, _ := findBeat(t, compiled, "alpha.3")
+		betaFirst, _ := findBeat(t, compiled, "beta.1")
+		betaLast, _ := findBeat(t, compiled, "beta.3")
+
+		alphaBeforeBeta := alphaLast < betaFirst
+		betaBeforeAlpha := betaLast < alphaFirst
+		if !alphaBeforeBeta && !betaBeforeAlpha {
+			t.Errorf("seed %d: binding key constraint violated: alpha beats at [%d,%d], beta beats at [%d,%d] — ranges overlap",
+				seed, alphaFirst, alphaLast, betaFirst, betaLast)
+		}
+
+		if len(compiled.Ticks) != 8 {
+			t.Errorf("seed %d: expected 8 ticks, got %d", seed, len(compiled.Ticks))
+		}
+	}
+}
+
+func TestCompileIRBindingKeyAllowsSameElementBeats(t *testing.T) {
+	// Elements within the same cluster share a binding key but are linked
+	// by precursors. They should still compile normally.
+	ir := IRFile{
+		SeasonID:    "same-cluster-dev",
+		Title:       "Same Cluster Dev",
+		CompileSeed: 7,
+		Elements: []StoryElement{
+			{
+				ElementID:  "clue",
+				Family:     "seed_clue_chain",
+				BindingKey: "Glass Choir green southern ward",
+				Beats: []StoryBeat{
+					testStoryBeat("clue.1", "clue.op.1"),
+					testStoryBeat("clue.2", "clue.op.2"),
+				},
+			},
+			{
+				ElementID:  "payoff",
+				Family:     "payoff_gate",
+				BindingKey: "Glass Choir green southern ward",
+				Beats: []StoryBeat{
+					testStoryBeat("payoff.1", "payoff.op.1"),
+				},
+			},
+		},
+	}
+
+	compiled, err := CompileIR(ir)
+	if err != nil {
+		t.Fatalf("compile ir: %v", err)
+	}
+	if len(compiled.Ticks) != 3 {
+		t.Errorf("expected 3 ticks, got %d", len(compiled.Ticks))
+	}
+}
+
 func testStoryBeat(beatID, opportunityID string, precursors ...string) StoryBeat {
 	return testStoryBeatWithTags(beatID, opportunityID, nil, nil, precursors...)
 }

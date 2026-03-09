@@ -20,6 +20,7 @@ type IRFile struct {
 type StoryElement struct {
 	ElementID       string      `json:"element_id"`
 	Family          string      `json:"family"`
+	BindingKey      string      `json:"binding_key,omitempty"`
 	LatentVars      []string    `json:"latent_vars,omitempty"`
 	ResourceTouches []string    `json:"resource_touches,omitempty"`
 	Beats           []StoryBeat `json:"beats"`
@@ -74,6 +75,11 @@ func CompileIR(ir IRFile) (File, error) {
 	beatToTick := make(map[string]string, totalBeats)
 	beatToIndex := make(map[string]int, totalBeats)
 
+	// Track active binding keys: keys whose owning element has started
+	// but not finished. Elements with a matching binding key from a
+	// different element are blocked until the active one completes.
+	activeBindingKeys := make(map[string]int) // binding_key -> element index
+
 	for len(compiled) < totalBeats {
 		available := make([]int, 0, len(ir.Elements))
 		for i, element := range ir.Elements {
@@ -81,17 +87,35 @@ func CompileIR(ir IRFile) (File, error) {
 				continue
 			}
 			beat := element.Beats[cursors[i]]
-			if precursorsSatisfied(beat.PrecursorBeatIDs, beatToTick) {
-				available = append(available, i)
+			if !precursorsSatisfied(beat.PrecursorBeatIDs, beatToTick) {
+				continue
 			}
+			if key := element.BindingKey; key != "" {
+				if owner, active := activeBindingKeys[key]; active && owner != i {
+					continue
+				}
+			}
+			available = append(available, i)
 		}
 		if len(available) == 0 {
-			return File{}, fmt.Errorf("cannot weave season ir: no schedulable beats remain; check precursor dependencies and element order")
+			return File{}, fmt.Errorf("cannot weave season ir: no schedulable beats remain; check precursor dependencies, element order, and binding key conflicts")
 		}
 		chosen := available[rng.Intn(len(available))]
 		element := ir.Elements[chosen]
 		beat := element.Beats[cursors[chosen]]
 		cursors[chosen]++
+
+		// Update binding key tracking.
+		if key := element.BindingKey; key != "" {
+			if cursors[chosen] == 1 {
+				// First beat of this element: activate the binding key.
+				activeBindingKeys[key] = chosen
+			}
+			if cursors[chosen] >= len(element.Beats) {
+				// Last beat of this element: release the binding key.
+				delete(activeBindingKeys, key)
+			}
+		}
 
 		tickID := fmt.Sprintf("S1-T%04d", len(compiled)+1)
 		tick := TickDefinition{

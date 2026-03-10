@@ -84,50 +84,103 @@ var devDistricts = []string{"southern ward", "north quay", "mirror steps", "rela
 var devWorkTypes = []string{"cleanup", "escort", "ledger", "sorting", "inspection", "repair", "triage", "registry", "survey", "dispatch", "stocktake"}                          // 11
 var devHazards = []string{"containment wash", "archive firebreak", "spore bloom", "signal spill", "relay fracture", "silt collapse", "fog cascade", "glass quake", "copper burn", "tide breach", "frost lock"}                                                                  // 11
 
-// BuildFocusedDevSeasonIR generates a season with only clue + ladder + payoff
-// elements. This maximizes signal density for testing whether the conjunctive
-// clue system is learnable, without the noise of standing work and hazard
-// interrupts. Tick count must be a multiple of 15.
-func BuildFocusedDevSeasonIR(tickCount int) (IRFile, error) {
-	const beatsPerCluster = 15
-	const elementsPerCluster = 3
-
+// BuildFocusedDevSeasonIR generates a season containing only the specified
+// families. Valid families: "clue", "ladder", "payoff", "hazard", "standing".
+// Families "ladder" and "payoff" implicitly include "clue" (they depend on it).
+// Beats per cluster = 5 * len(families). Tick count must be a multiple of that.
+func BuildFocusedDevSeasonIR(tickCount int, families []string) (IRFile, error) {
 	if tickCount <= 0 {
 		return IRFile{}, fmt.Errorf("tick count must be positive")
 	}
+
+	// Normalize: ladder and payoff require clue.
+	wantSet := make(map[string]bool, len(families))
+	for _, f := range families {
+		wantSet[f] = true
+	}
+	if wantSet["ladder"] || wantSet["payoff"] {
+		wantSet["clue"] = true
+	}
+
+	// Determine element count and beat allocation.
+	var familyOrder []string
+	for _, f := range []string{"standing", "clue", "ladder", "hazard", "payoff"} {
+		if wantSet[f] {
+			familyOrder = append(familyOrder, f)
+		}
+	}
+	elementsPerCluster := len(familyOrder)
+	if elementsPerCluster == 0 {
+		return IRFile{}, fmt.Errorf("no valid families specified")
+	}
+	beatsPerCluster := 5 * elementsPerCluster
+
 	if tickCount%beatsPerCluster != 0 {
-		return IRFile{}, fmt.Errorf("focused tick count must be a multiple of %d", beatsPerCluster)
+		return IRFile{}, fmt.Errorf("focused tick count must be a multiple of %d for families %v", beatsPerCluster, familyOrder)
+	}
+
+	// Build label for season ID.
+	label := ""
+	for i, f := range familyOrder {
+		if i > 0 {
+			label += "+"
+		}
+		label += f
 	}
 
 	clusterCount := tickCount / beatsPerCluster
+	clockDefaults := map[string]int64{"standard": 45_000}
+	if wantSet["payoff"] {
+		clockDefaults["dossier"] = 90_000
+	}
+	if wantSet["hazard"] {
+		clockDefaults["interrupt"] = 20_000
+	}
+
 	ir := IRFile{
 		SchemaVersion:   "v1alpha1",
-		SeasonID:        fmt.Sprintf("dev-focused-%dtick", tickCount),
-		Title:           fmt.Sprintf("Focused Clue+Ladder+Payoff (%d-Tick Dev)", tickCount),
+		SeasonID:        fmt.Sprintf("dev-%s-%dtick", label, tickCount),
+		Title:           fmt.Sprintf("Focused %s (%d-Tick Dev)", label, tickCount),
 		CompileSeed:     1007,
 		ScoreEpochTicks: 6,
 		RevealLagTicks:  3,
 		ShardCount:      64,
-		ClockDefaults: map[string]int64{
-			"standard": 45_000,
-			"dossier":  90_000,
-		},
-		Elements: make([]StoryElement, 0, clusterCount*elementsPerCluster),
+		ClockDefaults:   clockDefaults,
+		Elements:        make([]StoryElement, 0, clusterCount*elementsPerCluster),
 	}
 
 	for cluster := 0; cluster < clusterCount; cluster++ {
 		theme := buildDevTheme(cluster)
-		lengths := boundedBeatPartition(cluster, beatsPerCluster, elementsPerCluster, 3, 7)
-		plan := devClusterPlan{
-			Clue:   lengths[0],
-			Ladder: lengths[1],
-			Payoff: lengths[2],
+		lengths := boundedBeatPartition(cluster, beatsPerCluster, elementsPerCluster, 3, beatsPerCluster-2*(elementsPerCluster-1))
+		plan := devClusterPlan{}
+		for i, f := range familyOrder {
+			switch f {
+			case "standing":
+				plan.Standing = lengths[i]
+			case "clue":
+				plan.Clue = lengths[i]
+			case "ladder":
+				plan.Ladder = lengths[i]
+			case "hazard":
+				plan.Hazard = lengths[i]
+			case "payoff":
+				plan.Payoff = lengths[i]
+			}
 		}
-		ir.Elements = append(ir.Elements,
-			buildClueChainElement(cluster, theme, plan),
-			buildReputationLadderElement(cluster, theme, plan),
-			buildPayoffGateElement(cluster, theme, plan),
-		)
+		for _, f := range familyOrder {
+			switch f {
+			case "standing":
+				ir.Elements = append(ir.Elements, buildStandingWorkElement(cluster, theme, plan))
+			case "clue":
+				ir.Elements = append(ir.Elements, buildClueChainElement(cluster, theme, plan))
+			case "ladder":
+				ir.Elements = append(ir.Elements, buildReputationLadderElement(cluster, theme, plan))
+			case "hazard":
+				ir.Elements = append(ir.Elements, buildPreparednessHazardElement(cluster, theme, plan))
+			case "payoff":
+				ir.Elements = append(ir.Elements, buildPayoffGateElement(cluster, theme, plan))
+			}
+		}
 	}
 
 	if err := ValidateIR(ir); err != nil {
@@ -409,9 +462,13 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 
 	for i := 1; i <= plan.Ladder; i++ {
 		target := fmt.Sprintf("quest.cluster.%03d.offer.%d", cluster+1, i)
-		consumes := []string{clueTag(cluster, minInt(i, maxInt(plan.Clue, 2)))}
-		if i == 1 {
-			consumes = []string{clueTag(cluster, 1)}
+		var consumes []string
+		if plan.Clue > 0 {
+			if i == 1 {
+				consumes = []string{clueTag(cluster, 1)}
+			} else {
+				consumes = []string{clueTag(cluster, minInt(i, maxInt(plan.Clue, 2)))}
+			}
 		}
 		publicReqs := []PublicRequirement(nil)
 		thresholdRep := theme.RepTier + int64(maxInt(0, i-2))*2
@@ -437,7 +494,10 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 			)
 		}
 
-		precursors := []string{fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(i, plan.Clue))}
+		var precursors []string
+		if plan.Clue > 0 {
+			precursors = append(precursors, fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(i, plan.Clue)))
+		}
 		if i == 1 && plan.Standing > 0 {
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.standing.1", cluster+1))
 		} else if i > 1 {
@@ -566,7 +626,10 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			theme.Faction.Name,
 		)
 
-		precursors := []string{fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))}
+		var precursors []string
+		if plan.Clue > 0 {
+			precursors = append(precursors, fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(maxInt(plan.Clue, 2), maxInt(2, i))))
+		}
 		if i > 1 {
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
@@ -647,10 +710,14 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			},
 		}
 
+		var hazardConsumes []string
+		if plan.Clue > 0 {
+			hazardConsumes = []string{clueTag(cluster, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))}
+		}
 		beats = append(beats, StoryBeat{
 			BeatID:           fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i),
 			ClockClass:       "interrupt",
-			ConsumesTags:     []string{clueTag(cluster, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))},
+			ConsumesTags:     hazardConsumes,
 			ResourceTouches:  []string{"availability", "aura", "debt", "reputation"},
 			PrecursorBeatIDs: precursors,
 			Sources: []Source{
@@ -735,11 +802,15 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 				Text:       marketPrompt(theme),
 			},
 		}
-		clueBeat := minInt(plan.Clue, maxInt(2, i))
-		consumes := []string{clueTag(cluster, 1), clueTag(cluster, clueBeat)}
-		precursors := []string{
-			fmt.Sprintf("cluster_%03d.offer.%d", cluster+1, minInt(plan.Ladder, maxInt(1, i))),
-			fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, clueBeat),
+		clueBeat := minInt(maxInt(plan.Clue, 1), maxInt(2, i))
+		var consumes []string
+		var precursors []string
+		if plan.Clue > 0 {
+			consumes = []string{clueTag(cluster, 1), clueTag(cluster, clueBeat)}
+			precursors = append(precursors, fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, clueBeat))
+		}
+		if plan.Ladder > 0 {
+			precursors = append(precursors, fmt.Sprintf("cluster_%03d.offer.%d", cluster+1, minInt(plan.Ladder, maxInt(1, i))))
 		}
 
 		rules := []Rule{
@@ -797,9 +868,12 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 					Classification: "bad",
 				})
 			}
-			precursors = []string{
-				fmt.Sprintf("cluster_%03d.offer.%d", cluster+1, minInt(plan.Ladder, 2)),
-				fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(plan.Clue, 2)),
+			precursors = nil
+			if plan.Ladder > 0 {
+				precursors = append(precursors, fmt.Sprintf("cluster_%03d.offer.%d", cluster+1, minInt(plan.Ladder, 2)))
+			}
+			if plan.Clue > 0 {
+				precursors = append(precursors, fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(plan.Clue, 2)))
 			}
 		} else {
 			if i > 2 {

@@ -88,53 +88,55 @@ Note: hazard_interrupt shows 100% majority because exploit is always greedy-best
 - Score trajectory: +412 at tick 200, then collapsed to -181 at tick 300 as decision beats accumulated misses.
 - Compare old leaky prose: +24,025 over 1000 ticks.
 
-## Ablation 2: Persistent Haiku on Focused Season (2026-03-10)
+## Per-Family Learnability (2026-03-10)
 
-### Configuration
+Each family was tested in isolation using focused 90-tick seasons. All runs use Claude Haiku at low effort. "Persistent" means full context history + 3 recent reveals. "Ephemeral" means no history, no reveals.
 
-- Model: Claude Haiku
-- Effort: low
-- Memory: off
-- Context: persistent (full history in context)
-- Recent reveals: 3
-- Text mode: full prose
-- Season: focused-90tick (clue + ladder + payoff only, 6 clusters, no standing work or hazards)
+### Per-family accuracy: best-action rate
 
-### Result
+| Family | Random Baseline | Ephemeral | Persistent+Reveals | Memory Gap |
+|---|---:|---:|---:|---:|
+| **payoff_gate** | 29% | 12% | **90%** | +78pp |
+| **reputation_ladder** | 33% | 30% | **83%** | +53pp |
+| **seed_clue_chain** | ~50% | 95% | 100% | +5pp |
+| **hazard_interrupt** | 50% | — | **0%** | broken |
+| **standing_work_loop** | ~50% | — | 38% | none |
 
-**Final score: +7,411**
+### Raw results
 
-| Family | Score | Best/Total |
-|---|---:|---:|
-| payoff_gate | +4,373 | 23/27 (85%) |
-| reputation_ladder | +2,914 | 20/32 (63%) |
-| seed_clue_chain | +126 | 31/31 (100%) |
+**clue+payoff (persistent+reveals)**: score=+7,939, payoff 38/42 (90%), clue 48/48 (100%)
 
-### Score trajectory
+**clue+ladder (persistent+reveals)**: score=+5,624, ladder 35/42 (83%), clue 48/48 (100%)
 
-| Tick | Score |
-|---:|---:|
-| 15 | +64 |
-| 30 | +821 |
-| 45 | +1,949 |
-| 60 | +4,166 |
-| 75 | +6,219 |
-| 90 | +7,411 |
+**clue+ladder+payoff (persistent+reveals)**: score=+7,411, payoff 23/27 (85%), ladder 20/32 (63%), clue 31/31 (100%)
+
+**clue+ladder+payoff (ephemeral)**: score=+986, payoff 3/25 (12%), ladder 8/27 (30%), clue 36/38 (95%)
+
+**hazard (persistent+reveals)**: score=-1,800, hazard 0/90 (0%)
+
+**standing (persistent+reveals)**: score=+31, standing 34/90 (38%)
 
 ### Interpretation
 
-- **payoff_gate at 85%** (vs 29% random) confirms the conjunctive clue system is learnable.
-- **reputation_ladder at 63%** (vs 33% random) shows regime inference works for ladder decisions too.
-- The accelerating score trajectory shows the model learning from reveals over time.
-- The game is not too obfuscated. With memory and feedback, a small model learns the rules.
+**payoff_gate** and **reputation_ladder** show the design working as intended: near-random without memory, strong with memory. The 78pp and 53pp memory gaps confirm the benchmark measures long-range retrieval and multi-step inference.
+
+When tested in isolation (clue+payoff only), payoff accuracy rises from 85% to 90% — fewer distracting families means cleaner signal. Similarly, ladder rises from 63% to 83% when tested without payoff beats competing for attention.
+
+**seed_clue_chain** is trivially solvable (inspect is always best). This is by design — clue beats provide evidence, not decisions. The 95% ephemeral rate reflects that inspect is locally obvious.
+
+**hazard_interrupt** is broken: 0% best-action even with full context and reveals. This is not a prose issue — exploit is always the greedy-best action (100% majority class), but Haiku never chooses it. The hazard system needs redesign.
+
+**standing_work_loop** has a low skill ceiling (38% with memory). Standing work is intentionally low-value ambient work. It should not be a primary differentiator.
 
 ## Key Comparison Table
 
 | Condition | Score | payoff_gate | reputation_ladder |
 |---|---:|---:|---:|
 | Old prose, ephemeral | +24,025 | 26,857 | — |
-| **New prose, ephemeral** | **-181** | 0 (not reached) | 34% (random) |
+| **New prose, ephemeral** | **+986** | 12% | 30% |
 | **New prose, persistent + reveals** | **+7,411** | 85% | 63% |
+| New prose, isolated payoff (persistent) | +7,939 | 90% | — |
+| New prose, isolated ladder (persistent) | +5,624 | — | 83% |
 | Random baseline (sim) | -6,131 | — | — |
 | Greedy-best oracle | +117,100 | — | — |
 

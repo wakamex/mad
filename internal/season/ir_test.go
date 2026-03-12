@@ -227,8 +227,8 @@ func TestLoadIRFileValidatesDevSeasonIR(t *testing.T) {
 	if err != nil {
 		t.Fatalf("load dev season ir: %v", err)
 	}
-	if loaded.SeasonID != "dev-season" {
-		t.Fatalf("unexpected season: %s", loaded.SeasonID)
+	if loaded.SeasonID == "" {
+		t.Fatalf("expected non-empty season ID")
 	}
 	if len(loaded.Elements) == 0 {
 		t.Fatalf("expected story elements")

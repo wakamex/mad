@@ -14,7 +14,7 @@ import (
 	"github.com/mihai/mad/internal/storage"
 )
 
-func testServer(t *testing.T) (*Server, *game.Engine) {
+func testServer(t *testing.T) (*Server, *game.Engine, season.File) {
 	t.Helper()
 	loadedSeason, err := season.LoadFile(filepath.Join("..", "..", "seasons", "dev", "season.json"))
 	if err != nil {
@@ -25,11 +25,25 @@ func testServer(t *testing.T) (*Server, *game.Engine) {
 		t.Fatalf("wal: %v", err)
 	}
 	engine := game.NewEngine(loadedSeason, wal, 8)
-	return NewServer(engine), engine
+	return NewServer(engine), engine, loadedSeason
+}
+
+// firstCommitOpp finds the first tick with a commit opportunity.
+func firstCommitOpp(s season.File) (opp season.Opportunity, option string, ok bool) {
+	for _, tick := range s.Ticks {
+		for _, o := range tick.Opportunities {
+			for _, cmd := range o.AllowedCommands {
+				if cmd == "commit" && len(o.AllowedOptions) > 0 {
+					return o, o.AllowedOptions[0], true
+				}
+			}
+		}
+	}
+	return season.Opportunity{}, "", false
 }
 
 func TestActionEndpoint(t *testing.T) {
-	server, engine := testServer(t)
+	server, engine, _ := testServer(t)
 	body, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
@@ -47,7 +61,7 @@ func TestActionEndpoint(t *testing.T) {
 }
 
 func TestIdempotentRetryEndpoint(t *testing.T) {
-	server, engine := testServer(t)
+	server, engine, _ := testServer(t)
 	body, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
@@ -76,19 +90,28 @@ func TestIdempotentRetryEndpoint(t *testing.T) {
 }
 
 func TestRevealEndpointAfterClose(t *testing.T) {
-	server, engine := testServer(t)
+	server, engine, loadedSeason := testServer(t)
 	now := time.Now().UTC()
+
+	opp, option, ok := firstCommitOpp(loadedSeason)
+	if !ok {
+		t.Fatalf("no commit opportunity found")
+	}
+
 	_, err := engine.Submit(engine.DevToken(1), game.ActionSubmission{
-		TickID:     engine.Current().TickID,
-		Command:    "commit",
-		Target:     "quest.glass_choir.7",
-		Option:     "broker",
+		TickID:  engine.Current().TickID,
+		Command: "commit",
+		Target:  opp.OpportunityID,
+		Option:  option,
 	}, now)
 	if err != nil {
 		t.Fatalf("submit: %v", err)
 	}
-	engine.DebugForceClose(now)
-	engine.DebugForceClose(now)
+
+	// Advance enough ticks for the reveal to publish.
+	for i := 0; i < loadedSeason.RevealLagTicks; i++ {
+		engine.DebugForceClose(now)
+	}
 
 	req := httptest.NewRequest(http.MethodGet, "/reveals/S1-T0001.json", nil)
 	rec := httptest.NewRecorder()
@@ -99,7 +122,13 @@ func TestRevealEndpointAfterClose(t *testing.T) {
 }
 
 func TestTickAlreadyCommittedEndpoint(t *testing.T) {
-	server, engine := testServer(t)
+	server, engine, loadedSeason := testServer(t)
+
+	opp, option, ok := firstCommitOpp(loadedSeason)
+	if !ok {
+		t.Fatalf("no commit opportunity found")
+	}
+
 	firstBody, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "hold",
@@ -108,8 +137,8 @@ func TestTickAlreadyCommittedEndpoint(t *testing.T) {
 	secondBody, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "commit",
-		Target:       "quest.glass_choir.7",
-		Option:       "broker",
+		Target:       opp.OpportunityID,
+		Option:       option,
 		SubmissionID: "second",
 	})
 	handler := server.Routes()
@@ -132,19 +161,25 @@ func TestTickAlreadyCommittedEndpoint(t *testing.T) {
 }
 
 func TestSubmissionIDConflictEndpoint(t *testing.T) {
-	server, engine := testServer(t)
+	server, engine, loadedSeason := testServer(t)
+
+	opp, option, ok := firstCommitOpp(loadedSeason)
+	if !ok {
+		t.Fatalf("no commit opportunity found")
+	}
+
 	firstBody, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "commit",
-		Target:       "quest.glass_choir.7",
-		Option:       "broker",
+		Target:       opp.OpportunityID,
+		Option:       option,
 		SubmissionID: "same-id",
 	})
 	secondBody, _ := json.Marshal(game.ActionSubmission{
 		TickID:       engine.Current().TickID,
 		Command:      "commit",
-		Target:       "quest.glass_choir.7",
-		Option:       "smuggler",
+		Target:       opp.OpportunityID,
+		Option:       option + "-alt",
 		SubmissionID: "same-id",
 	})
 	handler := server.Routes()
@@ -183,8 +218,8 @@ func TestTrustProxyHeadersForIPLimit(t *testing.T) {
 	})
 
 	body, _ := json.Marshal(game.ActionSubmission{
-		TickID:     engine.Current().TickID,
-		Command:    "hold",
+		TickID:  engine.Current().TickID,
+		Command: "hold",
 	})
 	handler := server.Routes()
 

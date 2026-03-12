@@ -110,7 +110,7 @@ func TestDecodeDecisionSupportsLetterWithColon(t *testing.T) {
 }
 
 func TestBuildPromptOmitsNotesInstructionsWhenDisabled(t *testing.T) {
-	packet := PromptPacket{}
+	packet := PromptPacket{ActionChoices: []PromptActionChoice{{Label: "hold"}}}
 	prompt, err := BuildPrompt(packet, 100, false, false, ActionLabelNumbers)
 	if err != nil {
 		t.Fatalf("build prompt: %v", err)
@@ -146,7 +146,7 @@ func TestBuildPromptIncludesProviderMemoryHintWhenEnabled(t *testing.T) {
 }
 
 func TestBuildPromptUsesLetterInstructionWhenRequested(t *testing.T) {
-	packet := PromptPacket{}
+	packet := PromptPacket{ActionChoices: []PromptActionChoice{{Label: "hold"}}}
 	prompt, err := BuildPrompt(packet, 100, false, false, ActionLabelLetters)
 	if err != nil {
 		t.Fatalf("build prompt: %v", err)
@@ -242,7 +242,7 @@ func TestRunSeasonCapturesScoreTrace(t *testing.T) {
 		},
 	}
 
-	result, err := RunSeason(context.Background(), file, report, runner, RunOptions{MaxTicks: 2})
+	result, err := RunSeason(context.Background(), file, report, runner, RunOptions{MaxTicks: 3})
 	if err != nil {
 		t.Fatalf("run season: %v", err)
 	}
@@ -287,7 +287,7 @@ func TestRunSeasonEphemeralContextDoesNotPersistNotes(t *testing.T) {
 		},
 	}
 
-	result, err := RunSeason(context.Background(), file, report, runner, RunOptions{MaxTicks: 2})
+	result, err := RunSeason(context.Background(), file, report, runner, RunOptions{MaxTicks: 3})
 	if err != nil {
 		t.Fatalf("run season: %v", err)
 	}

@@ -33,47 +33,9 @@
               "text": "Channel audit for the Glass Choir amber archive annex sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.001.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.001.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_001.signal.primary"
@@ -92,47 +54,9 @@
               "text": "Follow-up for the Glass Choir amber archive annex sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.001.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.001.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_001.signal.alias"
@@ -151,47 +75,9 @@
               "text": "Market gossip ties the amber resin line to the warden suffix through the Glass Choir amber archive annex sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.001.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.001.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_001.signal.fragment_1"
@@ -370,21 +256,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Glass Choir standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 36,
-                  "label": "Debt 36 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -403,31 +274,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.2",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 36,
-                  "min_reputation": {
-                    "glass_choir": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -544,21 +390,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Glass Choir standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 34,
-                  "label": "Debt 34 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -577,31 +408,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.3",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 34,
-                  "min_reputation": {
-                    "glass_choir": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -718,21 +524,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Glass Choir standing 8+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 32,
-                  "label": "Debt 32 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -751,31 +542,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.4",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 32,
-                  "min_reputation": {
-                    "glass_choir": 8
-                  }
-                },
-                "delta": {
-                  "yield": 255,
-                  "insight": 48,
-                  "aura": 12,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -892,21 +658,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Glass Choir standing 10+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -925,31 +676,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.5",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_reputation": {
-                    "glass_choir": 10
-                  }
-                },
-                "delta": {
-                  "yield": 290,
-                  "insight": 54,
-                  "aura": 13,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -1066,21 +792,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Glass Choir standing 12+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -1099,31 +810,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.6",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_reputation": {
-                    "glass_choir": 12
-                  }
-                },
-                "delta": {
-                  "yield": 325,
-                  "insight": 60,
-                  "aura": 14,
-                  "debt": -7,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -1240,21 +926,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "glass_choir",
-                  "operator": "\u003e=",
-                  "value": 14,
-                  "label": "Glass Choir standing 14+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 26,
-                  "label": "Debt 26 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -1273,31 +944,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.001.offer.7",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 26,
-                  "min_reputation": {
-                    "glass_choir": 14
-                  }
-                },
-                "delta": {
-                  "yield": 360,
-                  "insight": 66,
-                  "aura": 15,
-                  "debt": -7,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -2209,47 +1855,9 @@
               "text": "Channel audit for the Civic Ward cobalt north quay sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.primary"
@@ -2268,47 +1876,9 @@
               "text": "Follow-up for the Civic Ward cobalt north quay sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.alias"
@@ -2327,47 +1897,9 @@
               "text": "Market gossip ties the cobalt lacquer line to the scribe suffix through the Civic Ward cobalt north quay sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.fragment_1"
@@ -2386,47 +1918,9 @@
               "text": "Console note: the line proof docket for the Civic Ward cobalt north quay sector only clears when the lacquer lineage is treated as the same asset family."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.4",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.4"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You indexed the console lineage note against the earlier alias.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.fragment_2"
@@ -2445,47 +1939,9 @@
               "text": "Faction note: operators in the Civic Ward cobalt north quay sector who recall the cobalt/mire signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.5",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.5"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.fragment_3"
@@ -2504,47 +1960,9 @@
               "text": "Faction note: operators in the Civic Ward cobalt north quay sector who recall the cobalt/mire signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.002.6",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.002.6"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_002.signal.fragment_4"
@@ -2723,21 +2141,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "civic_ward",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Civic Ward standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 36,
-                  "label": "Debt 36 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -2756,31 +2159,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.002.offer.2",
-                  "option": "penitent"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 36,
-                  "min_reputation": {
-                    "civic_ward": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -2897,21 +2275,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "civic_ward",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Civic Ward standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 34,
-                  "label": "Debt 34 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -2930,31 +2293,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.002.offer.3",
-                  "option": "penitent"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 34,
-                  "min_reputation": {
-                    "civic_ward": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -4003,47 +3341,9 @@
               "text": "Channel audit for the Harbor Union ashen salt flat sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.primary"
@@ -4062,47 +3362,9 @@
               "text": "Follow-up for the Harbor Union ashen salt flat sector: public postings and civilian broadcasts have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.alias"
@@ -4121,47 +3383,9 @@
               "text": "Market gossip ties the ashen basalt line to the binder suffix through the Harbor Union ashen salt flat sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_1"
@@ -4180,47 +3404,9 @@
               "text": "Console note: the writ marker docket for the Harbor Union ashen salt flat sector only clears when the basalt lineage is treated as the same asset family."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.4",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.4"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You indexed the console lineage note against the earlier alias.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_2"
@@ -4239,47 +3425,9 @@
               "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.5",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.5"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_3"
@@ -4298,47 +3446,9 @@
               "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.6",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.6"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_4"
@@ -4357,47 +3467,9 @@
               "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.7",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.7"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_5"
@@ -4416,47 +3488,9 @@
               "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.8",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.8"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_6"
@@ -4475,47 +3509,9 @@
               "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.003.9",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.003.9"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_003.signal.fragment_7"
@@ -4694,21 +3690,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "harbor_union",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Harbor Union standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 36,
-                  "label": "Debt 36 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -4727,31 +3708,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.003.offer.2",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 36,
-                  "min_reputation": {
-                    "harbor_union": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -4868,21 +3824,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "harbor_union",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Harbor Union standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 34,
-                  "label": "Debt 34 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -4901,31 +3842,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.003.offer.3",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 34,
-                  "min_reputation": {
-                    "harbor_union": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -5563,47 +4479,9 @@
               "text": "Channel audit for the Archive Office ochre ember causeway sector: archive fragments and historical records are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.primary"
@@ -5622,47 +4500,9 @@
               "text": "Follow-up for the Archive Office ochre ember causeway sector: public postings and civilian broadcasts have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.alias"
@@ -5681,47 +4521,9 @@
               "text": "Market gossip ties the ochre wire line to the auditor suffix through the Archive Office ochre ember causeway sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.fragment_1"
@@ -5740,47 +4542,9 @@
               "text": "Console note: the veil-token docket for the Archive Office ochre ember causeway sector only clears when the wire lineage is treated as the same asset family."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.4",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.4"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You indexed the console lineage note against the earlier alias.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.fragment_2"
@@ -5799,47 +4563,9 @@
               "text": "Faction note: operators in the Archive Office ochre ember causeway sector who recall the ochre/hail signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.5",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.5"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.fragment_3"
@@ -5858,47 +4584,9 @@
               "text": "Faction note: operators in the Archive Office ochre ember causeway sector who recall the ochre/hail signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.004.6",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.004.6"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_004.signal.fragment_4"
@@ -6077,21 +4765,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "archive_office",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Archive Office standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 40,
-                  "label": "Debt 40 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -6110,31 +4783,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.004.offer.2",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 40,
-                  "min_reputation": {
-                    "archive_office": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -6251,21 +4899,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "archive_office",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Archive Office standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 38,
-                  "label": "Debt 38 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -6284,31 +4917,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.004.offer.3",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 38,
-                  "min_reputation": {
-                    "archive_office": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -6425,21 +5033,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "archive_office",
-                  "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Archive Office standing 8+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 36,
-                  "label": "Debt 36 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -6458,31 +5051,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.004.offer.4",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 36,
-                  "min_reputation": {
-                    "archive_office": 8
-                  }
-                },
-                "delta": {
-                  "yield": 255,
-                  "insight": 48,
-                  "aura": 12,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -6599,21 +5167,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "archive_office",
-                  "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Archive Office standing 10+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 34,
-                  "label": "Debt 34 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -6632,31 +5185,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.004.offer.5",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 34,
-                  "min_reputation": {
-                    "archive_office": 10
-                  }
-                },
-                "delta": {
-                  "yield": 290,
-                  "insight": 54,
-                  "aura": 13,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -6773,21 +5301,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "archive_office",
-                  "operator": "\u003e=",
-                  "value": 12,
-                  "label": "Archive Office standing 12+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 32,
-                  "label": "Debt 32 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -6806,31 +5319,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.004.offer.6",
-                  "option": "broker"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 32,
-                  "min_reputation": {
-                    "archive_office": 12
-                  }
-                },
-                "delta": {
-                  "yield": 325,
-                  "insight": 60,
-                  "aura": 14,
-                  "debt": -7,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -7468,47 +5956,9 @@
               "text": "Channel audit for the Silt Exchange saffron mirror steps sector: archive fragments and historical records are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.primary"
@@ -7527,47 +5977,9 @@
               "text": "Follow-up for the Silt Exchange saffron mirror steps sector: institutional filings and faction dispatches have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.alias"
@@ -7586,47 +5998,9 @@
               "text": "Market gossip ties the saffron bone line to the factor suffix through the Silt Exchange saffron mirror steps sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_1"
@@ -7645,47 +6019,9 @@
               "text": "Console note: the vault echo docket for the Silt Exchange saffron mirror steps sector only clears when the bone lineage is treated as the same asset family."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.4",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.4"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You indexed the console lineage note against the earlier alias.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_2"
@@ -7704,47 +6040,9 @@
               "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.5",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.5"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_3"
@@ -7763,47 +6061,9 @@
               "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.6",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.6"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_4"
@@ -7822,47 +6082,9 @@
               "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.7",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.7"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_5"
@@ -7881,47 +6103,9 @@
               "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.8",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.8"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_6"
@@ -7940,47 +6124,9 @@
               "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.005.9",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.005.9"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_005.signal.fragment_7"
@@ -8159,21 +6305,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "silt_exchange",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Silt Exchange standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 40,
-                  "label": "Debt 40 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -8192,31 +6323,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.005.offer.2",
-                  "option": "penitent"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 40,
-                  "min_reputation": {
-                    "silt_exchange": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -8333,21 +6439,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "silt_exchange",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Silt Exchange standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 38,
-                  "label": "Debt 38 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -8366,31 +6457,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.005.offer.3",
-                  "option": "penitent"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 38,
-                  "min_reputation": {
-                    "silt_exchange": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -9028,47 +7094,9 @@
               "text": "Channel audit for the Relay Guild scarlet chimney court sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.006.1",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.006.1"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You logged the contradiction between the bulletin and the market.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_006.signal.primary"
@@ -9087,47 +7115,9 @@
               "text": "Follow-up for the Relay Guild scarlet chimney court sector: institutional filings and faction dispatches have also been verified as standard. Remaining channels should be treated as potentially affected."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.006.2",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.006.2"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You recorded the alias lineage and the role suffix.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_006.signal.alias"
@@ -9146,47 +7136,9 @@
               "text": "Market gossip ties the scarlet amber line to the broker suffix through the Relay Guild scarlet chimney court sector, not to literal cargo shape."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.006.3",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.006.3"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 3,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You bound the role suffix back to the public market signal.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_006.signal.fragment_1"
@@ -9205,47 +7157,9 @@
               "text": "Console note: the ghost ledger docket for the Relay Guild scarlet chimney court sector only clears when the amber lineage is treated as the same asset family."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.006.4",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.006.4"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 4,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You indexed the console lineage note against the earlier alias.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_006.signal.fragment_2"
@@ -9264,47 +7178,9 @@
               "text": "Faction note: operators in the Relay Guild scarlet chimney court sector who recall the scarlet/fog signals from earlier analysis continue to be rewarded."
             }
           ],
-          "opportunities": [
-            {
-              "opportunity_id": "clue.cluster.006.5",
-              "allowed_commands": [
-                "inspect",
-                "hold"
-              ]
-            }
-          ],
+          "opportunities": null,
           "scoring": {
-            "rules": [
-              {
-                "match": {
-                  "command": "inspect",
-                  "target": "clue.cluster.006.5"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 5,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 0
-                },
-                "label": "You preserved another small but lawful clue fragment.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "hold"
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 0,
-                  "miss_penalties": 1
-                },
-                "label": "The clue passed without annotation.",
-                "classification": "miss"
-              }
-            ]
+            "rules": null
           },
           "produces_tags": [
             "cluster_006.signal.fragment_3"
@@ -9483,21 +7359,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "relay_guild",
-                  "operator": "\u003e=",
-                  "value": 4,
-                  "label": "Relay Guild standing 4+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 40,
-                  "label": "Debt 40 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -9516,31 +7377,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.006.offer.2",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 40,
-                  "min_reputation": {
-                    "relay_guild": 4
-                  }
-                },
-                "delta": {
-                  "yield": 185,
-                  "insight": 36,
-                  "aura": 10,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -9657,21 +7493,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "relay_guild",
-                  "operator": "\u003e=",
-                  "value": 6,
-                  "label": "Relay Guild standing 6+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 38,
-                  "label": "Debt 38 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -9690,31 +7511,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.006.offer.3",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 38,
-                  "min_reputation": {
-                    "relay_guild": 6
-                  }
-                },
-                "delta": {
-                  "yield": 220,
-                  "insight": 42,
-                  "aura": 11,
-                  "debt": -5,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -9831,21 +7627,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "relay_guild",
-                  "operator": "\u003e=",
-                  "value": 8,
-                  "label": "Relay Guild standing 8+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 36,
-                  "label": "Debt 36 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -9864,31 +7645,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.006.offer.4",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 36,
-                  "min_reputation": {
-                    "relay_guild": 8
-                  }
-                },
-                "delta": {
-                  "yield": 255,
-                  "insight": 48,
-                  "aura": 12,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {
@@ -10005,21 +7761,6 @@
                 "broker",
                 "penitent",
                 "auditor"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "reputation",
-                  "scope": "relay_guild",
-                  "operator": "\u003e=",
-                  "value": 10,
-                  "label": "Relay Guild standing 10+ unlocks the trusted tier."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 34,
-                  "label": "Debt 34 or lower preserves trusted handling."
-                }
               ]
             }
           ],
@@ -10038,31 +7779,6 @@
                   "miss_penalties": 0
                 },
                 "label": "You inspected the social framing before acting.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "quest.cluster.006.offer.5",
-                  "option": "auditor"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 34,
-                  "min_reputation": {
-                    "relay_guild": 10
-                  }
-                },
-                "delta": {
-                  "yield": 290,
-                  "insight": 54,
-                  "aura": 13,
-                  "debt": -6,
-                  "miss_penalties": 0
-                },
-                "label": "Your earlier standing unlocked the premium tier.",
                 "classification": "best"
               },
               {

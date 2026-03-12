@@ -54,14 +54,14 @@ func TestHazardFactionProfilesStayStableAcrossClusters(t *testing.T) {
 	if first.Faction.ID != repeat.Faction.ID {
 		t.Fatalf("expected same faction after one full rotation: first=%s repeat=%s", first.Faction.ID, repeat.Faction.ID)
 	}
-	if first.Faction.StabilizeRepThreshold != repeat.Faction.StabilizeRepThreshold {
-		t.Fatalf("expected stable stabilize threshold across cluster reuse: first=%d repeat=%d", first.Faction.StabilizeRepThreshold, repeat.Faction.StabilizeRepThreshold)
+	if first.Faction.StabilizeRepPct != repeat.Faction.StabilizeRepPct {
+		t.Fatalf("expected stable stabilize pct across cluster reuse: first=%f repeat=%f", first.Faction.StabilizeRepPct, repeat.Faction.StabilizeRepPct)
 	}
 	if first.Faction.StabilizeRepSpend != repeat.Faction.StabilizeRepSpend {
 		t.Fatalf("expected stable stabilize spend across cluster reuse: first=%d repeat=%d", first.Faction.StabilizeRepSpend, repeat.Faction.StabilizeRepSpend)
 	}
-	if first.Faction.ExploitAuraThreshold != repeat.Faction.ExploitAuraThreshold {
-		t.Fatalf("expected stable exploit threshold across cluster reuse: first=%d repeat=%d", first.Faction.ExploitAuraThreshold, repeat.Faction.ExploitAuraThreshold)
+	if first.Faction.ExploitAuraPct != repeat.Faction.ExploitAuraPct {
+		t.Fatalf("expected stable exploit pct across cluster reuse: first=%f repeat=%f", first.Faction.ExploitAuraPct, repeat.Faction.ExploitAuraPct)
 	}
 	if first.Faction.ExploitAuraSpend != repeat.Faction.ExploitAuraSpend {
 		t.Fatalf("expected stable exploit spend across cluster reuse: first=%d repeat=%d", first.Faction.ExploitAuraSpend, repeat.Faction.ExploitAuraSpend)

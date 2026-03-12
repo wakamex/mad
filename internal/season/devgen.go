@@ -10,18 +10,50 @@ const (
 )
 
 type devFaction struct {
-	ID                    string
-	Name                  string
-	Protocol              string
-	StabilizeBonus        int64
-	ExploitBonus          int64
-	StabilizeDebtRelief   int64
-	StabilizeRepThreshold int64
-	StabilizeRepSpend     int64
-	StabilizeDebtCap      int64
-	ExploitAuraThreshold  int64
-	ExploitAuraSpend      int64
-	ExploitDebtCap        int64
+	ID                  string
+	Name                string
+	Protocol            string
+	StabilizeBonus      int64
+	ExploitBonus        int64
+	StabilizeDebtRelief int64
+	StabilizeRepPct     float64 // fraction of max faction rep required to stabilize
+	StabilizeRepSpend   int64
+	StabilizeDebtCap    int64
+	ExploitAuraPct      float64 // fraction of max global aura required to exploit
+	ExploitAuraSpend    int64
+	ExploitDebtCap      int64
+}
+
+// resourceBudget holds the max achievable reputation per faction and global
+// aura, computed from the standing work beats in the season plan. Hazard
+// thresholds are set as fractions of these ceilings so the game scales to
+// any season length.
+type resourceBudget struct {
+	RepPerFaction map[string]int64
+	TotalAura     int64
+}
+
+func computeResourceBudget(clusterCount int, plans []devClusterPlan, themes []devTheme) resourceBudget {
+	budget := resourceBudget{RepPerFaction: make(map[string]int64)}
+	for c := 0; c < clusterCount; c++ {
+		budget.RepPerFaction[themes[c].Faction.ID] += standingRepForBeats(plans[c].Standing)
+		budget.TotalAura += standingAuraForBeats(plans[c].Standing)
+	}
+	return budget
+}
+
+func standingRepForBeats(n int) int64 {
+	if n <= 0 {
+		return 0
+	}
+	if n <= 2 {
+		return int64(n) * 2
+	}
+	return 4 + int64(n-2)
+}
+
+func standingAuraForBeats(n int) int64 {
+	return int64((n + 1) / 2) // ceil(n/2): aura +1 on odd beats
 }
 
 type devRegime struct {
@@ -36,13 +68,24 @@ type devRegime struct {
 var devFactions = []devFaction{
 	// 7 factions. LCM(7, 11 colors, 13 districts) = 1001 > 250 clusters,
 	// so every cluster gets a unique (faction, color, district) binding key.
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 40, ExploitBonus: -8, StabilizeDebtRelief: 14, StabilizeRepThreshold: 16, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraThreshold: 22, ExploitAuraSpend: 12, ExploitDebtCap: 28},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 28, ExploitBonus: -2, StabilizeDebtRelief: 13, StabilizeRepThreshold: 10, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraThreshold: 20, ExploitAuraSpend: 9, ExploitDebtCap: 30},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: 4, ExploitBonus: 18, StabilizeDebtRelief: 5, StabilizeRepThreshold: 8, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraThreshold: 12, ExploitAuraSpend: 5, ExploitDebtCap: 38},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 22, ExploitBonus: 4, StabilizeDebtRelief: 11, StabilizeRepThreshold: 18, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraThreshold: 18, ExploitAuraSpend: 6, ExploitDebtCap: 34},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: 0, ExploitBonus: 22, StabilizeDebtRelief: 3, StabilizeRepThreshold: 7, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraThreshold: 10, ExploitAuraSpend: 6, ExploitDebtCap: 40},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 34, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepThreshold: 14, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraThreshold: 24, ExploitAuraSpend: 10, ExploitDebtCap: 30},
-	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 16, ExploitBonus: 12, StabilizeDebtRelief: 7, StabilizeRepThreshold: 12, StabilizeRepSpend: 4, StabilizeDebtCap: 42, ExploitAuraThreshold: 14, ExploitAuraSpend: 5, ExploitDebtCap: 36},
+	//
+	// Stabilize base yield = 46 + 5i, exploit base yield = 62 + 8i. The narrow
+	// base gap (16 points at i=1) means faction bonuses genuinely determine
+	// which lane is better — the agent must learn per-faction ROI from experience.
+	//
+	// Split: 3 stabilize-favored, 1 mixed (crossover at beat 2), 3 exploit-favored.
+	// Thresholds are NOT predictive of best lane — can't infer ROI from entry cost.
+	//
+	//                                                                   stab    stab  stab   expl    expl  expl
+	//                                                          stab  expl  debt  rep   rep   debt   aura  aura  debt
+	//                                                          bonus bonus relief pct  spend  cap    pct  spend  cap
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.18, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraPct: 0.12, ExploitAuraSpend: 12, ExploitDebtCap: 28},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.12, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraPct: 0.10, ExploitAuraSpend: 9, ExploitDebtCap: 30},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.08, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraPct: 0.05, ExploitAuraSpend: 5, ExploitDebtCap: 38},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.16, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraPct: 0.08, ExploitAuraSpend: 6, ExploitDebtCap: 34},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.06, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraPct: 0.05, ExploitAuraSpend: 6, ExploitDebtCap: 40},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.15, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraPct: 0.12, ExploitAuraSpend: 10, ExploitDebtCap: 30},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.10, StabilizeRepSpend: 4, StabilizeDebtCap: 42, ExploitAuraPct: 0.06, ExploitAuraSpend: 5, ExploitDebtCap: 36},
 }
 
 var devRegimes = []devRegime{
@@ -149,36 +192,43 @@ func BuildFocusedDevSeasonIR(tickCount int, families []string) (IRFile, error) {
 		Elements:        make([]StoryElement, 0, clusterCount*elementsPerCluster),
 	}
 
+	// First pass: compute themes and plans for budget calculation.
+	themes := make([]devTheme, clusterCount)
+	plans := make([]devClusterPlan, clusterCount)
 	for cluster := 0; cluster < clusterCount; cluster++ {
-		theme := buildDevTheme(cluster)
+		themes[cluster] = buildDevTheme(cluster)
 		lengths := boundedBeatPartition(cluster, beatsPerCluster, elementsPerCluster, 3, beatsPerCluster-2*(elementsPerCluster-1))
-		plan := devClusterPlan{}
 		for i, f := range familyOrder {
 			switch f {
 			case "standing":
-				plan.Standing = lengths[i]
+				plans[cluster].Standing = lengths[i]
 			case "clue":
-				plan.Clue = lengths[i]
+				plans[cluster].Clue = lengths[i]
 			case "ladder":
-				plan.Ladder = lengths[i]
+				plans[cluster].Ladder = lengths[i]
 			case "hazard":
-				plan.Hazard = lengths[i]
+				plans[cluster].Hazard = lengths[i]
 			case "payoff":
-				plan.Payoff = lengths[i]
+				plans[cluster].Payoff = lengths[i]
 			}
 		}
+	}
+	budget := computeResourceBudget(clusterCount, plans, themes)
+
+	// Second pass: build story elements.
+	for cluster := 0; cluster < clusterCount; cluster++ {
 		for _, f := range familyOrder {
 			switch f {
 			case "standing":
-				ir.Elements = append(ir.Elements, buildStandingWorkElement(cluster, theme, plan))
+				ir.Elements = append(ir.Elements, buildStandingWorkElement(cluster, themes[cluster], plans[cluster]))
 			case "clue":
-				ir.Elements = append(ir.Elements, buildClueChainElement(cluster, theme, plan))
+				ir.Elements = append(ir.Elements, buildClueChainElement(cluster, themes[cluster], plans[cluster]))
 			case "ladder":
-				ir.Elements = append(ir.Elements, buildReputationLadderElement(cluster, theme, plan))
+				ir.Elements = append(ir.Elements, buildReputationLadderElement(cluster, themes[cluster], plans[cluster]))
 			case "hazard":
-				ir.Elements = append(ir.Elements, buildPreparednessHazardElement(cluster, theme, plan))
+				ir.Elements = append(ir.Elements, buildPreparednessHazardElement(cluster, themes[cluster], plans[cluster], budget))
 			case "payoff":
-				ir.Elements = append(ir.Elements, buildPayoffGateElement(cluster, theme, plan))
+				ir.Elements = append(ir.Elements, buildPayoffGateElement(cluster, themes[cluster], plans[cluster]))
 			}
 		}
 	}
@@ -214,15 +264,21 @@ func BuildGeneratedDevSeasonIR(tickCount int) (IRFile, error) {
 		Elements: make([]StoryElement, 0, clusterCount*devElementsPerCluster),
 	}
 
+	themes := make([]devTheme, clusterCount)
+	plans := make([]devClusterPlan, clusterCount)
 	for cluster := 0; cluster < clusterCount; cluster++ {
-		theme := buildDevTheme(cluster)
-		plan := buildDevClusterPlan(cluster)
+		themes[cluster] = buildDevTheme(cluster)
+		plans[cluster] = buildDevClusterPlan(cluster)
+	}
+	budget := computeResourceBudget(clusterCount, plans, themes)
+
+	for cluster := 0; cluster < clusterCount; cluster++ {
 		ir.Elements = append(ir.Elements,
-			buildStandingWorkElement(cluster, theme, plan),
-			buildClueChainElement(cluster, theme, plan),
-			buildReputationLadderElement(cluster, theme, plan),
-			buildPreparednessHazardElement(cluster, theme, plan),
-			buildPayoffGateElement(cluster, theme, plan),
+			buildStandingWorkElement(cluster, themes[cluster], plans[cluster]),
+			buildClueChainElement(cluster, themes[cluster], plans[cluster]),
+			buildReputationLadderElement(cluster, themes[cluster], plans[cluster]),
+			buildPreparednessHazardElement(cluster, themes[cluster], plans[cluster], budget),
+			buildPayoffGateElement(cluster, themes[cluster], plans[cluster]),
 		)
 	}
 
@@ -404,7 +460,6 @@ func buildStandingWorkElement(cluster int, theme devTheme, plan devClusterPlan) 
 func buildClueChainElement(cluster int, theme devTheme, plan devClusterPlan) StoryElement {
 	beats := make([]StoryBeat, 0, plan.Clue)
 	for i := 1; i <= plan.Clue; i++ {
-		target := fmt.Sprintf("clue.cluster.%03d.%d", cluster+1, i)
 		beat := StoryBeat{
 			BeatID:          fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, i),
 			ClockClass:      clueClockClass(i),
@@ -417,28 +472,8 @@ func buildClueChainElement(cluster int, theme devTheme, plan devClusterPlan) Sto
 					Text:       clueText(theme, i),
 				},
 			},
-			Opportunities: []Opportunity{
-				{
-					OpportunityID:   target,
-					AllowedCommands: []string{"inspect", "hold"},
-				},
-			},
-			Scoring: ScoringPlan{
-				Rules: []Rule{
-					{
-						Match:          ActionMatch{Command: "inspect", Target: target},
-						Delta:          ScoreDelta{Yield: 0, Insight: 2 + int64((i%3)+1), Aura: 0, Debt: 0, MissPenalties: 0},
-						Label:          clueInspectLabel(i),
-						Classification: "best",
-					},
-					{
-						Match:          ActionMatch{Command: "hold"},
-						Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 0, MissPenalties: 1},
-						Label:          "The clue passed without annotation.",
-						Classification: "miss",
-					},
-				},
-			},
+			// Observe-only: no Opportunities or Scoring. The agent sees the
+			// prose (it enters conversation context) but takes no action.
 		}
 		// No ActiveSourceRegimes — regime must be inferred from conjunctive
 		// evidence across beats 1 and 2, not from structured metadata.
@@ -470,31 +505,7 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 				consumes = []string{clueTag(cluster, minInt(i, maxInt(plan.Clue, 2)))}
 			}
 		}
-		publicReqs := []PublicRequirement(nil)
-		thresholdRep := theme.RepTier + int64(maxInt(0, i-2))*2
-		thresholdDebt := theme.DebtCap - int64(maxInt(0, i-2))*2
-		if thresholdDebt < 18 {
-			thresholdDebt = 18
-		}
-		if i >= 2 {
-			publicReqs = append(publicReqs,
-				PublicRequirement{
-					Metric:   "reputation",
-					Scope:    theme.Faction.ID,
-					Operator: ">=",
-					Value:    thresholdRep,
-					Label:    fmt.Sprintf("%s standing %d+ unlocks the trusted tier.", theme.Faction.Name, thresholdRep),
-				},
-				PublicRequirement{
-					Metric:   "debt",
-					Operator: "<=",
-					Value:    thresholdDebt,
-					Label:    fmt.Sprintf("Debt %d or lower preserves trusted handling.", thresholdDebt),
-				},
-			)
-		}
-
-		var precursors []string
+			var precursors []string
 		if plan.Clue > 0 {
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.clue.%d", cluster+1, minInt(i, plan.Clue)))
 		}
@@ -513,19 +524,6 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 			},
 		}
 
-		if i >= 2 {
-			rules = append(rules, Rule{
-				Match: ActionMatch{Command: "commit", Target: target, Option: theme.Regime.OfferBestOption},
-				Requirements: RuleRequirements{
-					RequiresAvailability: []string{defaultAvailability},
-					MinReputation:        map[string]int64{theme.Faction.ID: thresholdRep},
-					MaxDebt:              thresholdDebt,
-				},
-				Delta:          ScoreDelta{Yield: 115 + int64(i*35), Insight: 24 + int64(i*6), Aura: 8 + int64(i), Debt: -(4 + int64(i/2)), MissPenalties: 0},
-				Label:          "Your earlier standing unlocked the premium tier.",
-				Classification: "best",
-			})
-		}
 		rules = append(rules,
 			Rule{
 				Match: ActionMatch{Command: "commit", Target: target, Option: theme.Regime.OfferBestOption},
@@ -577,10 +575,9 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 			},
 			Opportunities: []Opportunity{
 				{
-					OpportunityID:      target,
-					AllowedCommands:    []string{"inspect", "commit", "hold"},
-					AllowedOptions:     options,
-					PublicRequirements: publicReqs,
+					OpportunityID:   target,
+					AllowedCommands: []string{"inspect", "commit", "hold"},
+					AllowedOptions:  options,
 				},
 			},
 			Scoring: ScoringPlan{Rules: rules},
@@ -600,17 +597,23 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 	}
 }
 
-func buildPreparednessHazardElement(cluster int, theme devTheme, plan devClusterPlan) StoryElement {
+func buildPreparednessHazardElement(cluster int, theme devTheme, plan devClusterPlan, budget resourceBudget) StoryElement {
 	beats := make([]StoryBeat, 0, plan.Hazard)
+
+	// Compute thresholds as fractions of the season's resource budget.
+	// Minimum threshold of 2 prevents zero-threshold degeneracy on tiny seasons.
+	factionRep := budget.RepPerFaction[theme.Faction.ID]
+	stabilizeRepBase := maxInt64(2, int64(theme.Faction.StabilizeRepPct*float64(factionRep)))
+	exploitAuraBase := maxInt64(2, int64(theme.Faction.ExploitAuraPct*float64(budget.TotalAura)))
 
 	for i := 1; i <= plan.Hazard; i++ {
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
 		stabilizeTarget := target + ".stabilize"
 		exploitTarget := target + ".exploit"
-		stabilizeRep := theme.Faction.StabilizeRepThreshold
+		stabilizeRep := stabilizeRepBase
 		stabilizeRepSpend := theme.Faction.StabilizeRepSpend
 		stabilizeDebtCap := theme.Faction.StabilizeDebtCap
-		exploitAura := theme.Faction.ExploitAuraThreshold
+		exploitAura := exploitAuraBase
 		exploitAuraSpend := theme.Faction.ExploitAuraSpend
 		exploitDebtCap := theme.Faction.ExploitDebtCap
 		// Answer-neutral: describe the hazard event without hinting at
@@ -646,7 +649,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					ReputationDelta: map[string]int64{theme.Faction.ID: -stabilizeRepSpend},
 				},
 				Delta: ScoreDelta{
-					Yield:         32 + int64(i*5) + theme.Faction.StabilizeBonus,
+					Yield:         46 + int64(i*5) + theme.Faction.StabilizeBonus,
 					Insight:       10 + int64(i*2),
 					Aura:          0,
 					Debt:          -(5 + theme.Faction.StabilizeDebtRelief/2),
@@ -678,7 +681,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					MaxDebt:              exploitDebtCap,
 				},
 				Delta: ScoreDelta{
-					Yield:         74 + int64(i*8) + theme.Faction.ExploitBonus,
+					Yield:         62 + int64(i*8) + theme.Faction.ExploitBonus,
 					Insight:       8 + int64(i*2),
 					Aura:          -exploitAuraSpend,
 					Debt:          2 + int64(i/2),
@@ -738,7 +741,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Scope:    theme.Faction.ID,
 							Operator: ">=",
 							Value:    stabilizeRep,
-							Label:    fmt.Sprintf("%s standing %d+ unlocks %s; successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, stabilizeRepSpend),
+							Label:    fmt.Sprintf("%s standing %d+ unlocks %s (expected yield ~%d); successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, 46+int64(i*5)+theme.Faction.StabilizeBonus, stabilizeRepSpend),
 						},
 						{
 							Metric:   "debt",
@@ -757,7 +760,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Metric:   "aura",
 							Operator: ">=",
 							Value:    exploitAura,
-							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation; successful use spends %d aura.", exploitAura, exploitAuraSpend),
+							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation (expected yield ~%d); successful use spends %d aura.", exploitAura, 62+int64(i*8)+theme.Faction.ExploitBonus, exploitAuraSpend),
 						},
 						{
 							Metric:   "debt",
@@ -1075,21 +1078,6 @@ func clueText(theme devTheme, beat int) string {
 	}
 }
 
-func clueInspectLabel(beat int) string {
-	switch beat {
-	case 1:
-		return "You logged the contradiction between the bulletin and the market."
-	case 2:
-		return "You recorded the alias lineage and the role suffix."
-	case 3:
-		return "You bound the role suffix back to the public market signal."
-	case 4:
-		return "You indexed the console lineage note against the earlier alias."
-	default:
-		return "You preserved another small but lawful clue fragment."
-	}
-}
-
 
 func ladderPrompt(theme devTheme, trustedTier bool) string {
 	tier := "initial"
@@ -1142,6 +1130,13 @@ func minInt(a, b int) int {
 }
 
 func maxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func maxInt64(a, b int64) int64 {
 	if a > b {
 		return a
 	}

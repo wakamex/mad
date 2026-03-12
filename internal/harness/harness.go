@@ -149,6 +149,7 @@ type PromptPacket struct {
 	SeasonTitle   string                      `json:"season_title"`
 	TickIndex     int                         `json:"tick_index"`
 	TickCount     int                         `json:"tick_count"`
+	Observations  []season.PublicTick         `json:"observations,omitempty"`
 	CurrentTick   season.PublicTick           `json:"current_tick"`
 	ActionChoices []PromptActionChoice        `json:"action_choices"`
 	CurrentState  season.HarnessStateSnapshot `json:"current_state"`
@@ -391,6 +392,8 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 	persistNotes := runner.Spec().ContextMode != ContextModeEphemeral
 	actionStyle := actionLabelStyleForRunner(runner.Spec(), tickActionCount(file))
 
+	var pendingObservations []season.PublicTick
+
 	for tickIndex := startTick; tickIndex < endTick; tickIndex++ {
 		for _, reveal := range revealsByStart[tickIndex] {
 			visibleReveals = append(visibleReveals, reveal)
@@ -401,16 +404,25 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 
 		state.AdvanceToTick(tickIndex)
 		tick := file.Ticks[tickIndex]
+
+		// Observe-only ticks (no opportunities): buffer prose for the next action tick.
+		if len(tick.Opportunities) == 0 {
+			pendingObservations = append(pendingObservations, applyTextModeTick(tick.Public(), options.TextMode))
+			continue
+		}
+
 		packet := PromptPacket{
 			SeasonID:      file.SeasonID,
 			SeasonTitle:   file.Title,
 			TickIndex:     tickIndex,
 			TickCount:     len(file.Ticks),
+			Observations:  pendingObservations,
 			CurrentTick:   applyTextModeTick(tick.Public(), options.TextMode),
 			ActionChoices: buildActionChoices(runner.Spec(), tick, actionStyle),
 			CurrentState:  state.Snapshot(),
 			RecentReveals: applyTextModeReveals(cloneReveals(visibleReveals), options.TextMode),
 		}
+		pendingObservations = nil
 		if persistNotes {
 			packet.Notes = notes
 		}

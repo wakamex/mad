@@ -283,6 +283,37 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		advanceSimulatedStateToTick(&oracleState, i)
 		resolution := simulateResolution(tick, greedyState)
 
+		// Observe-only ticks have no opportunities or scoring — skip baselines.
+		if len(tick.Opportunities) == 0 {
+			simTick := SimulatedTick{
+				Index:             i,
+				TickID:            tick.TickID,
+				ClockClass:        tick.ClockClass,
+				DurationMS:        tick.DurationMS,
+				StartsAtMS:        nowMS,
+				EndsAtMS:          nowMS + tick.DurationMS,
+				RandomActionCount: 0,
+				Annotations:       tick.Annotations,
+				ResolutionPreview: resolution,
+			}
+			report.ActionSurface.PerTickCounts[tick.TickID] = 0
+			report.ActionSurface.Distribution["0"]++
+			publishIndex := i + file.RevealLagTicks - 1
+			if file.RevealLagTicks > 0 && publishIndex >= 0 && publishIndex < len(file.Ticks) {
+				simTick.RevealPublishesAtTick = file.Ticks[publishIndex].TickID
+				report.Reveals = append(report.Reveals, SimulatedReveal{
+					TickID:               tick.TickID,
+					RevealLagTicks:       file.RevealLagTicks,
+					PublishedAfterTickID: file.Ticks[publishIndex].TickID,
+					PublishedAfterIndex:  publishIndex,
+					ResolutionPreview:    resolution,
+				})
+			}
+			report.Ticks = append(report.Ticks, simTick)
+			nowMS += tick.DurationMS
+			continue
+		}
+
 		greedyRule := chooseGreedyRule(tick, greedyState)
 		bestBaseline := report.Baselines["greedy_best"]
 		advanceBaseline(&bestBaseline, &greedyState, greedyRule)
@@ -776,6 +807,9 @@ func simulateRandomRun(file File, rng *rand.Rand, captureBreakdown bool) (int64,
 	}
 	for tickIndex, tick := range file.Ticks {
 		advanceSimulatedStateToTick(&state, tickIndex)
+		if len(tick.Opportunities) == 0 {
+			continue
+		}
 		action := randomActionForTick(tick, rng)
 		rule, isBest := evaluateSimulatedAction(tick.Scoring, action, state)
 		applyRuleToSimulatedState(&state, rule)

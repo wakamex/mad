@@ -17,47 +17,9 @@
           "text": "Channel audit for the Relay Guild scarlet chimney court sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.006.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.006.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -76,47 +38,9 @@
           "text": "Channel audit for the Civic Ward ivory blind alley sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -135,47 +59,9 @@
           "text": "Channel audit for the Harbor Union ashen salt flat sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -194,47 +80,9 @@
           "text": "Follow-up for the Civic Ward ivory blind alley sector: public postings and civilian broadcasts have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -253,47 +101,9 @@
           "text": "Follow-up for the Harbor Union ashen salt flat sector: public postings and civilian broadcasts have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -312,47 +122,9 @@
           "text": "Channel audit for the Glass Choir green relay row sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.008.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.008.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -371,47 +143,9 @@
           "text": "Market gossip ties the ivory silk line to the warden suffix through the Civic Ward ivory blind alley sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -430,47 +164,9 @@
           "text": "Channel audit for the Silt Exchange saffron mirror steps sector: archive fragments and historical records are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -489,47 +185,9 @@
           "text": "Channel audit for the Glass Choir amber archive annex sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.001.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.001.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -548,47 +206,9 @@
           "text": "Market gossip ties the ashen basalt line to the binder suffix through the Harbor Union ashen salt flat sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -607,47 +227,9 @@
           "text": "Follow-up for the Silt Exchange saffron mirror steps sector: institutional filings and faction dispatches have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -666,47 +248,9 @@
           "text": "Channel audit for the Archive Office ochre ember causeway sector: archive fragments and historical records are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.004.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.004.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -725,47 +269,9 @@
           "text": "Channel audit for the Civic Ward cobalt north quay sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.002.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.002.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -784,47 +290,9 @@
           "text": "Console note: the writ marker docket for the Harbor Union ashen salt flat sector only clears when the basalt lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -843,47 +311,9 @@
           "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -902,47 +332,9 @@
           "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.6",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.6"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -961,47 +353,9 @@
           "text": "Follow-up for the Archive Office ochre ember causeway sector: public postings and civilian broadcasts have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.004.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.004.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1020,47 +374,9 @@
           "text": "Faction note: operators in the Harbor Union ashen salt flat sector who recall the ashen/flux signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.003.7",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.003.7"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1214,47 +530,9 @@
           "text": "Channel audit for the Copper Terrace vermilion river stairs sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.1",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.1"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You logged the contradiction between the bulletin and the market.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1273,47 +551,9 @@
           "text": "Follow-up for the Civic Ward cobalt north quay sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.002.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.002.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1332,47 +572,9 @@
           "text": "Market gossip ties the ochre wire line to the auditor suffix through the Archive Office ochre ember causeway sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.004.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.004.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1620,47 +822,9 @@
           "text": "Follow-up for the Relay Guild scarlet chimney court sector: institutional filings and faction dispatches have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.006.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.006.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1679,47 +843,9 @@
           "text": "Console note: the proof reed docket for the Civic Ward ivory blind alley sector only clears when the silk lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1738,47 +864,9 @@
           "text": "Follow-up for the Copper Terrace vermilion river stairs sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1934,47 +1022,9 @@
           "text": "Follow-up for the Glass Choir green relay row sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.008.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.008.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -1993,47 +1043,9 @@
           "text": "Market gossip ties the saffron bone line to the factor suffix through the Silt Exchange saffron mirror steps sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2052,47 +1064,9 @@
           "text": "Faction note: operators in the Civic Ward ivory blind alley sector who recall the ivory/static signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2111,47 +1085,9 @@
           "text": "Market gossip ties the green copper line to the porter suffix through the Glass Choir green relay row sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.008.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.008.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2170,47 +1106,9 @@
           "text": "Console note: the vault echo docket for the Silt Exchange saffron mirror steps sector only clears when the bone lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2229,47 +1127,9 @@
           "text": "Console note: the veil-token docket for the Archive Office ochre ember causeway sector only clears when the wire lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.004.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.004.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2288,47 +1148,9 @@
           "text": "Faction note: operators in the Archive Office ochre ember causeway sector who recall the ochre/hail signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.004.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.004.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2347,47 +1169,9 @@
           "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2406,47 +1190,9 @@
           "text": "Market gossip ties the cobalt lacquer line to the scribe suffix through the Civic Ward cobalt north quay sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.002.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.002.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2465,47 +1211,9 @@
           "text": "Console note: the line proof docket for the Civic Ward cobalt north quay sector only clears when the lacquer lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.002.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.002.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2524,47 +1232,9 @@
           "text": "Faction note: operators in the Civic Ward ivory blind alley sector who recall the ivory/static signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.009.6",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.009.6"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2583,47 +1253,9 @@
           "text": "Market gossip ties the scarlet amber line to the broker suffix through the Relay Guild scarlet chimney court sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.006.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.006.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2642,47 +1274,9 @@
           "text": "Faction note: operators in the Civic Ward cobalt north quay sector who recall the cobalt/mire signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.002.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.002.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2836,47 +1430,9 @@
           "text": "Follow-up for the Glass Choir amber archive annex sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.001.2",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.001.2"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You recorded the alias lineage and the role suffix.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -2895,47 +1451,9 @@
           "text": "Market gossip ties the vermilion salt line to the carrier suffix through the Copper Terrace vermilion river stairs sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -3089,47 +1607,9 @@
           "text": "Market gossip ties the amber resin line to the warden suffix through the Glass Choir amber archive annex sector, not to literal cargo shape."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.001.3",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.001.3"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You bound the role suffix back to the public market signal.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -3148,47 +1628,9 @@
           "text": "Console note: the ghost ledger docket for the Relay Guild scarlet chimney court sector only clears when the amber lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.006.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.006.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -3207,47 +1649,9 @@
           "text": "Console note: the ledger-key docket for the Copper Terrace vermilion river stairs sector only clears when the salt lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -3401,47 +1805,9 @@
           "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.6",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.6"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -3826,47 +2192,9 @@
           "text": "Console note: the blind receipt docket for the Glass Choir green relay row sector only clears when the copper lineage is treated as the same asset family."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.008.4",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.008.4"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You indexed the console lineage note against the earlier alias.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -4750,47 +3078,9 @@
           "text": "Faction note: operators in the Copper Terrace vermilion river stairs sector who recall the vermilion/drift signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.5",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.5"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 5,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -4809,47 +3099,9 @@
           "text": "Faction note: operators in the Silt Exchange saffron mirror steps sector who recall the saffron/vapor signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.005.7",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.005.7"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -5598,47 +3850,9 @@
           "text": "Faction note: operators in the Copper Terrace vermilion river stairs sector who recall the vermilion/drift signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.6",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.6"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 3,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",
@@ -6066,47 +4280,9 @@
           "text": "Faction note: operators in the Copper Terrace vermilion river stairs sector who recall the vermilion/drift signals from earlier analysis continue to be rewarded."
         }
       ],
-      "opportunities": [
-        {
-          "opportunity_id": "clue.cluster.007.7",
-          "allowed_commands": [
-            "inspect",
-            "hold"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "inspect",
-              "target": "clue.cluster.007.7"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 4,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "You preserved another small but lawful clue fragment.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 1
-            },
-            "label": "The clue passed without annotation.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
         "family": "seed_clue_chain",

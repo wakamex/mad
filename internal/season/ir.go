@@ -204,10 +204,12 @@ func ValidateIR(ir IRFile) error {
 			if beat.ClockClass == "" {
 				return fmt.Errorf("element[%d] beat[%d]: clock_class is required", elementIndex, beatIndex)
 			}
-			if len(beat.Opportunities) == 0 {
+			// Observe-only beats (e.g. clue chain) have no opportunities or scoring.
+			observeOnly := len(beat.Opportunities) == 0 && len(beat.Scoring.Rules) == 0
+			if !observeOnly && len(beat.Opportunities) == 0 {
 				return fmt.Errorf("element[%d] beat[%d]: at least one opportunity is required", elementIndex, beatIndex)
 			}
-			if len(beat.Scoring.Rules) == 0 {
+			if !observeOnly && len(beat.Scoring.Rules) == 0 {
 				return fmt.Errorf("element[%d] beat[%d]: at least one scoring rule is required", elementIndex, beatIndex)
 			}
 			for regimeIndex, regime := range beat.ActiveSourceRegimes {

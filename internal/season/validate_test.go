@@ -11,8 +11,8 @@ func TestLoadFileValidatesDevSeason(t *testing.T) {
 	if err != nil {
 		t.Fatalf("load dev season: %v", err)
 	}
-	if loaded.SeasonID != "dev-season" {
-		t.Fatalf("unexpected season: %s", loaded.SeasonID)
+	if loaded.SeasonID == "" {
+		t.Fatalf("expected non-empty season ID")
 	}
 }
 

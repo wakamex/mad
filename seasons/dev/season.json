@@ -1,25 +1,25 @@
 {
   "schema_version": "v1alpha1",
-  "season_id": "dev-season",
-  "title": "The Latent Labyrinth (Dev)",
-  "score_epoch_ticks": 2,
-  "reveal_lag_ticks": 2,
-  "shard_count": 16,
+  "season_id": "dev-season-40tick",
+  "title": "The Latent Labyrinth (40-Tick Dev)",
+  "score_epoch_ticks": 12,
+  "reveal_lag_ticks": 6,
+  "shard_count": 64,
   "ticks": [
     {
       "tick_id": "S1-T0001",
       "clock_class": "standard",
-      "duration_ms": 15000,
+      "duration_ms": 45000,
       "sources": [
         {
-          "source_id": "ward.notice.14",
+          "source_id": "public_notice.cluster_001.work_1",
           "source_type": "public_notice",
-          "text": "The southern ward needs cleanup crews. The work is dull, paid poorly, and quietly remembered."
+          "text": "Glass Choir posted another low-pay cleanup shift in the archive annex. The work is ordinary, the memory of who showed up is not."
         }
       ],
       "opportunities": [
         {
-          "opportunity_id": "quest.ward_service.1",
+          "opportunity_id": "quest.cluster.001.work.1",
           "allowed_commands": [
             "commit",
             "hold"
@@ -34,31 +34,32 @@
           {
             "match": {
               "command": "commit",
-              "target": "quest.ward_service.1",
+              "target": "quest.cluster.001.work.1",
               "option": "cleanup"
             },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
             "effects": {
-              "add_tags": [
-                "ward.clean_hands"
-              ],
               "lock_ticks": 1,
               "availability_delta": "on_shift",
               "set_cooldowns": {
-                "ward.cleanup": 2
+                "glass_choir.001.standing": 3
               },
               "reputation_delta": {
-                "civic": 4,
-                "glass_choir": 4
+                "glass_choir": 2
               }
             },
             "delta": {
               "yield": 0,
-              "insight": 1,
-              "aura": 0,
-              "debt": 2,
+              "insight": 0,
+              "aura": 1,
+              "debt": 1,
               "miss_penalties": 0
             },
-            "label": "The cleanup shift bought clean-hands standing and a little faction trust, but cost time and energy.",
+            "label": "You took the cleanup shift. The immediate return was small, but Glass Choir logged your name.",
             "classification": "best"
           },
           {
@@ -72,144 +73,194 @@
               "debt": 0,
               "miss_penalties": 0
             },
-            "label": "You skipped the shift. Nothing happened immediately.",
+            "label": "You ignored the routine work.",
             "classification": "miss"
           }
         ]
       },
       "annotations": {
         "family": "standing_work_loop",
-        "element_id": "ward_service",
-        "beat_id": "ward_service.shift_1"
+        "element_id": "cluster_001_standing",
+        "beat_id": "cluster_001.standing.1"
       }
     },
     {
       "tick_id": "S1-T0002",
       "clock_class": "standard",
-      "duration_ms": 15000,
+      "duration_ms": 45000,
       "sources": [
         {
-          "source_id": "archive.bulletin.77",
+          "source_id": "official_bulletin.cluster_002.1",
           "source_type": "official_bulletin",
-          "text": "The Choir of Glass denies all contact with rain-touched cargo."
-        },
-        {
-          "source_id": "market.gossip.901",
-          "source_type": "market_gossip",
-          "text": "Rain-touched glass is trading at a premium in the southern wards."
+          "text": "Channel audit for the Civic Ward cobalt north quay sector: institutional filings and faction dispatches are routing normally. No disruption detected in that area."
         }
       ],
-      "active_source_regimes": [
-        {
-          "regime_id": "choir_suppression",
-          "label": "Choir Suppression",
-          "description": "Official bulletins omit sensitive cargo details.",
-          "affected_source_types": [
-            "official_bulletin"
-          ]
-        }
-      ],
-      "opportunities": [
-        {
-          "opportunity_id": "quest.glass_choir.7",
-          "allowed_commands": [
-            "inspect",
-            "commit",
-            "hold"
-          ],
-          "allowed_options": [
-            "penitent",
-            "broker",
-            "smuggler"
-          ]
-        }
-      ],
+      "opportunities": null,
       "scoring": {
-        "rules": [
-          {
-            "match": {
-              "command": "commit",
-              "target": "quest.glass_choir.7",
-              "option": "broker"
-            },
-            "delta": {
-              "yield": 120,
-              "insight": 40,
-              "aura": 8,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "During the Omission phase, the Choir rewards discretion. Broker aligned with the phase and current value chain.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "commit",
-              "target": "quest.glass_choir.7",
-              "option": "smuggler"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 50,
-              "miss_penalties": 10
-            },
-            "label": "Smuggler triggered debt and suspicion. The market signal was public, but the faction notice punished brazenness.",
-            "classification": "bad"
-          },
-          {
-            "match": {
-              "command": "hold"
-            },
-            "delta": {
-              "yield": 0,
-              "insight": 0,
-              "aura": 0,
-              "debt": 0,
-              "miss_penalties": 10
-            },
-            "label": "The opportunity passed.",
-            "classification": "miss"
-          }
-        ]
+        "rules": null
       },
       "annotations": {
-        "family": "reputation_ladder",
-        "element_id": "glass_choir",
-        "beat_id": "glass_choir.offer_1"
+        "family": "seed_clue_chain",
+        "element_id": "cluster_002_clues",
+        "beat_id": "cluster_002.clue.1"
       }
     },
     {
       "tick_id": "S1-T0003",
       "clock_class": "standard",
-      "duration_ms": 15000,
+      "duration_ms": 45000,
       "sources": [
         {
-          "source_id": "faction.notice.22",
-          "source_type": "faction_notice",
-          "text": "The Choir seeks discreet brokers for a second, more delicate shipment."
+          "source_id": "public_notice.cluster_001.work_2",
+          "source_type": "public_notice",
+          "text": "A second sorting rota opened near the archive annex. Nobody promises a prize, only that reliable names keep resurfacing later."
         }
       ],
       "opportunities": [
         {
-          "opportunity_id": "quest.glass_choir.8",
+          "opportunity_id": "quest.cluster.001.work.2",
           "allowed_commands": [
-            "inspect",
             "commit",
             "hold"
           ],
           "allowed_options": [
-            "broker",
-            "penitent"
+            "sorting"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.work.2",
+              "option": "sorting"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "effects": {
+              "lock_ticks": 1,
+              "availability_delta": "on_shift",
+              "set_cooldowns": {
+                "glass_choir.001.standing": 4
+              },
+              "reputation_delta": {
+                "glass_choir": 2
+              }
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 1,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You took the sorting shift. The immediate return was small, but Glass Choir logged your name.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You ignored the routine work.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "standing_work_loop",
+        "element_id": "cluster_001_standing",
+        "beat_id": "cluster_001.standing.2"
+      }
+    },
+    {
+      "tick_id": "S1-T0004",
+      "clock_class": "dossier",
+      "duration_ms": 90000,
+      "sources": [
+        {
+          "source_id": "archive_fragment.cluster_002.2",
+          "source_type": "archive_fragment",
+          "text": "Follow-up for the Civic Ward cobalt north quay sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_002_clues",
+        "beat_id": "cluster_002.clue.2"
+      }
+    },
+    {
+      "tick_id": "S1-T0005",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_002.1",
+          "source_type": "critical_broadcast",
+          "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.002.1.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
           ],
           "public_requirements": [
             {
               "metric": "reputation",
-              "scope": "glass_choir",
+              "scope": "civic_ward",
               "operator": "\u003e=",
-              "value": 4,
-              "label": "Choir standing 4+ unlocks trusted broker tier."
+              "value": 2,
+              "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~59); successful use spends 5 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 48,
+              "label": "Debt 48 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.002.1.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~70); successful use spends 9 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 30,
+              "label": "Debt 30 or lower keeps the exploit lane viable."
             }
           ]
         }
@@ -219,54 +270,96 @@
           {
             "match": {
               "command": "commit",
-              "target": "quest.glass_choir.8",
-              "option": "broker"
+              "target": "hazard.cluster.002.1.stabilize",
+              "option": "stabilize"
             },
             "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 48,
               "min_reputation": {
-                "glass_choir": 4
+                "civic_ward": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "civic_ward": -5
               }
             },
             "delta": {
-              "yield": 180,
-              "insight": 65,
-              "aura": 14,
-              "debt": 0,
+              "yield": 59,
+              "insight": 12,
+              "aura": 0,
+              "debt": -9,
               "miss_penalties": 0
             },
-            "label": "Broker plus clean-hands standing made the Choir trust you with the better shipment tier.",
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
             "classification": "best"
           },
           {
             "match": {
               "command": "commit",
-              "target": "quest.glass_choir.8",
-              "option": "broker"
+              "target": "hazard.cluster.002.1.stabilize",
+              "option": "stabilize"
             },
-            "delta": {
-              "yield": 160,
-              "insight": 60,
-              "aura": 12,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "The pattern held: discretion still dominated in the current phase.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "commit",
-              "target": "quest.glass_choir.8",
-              "option": "penitent"
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
             },
             "delta": {
               "yield": 0,
               "insight": 0,
               "aura": 0,
-              "debt": 30,
-              "miss_penalties": 10
+              "debt": 2,
+              "miss_penalties": 20
             },
-            "label": "Penitent signaled the wrong social model for this phase.",
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.1.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 30,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 70,
+              "insight": 10,
+              "aura": -9,
+              "debt": 2,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.1.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 5,
+              "miss_penalties": 22
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
             "classification": "bad"
           },
           {
@@ -278,58 +371,83 @@
               "insight": 0,
               "aura": 0,
               "debt": 0,
-              "miss_penalties": 8
+              "miss_penalties": 16
             },
-            "label": "Another profitable broker window passed.",
-            "classification": "miss"
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
           }
         ]
       },
       "annotations": {
-        "family": "reputation_ladder",
-        "element_id": "glass_choir",
-        "beat_id": "glass_choir.offer_2",
+        "family": "hazard_interrupt",
+        "element_id": "cluster_002_hazard",
+        "beat_id": "cluster_002.hazard.1",
         "precursor_beat_ids": [
-          "glass_choir.offer_1",
-          "ward_service.shift_1"
+          "cluster_002.clue.2"
         ],
         "precursor_tick_ids": [
-          "S1-T0002",
-          "S1-T0001"
+          "S1-T0004"
         ],
         "memory_distance_min": 1
       }
     },
     {
-      "tick_id": "S1-T0004",
+      "tick_id": "S1-T0006",
       "clock_class": "interrupt",
-      "duration_ms": 12000,
+      "duration_ms": 20000,
       "sources": [
         {
-          "source_id": "system.broadcast.11",
+          "source_id": "critical_broadcast.cluster_002.2",
           "source_type": "critical_broadcast",
-          "text": "Containment failure in the northern hub. Unshielded carriers must vacate or deploy a dampener."
+          "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
         }
       ],
       "opportunities": [
         {
-          "opportunity_id": "hazard.northern_hub.2",
+          "opportunity_id": "hazard.cluster.002.2.stabilize",
           "allowed_commands": [
-            "equip",
             "commit",
             "hold"
           ],
           "allowed_options": [
-            "evacuate",
-            "deploy_dampener"
+            "stabilize"
           ],
           "public_requirements": [
             {
               "metric": "reputation",
-              "scope": "civic",
+              "scope": "civic_ward",
               "operator": "\u003e=",
-              "value": 4,
-              "label": "Civic standing 4+ unlocks trusted containment handling."
+              "value": 2,
+              "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~64); successful use spends 5 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 48,
+              "label": "Debt 48 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.002.2.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~78); successful use spends 9 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 30,
+              "label": "Debt 30 or lower keeps the exploit lane viable."
             }
           ]
         }
@@ -339,54 +457,96 @@
           {
             "match": {
               "command": "commit",
-              "target": "hazard.northern_hub.2",
-              "option": "deploy_dampener"
+              "target": "hazard.cluster.002.2.stabilize",
+              "option": "stabilize"
             },
             "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 48,
               "min_reputation": {
-                "civic": 4
+                "civic_ward": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "civic_ward": -5
               }
             },
             "delta": {
-              "yield": 55,
-              "insight": 35,
-              "aura": 12,
-              "debt": 0,
+              "yield": 64,
+              "insight": 14,
+              "aura": 0,
+              "debt": -9,
               "miss_penalties": 0
             },
-            "label": "Clean-hands clearance let you deploy the dampener with the higher-trust containment protocol.",
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
             "classification": "best"
           },
           {
             "match": {
               "command": "commit",
-              "target": "hazard.northern_hub.2",
-              "option": "deploy_dampener"
+              "target": "hazard.cluster.002.2.stabilize",
+              "option": "stabilize"
             },
-            "delta": {
-              "yield": 40,
-              "insight": 30,
-              "aura": 10,
-              "debt": 0,
-              "miss_penalties": 0
-            },
-            "label": "Prepared players deployed the dampener in time.",
-            "classification": "best"
-          },
-          {
-            "match": {
-              "command": "commit",
-              "target": "hazard.northern_hub.2",
-              "option": "evacuate"
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
             },
             "delta": {
               "yield": 0,
-              "insight": 10,
-              "aura": 2,
-              "debt": 0,
-              "miss_penalties": 2
+              "insight": 0,
+              "aura": 0,
+              "debt": 3,
+              "miss_penalties": 22
             },
-            "label": "Evacuation worked but gave up the best outcome.",
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.2.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 30,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 78,
+              "insight": 12,
+              "aura": -9,
+              "debt": 3,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.2.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 6,
+              "miss_penalties": 24
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
             "classification": "bad"
           },
           {
@@ -396,43 +556,874 @@
             "delta": {
               "yield": 0,
               "insight": 0,
-              "aura": -5,
-              "debt": 15,
-              "miss_penalties": 20
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 18
             },
-            "label": "The hazard landed because no action was taken.",
-            "classification": "miss"
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
           }
         ]
       },
       "annotations": {
-        "family": "preparedness_hazard",
-        "element_id": "northern_hub",
-        "beat_id": "northern_hub.interrupt_1",
+        "family": "hazard_interrupt",
+        "element_id": "cluster_002_hazard",
+        "beat_id": "cluster_002.hazard.2",
         "precursor_beat_ids": [
-          "ward_service.shift_1"
+          "cluster_002.clue.2",
+          "cluster_002.hazard.1"
         ],
         "precursor_tick_ids": [
-          "S1-T0001"
+          "S1-T0004",
+          "S1-T0005"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0007",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "official_bulletin.cluster_001.1",
+          "source_type": "official_bulletin",
+          "text": "Channel audit for the Glass Choir amber archive annex sector: public postings and civilian broadcasts are routing normally. No disruption detected in that area."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_001_clues",
+        "beat_id": "cluster_001.clue.1"
+      }
+    },
+    {
+      "tick_id": "S1-T0008",
+      "clock_class": "dossier",
+      "duration_ms": 90000,
+      "sources": [
+        {
+          "source_id": "archive_fragment.cluster_001.2",
+          "source_type": "archive_fragment",
+          "text": "Follow-up for the Glass Choir amber archive annex sector: archive fragments and historical records have also been verified as standard. Remaining channels should be treated as potentially affected."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_001_clues",
+        "beat_id": "cluster_001.clue.2"
+      }
+    },
+    {
+      "tick_id": "S1-T0009",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_002.3",
+          "source_type": "critical_broadcast",
+          "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.002.3.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "civic_ward",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~69); successful use spends 5 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 48,
+              "label": "Debt 48 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.002.3.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~86); successful use spends 9 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 30,
+              "label": "Debt 30 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.3.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 48,
+              "min_reputation": {
+                "civic_ward": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "civic_ward": -5
+              }
+            },
+            "delta": {
+              "yield": 69,
+              "insight": 16,
+              "aura": 0,
+              "debt": -9,
+              "miss_penalties": 0
+            },
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.3.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 3,
+              "miss_penalties": 24
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.3.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 30,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 86,
+              "insight": 14,
+              "aura": -9,
+              "debt": 3,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.3.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 7,
+              "miss_penalties": 26
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 20
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_002_hazard",
+        "beat_id": "cluster_002.hazard.3",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.hazard.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0006"
         ],
         "memory_distance_min": 3
       }
     },
     {
-      "tick_id": "S1-T0005",
-      "clock_class": "dossier",
+      "tick_id": "S1-T0010",
+      "clock_class": "interrupt",
       "duration_ms": 20000,
       "sources": [
         {
-          "source_id": "archive.console.5",
-          "source_type": "archive_fragment",
-          "text": "Terminal requests the verified authorization lane for the rain-touched vault dossier."
+          "source_id": "critical_broadcast.cluster_002.4",
+          "source_type": "critical_broadcast",
+          "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
         }
       ],
       "opportunities": [
         {
-          "opportunity_id": "auth.vault.3",
+          "opportunity_id": "hazard.cluster.002.4.stabilize",
           "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "civic_ward",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~74); successful use spends 5 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 48,
+              "label": "Debt 48 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.002.4.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~94); successful use spends 9 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 30,
+              "label": "Debt 30 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.4.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 48,
+              "min_reputation": {
+                "civic_ward": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "civic_ward": -5
+              }
+            },
+            "delta": {
+              "yield": 74,
+              "insight": 18,
+              "aura": 0,
+              "debt": -9,
+              "miss_penalties": 0
+            },
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.4.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 4,
+              "miss_penalties": 26
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.4.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 30,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 94,
+              "insight": 16,
+              "aura": -9,
+              "debt": 4,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.4.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 8,
+              "miss_penalties": 28
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 22
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_002_hazard",
+        "beat_id": "cluster_002.hazard.4",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.hazard.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0009"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0011",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_001.3",
+          "source_type": "market_gossip",
+          "text": "Market gossip ties the amber resin line to the warden suffix through the Glass Choir amber archive annex sector, not to literal cargo shape."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_001_clues",
+        "beat_id": "cluster_001.clue.3"
+      }
+    },
+    {
+      "tick_id": "S1-T0012",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_002.5",
+          "source_type": "critical_broadcast",
+          "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.002.5.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "civic_ward",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~79); successful use spends 5 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 48,
+              "label": "Debt 48 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.002.5.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~102); successful use spends 9 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 30,
+              "label": "Debt 30 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.5.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 48,
+              "min_reputation": {
+                "civic_ward": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "civic_ward": -5
+              }
+            },
+            "delta": {
+              "yield": 79,
+              "insight": 20,
+              "aura": 0,
+              "debt": -9,
+              "miss_penalties": 0
+            },
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.5.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 4,
+              "miss_penalties": 28
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.5.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 30,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 102,
+              "insight": 18,
+              "aura": -9,
+              "debt": 4,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.002.5.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 9,
+              "miss_penalties": 30
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 24
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_002_hazard",
+        "beat_id": "cluster_002.hazard.5",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.hazard.4"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0010"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0013",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "public_notice.cluster_002.work_1",
+          "source_type": "public_notice",
+          "text": "Civic Ward posted another low-pay escort shift in the north quay. The work is ordinary, the memory of who showed up is not."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.work.1",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "escort"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.work.1",
+              "option": "escort"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "effects": {
+              "lock_ticks": 1,
+              "availability_delta": "on_shift",
+              "set_cooldowns": {
+                "civic_ward.002.standing": 3
+              },
+              "reputation_delta": {
+                "civic_ward": 2
+              }
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 1,
+              "debt": 1,
+              "miss_penalties": 0
+            },
+            "label": "You took the escort shift. The immediate return was small, but Civic Ward logged your name.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You ignored the routine work.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "standing_work_loop",
+        "element_id": "cluster_002_standing",
+        "beat_id": "cluster_002.standing.1"
+      }
+    },
+    {
+      "tick_id": "S1-T0014",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "public_notice.cluster_002.work_2",
+          "source_type": "public_notice",
+          "text": "A second inspection rota opened near the north quay. Nobody promises a prize, only that reliable names keep resurfacing later."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.work.2",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "inspection"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.work.2",
+              "option": "inspection"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "effects": {
+              "lock_ticks": 1,
+              "availability_delta": "on_shift",
+              "set_cooldowns": {
+                "civic_ward.002.standing": 4
+              },
+              "reputation_delta": {
+                "civic_ward": 2
+              }
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 1,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You took the inspection shift. The immediate return was small, but Civic Ward logged your name.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You ignored the routine work.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "standing_work_loop",
+        "element_id": "cluster_002_standing",
+        "beat_id": "cluster_002.standing.2"
+      }
+    },
+    {
+      "tick_id": "S1-T0015",
+      "clock_class": "dossier",
+      "duration_ms": 90000,
+      "sources": [
+        {
+          "source_id": "archive_console.cluster_001.4",
+          "source_type": "archive_console",
+          "text": "Console note: the resonance seal docket for the Glass Choir amber archive annex sector only clears when the resin lineage is treated as the same asset family."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_001_clues",
+        "beat_id": "cluster_001.clue.4"
+      }
+    },
+    {
+      "tick_id": "S1-T0016",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_001.5",
+          "source_type": "faction_notice",
+          "text": "Faction note: operators in the Glass Choir amber archive annex sector who recall the amber/dust signals from earlier analysis continue to be rewarded."
+        }
+      ],
+      "opportunities": null,
+      "scoring": {
+        "rules": null
+      },
+      "annotations": {
+        "family": "seed_clue_chain",
+        "element_id": "cluster_001_clues",
+        "beat_id": "cluster_001.clue.5"
+      }
+    },
+    {
+      "tick_id": "S1-T0017",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_001.offer_1",
+          "source_type": "faction_notice",
+          "text": "Glass Choir amber archive annex initial offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.offer.1",
+          "allowed_commands": [
+            "inspect",
             "commit",
             "hold"
           ],
@@ -447,50 +1438,80 @@
         "rules": [
           {
             "match": {
-              "command": "commit",
-              "target": "auth.vault.3",
-              "option": "broker"
+              "command": "inspect",
+              "target": "quest.cluster.001.offer.1"
             },
             "delta": {
               "yield": 0,
-              "insight": 220,
-              "aura": 15,
+              "insight": 2,
+              "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
-            "label": "The terminal accepted the remembered authorization lane tied back to the earlier rain-and-broker contradiction.",
+            "label": "You inspected the social framing before acting.",
             "classification": "best"
           },
           {
             "match": {
               "command": "commit",
-              "target": "auth.vault.3",
+              "target": "quest.cluster.001.offer.1",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 88,
+              "insight": 18,
+              "aura": 5,
+              "debt": -2,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.1",
               "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
             },
             "delta": {
               "yield": 0,
               "insight": 0,
               "aura": 0,
-              "debt": 40,
-              "miss_penalties": 15
+              "debt": 34,
+              "miss_penalties": 11
             },
-            "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
+            "label": "penitent signaled the wrong reading and cost you standing.",
             "classification": "bad"
           },
           {
             "match": {
               "command": "commit",
-              "target": "auth.vault.3",
+              "target": "quest.cluster.001.offer.1",
               "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
             },
             "delta": {
               "yield": 0,
               "insight": 0,
               "aura": 0,
-              "debt": 40,
-              "miss_penalties": 15
+              "debt": 41,
+              "miss_penalties": 13
             },
-            "label": "The terminal rejected the wrong authorization lane and logged the attempt as suspicious.",
+            "label": "auditor poisoned the trust window.",
             "classification": "bad"
           },
           {
@@ -502,24 +1523,3574 @@
               "insight": 0,
               "aura": 0,
               "debt": 0,
-              "miss_penalties": 5
+              "miss_penalties": 8
             },
-            "label": "No authorization choice was made.",
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_001_reputation",
+        "beat_id": "cluster_001.offer.1",
+        "precursor_beat_ids": [
+          "cluster_001.clue.1",
+          "cluster_001.standing.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0007",
+          "S1-T0001"
+        ],
+        "memory_distance_min": 10
+      }
+    },
+    {
+      "tick_id": "S1-T0018",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_001.offer_2",
+          "source_type": "faction_notice",
+          "text": "Glass Choir amber archive annex trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.offer.2",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.offer.2"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.2",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 106,
+              "insight": 22,
+              "aura": 6,
+              "debt": -2,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.2",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 38,
+              "miss_penalties": 12
+            },
+            "label": "penitent signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.2",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 9
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_001_reputation",
+        "beat_id": "cluster_001.offer.2",
+        "precursor_beat_ids": [
+          "cluster_001.clue.2",
+          "cluster_001.offer.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0008",
+          "S1-T0017"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0019",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_001.offer_3",
+          "source_type": "faction_notice",
+          "text": "Glass Choir amber archive annex trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.offer.3",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.offer.3"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.3",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 124,
+              "insight": 26,
+              "aura": 6,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.3",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 42,
+              "miss_penalties": 13
+            },
+            "label": "penitent signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.3",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 51,
+              "miss_penalties": 15
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 10
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_001_reputation",
+        "beat_id": "cluster_001.offer.3",
+        "precursor_beat_ids": [
+          "cluster_001.clue.3",
+          "cluster_001.offer.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0011",
+          "S1-T0018"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0020",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "public_notice.cluster_002.work_3",
+          "source_type": "public_notice",
+          "text": "Another stocktake rota opened under Civic Ward supervision. The wage is forgettable, the optionality is not."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.work.3",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stocktake"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.work.3",
+              "option": "stocktake"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "effects": {
+              "lock_ticks": 1,
+              "availability_delta": "on_shift",
+              "set_cooldowns": {
+                "civic_ward.002.standing": 5
+              },
+              "reputation_delta": {
+                "civic_ward": 1
+              }
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 1,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You took the stocktake shift. The immediate return was small, but Civic Ward logged your name.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You ignored the routine work.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "standing_work_loop",
+        "element_id": "cluster_002_standing",
+        "beat_id": "cluster_002.standing.3"
+      }
+    },
+    {
+      "tick_id": "S1-T0021",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_002.offer_1",
+          "source_type": "faction_notice",
+          "text": "Civic Ward cobalt north quay initial offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.offer.1",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.offer.1"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.1",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 88,
+              "insight": 18,
+              "aura": 5,
+              "debt": -2,
+              "miss_penalties": 0
+            },
+            "label": "penitent was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.1",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 34,
+              "miss_penalties": 11
+            },
+            "label": "broker signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.1",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 41,
+              "miss_penalties": 13
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 8
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_002_reputation",
+        "beat_id": "cluster_002.offer.1",
+        "precursor_beat_ids": [
+          "cluster_002.clue.1",
+          "cluster_002.standing.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0002",
+          "S1-T0013"
+        ],
+        "memory_distance_min": 8
+      }
+    },
+    {
+      "tick_id": "S1-T0022",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_001.offer_4",
+          "source_type": "faction_notice",
+          "text": "Glass Choir amber archive annex trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.offer.4",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.offer.4"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.4",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 142,
+              "insight": 30,
+              "aura": 7,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.4",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "penitent signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.offer.4",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 56,
+              "miss_penalties": 16
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 11
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_001_reputation",
+        "beat_id": "cluster_001.offer.4",
+        "precursor_beat_ids": [
+          "cluster_001.clue.4",
+          "cluster_001.offer.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0015",
+          "S1-T0019"
+        ],
+        "memory_distance_min": 3
+      }
+    },
+    {
+      "tick_id": "S1-T0023",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_002.offer_2",
+          "source_type": "faction_notice",
+          "text": "Civic Ward cobalt north quay trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.offer.2",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.offer.2"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.2",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 106,
+              "insight": 22,
+              "aura": 6,
+              "debt": -2,
+              "miss_penalties": 0
+            },
+            "label": "penitent was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.2",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 38,
+              "miss_penalties": 12
+            },
+            "label": "broker signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.2",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 9
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_002_reputation",
+        "beat_id": "cluster_002.offer.2",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0021"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0024",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_002.offer_3",
+          "source_type": "faction_notice",
+          "text": "Civic Ward cobalt north quay trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.offer.3",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.offer.3"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.3",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 124,
+              "insight": 26,
+              "aura": 6,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "penitent was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.3",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 42,
+              "miss_penalties": 13
+            },
+            "label": "broker signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.3",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 51,
+              "miss_penalties": 15
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 10
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_002_reputation",
+        "beat_id": "cluster_002.offer.3",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0023"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0025",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_002.offer_4",
+          "source_type": "faction_notice",
+          "text": "Civic Ward cobalt north quay trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.offer.4",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.offer.4"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.4",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 142,
+              "insight": 30,
+              "aura": 7,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "penitent was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.4",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "broker signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.4",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 56,
+              "miss_penalties": 16
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 11
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_002_reputation",
+        "beat_id": "cluster_002.offer.4",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0024"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0026",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_001.1",
+          "source_type": "critical_broadcast",
+          "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.001.1.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "glass_choir",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~69); successful use spends 2 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 46,
+              "label": "Debt 46 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.001.1.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~66); successful use spends 12 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 28,
+              "label": "Debt 28 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.1.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 46,
+              "min_reputation": {
+                "glass_choir": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "glass_choir": -2
+              }
+            },
+            "delta": {
+              "yield": 69,
+              "insight": 12,
+              "aura": 0,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.1.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 2,
+              "miss_penalties": 20
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.1.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 28,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 66,
+              "insight": 10,
+              "aura": -12,
+              "debt": 2,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.1.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 5,
+              "miss_penalties": 22
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 16
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_001_hazard",
+        "beat_id": "cluster_001.hazard.1",
+        "precursor_beat_ids": [
+          "cluster_001.clue.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0008"
+        ],
+        "memory_distance_min": 18
+      }
+    },
+    {
+      "tick_id": "S1-T0027",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "faction_notice.cluster_002.offer_5",
+          "source_type": "faction_notice",
+          "text": "Civic Ward cobalt north quay trusted offer: the situation has reached a decision point. The faction is accepting operators through any of the three public lanes, but only one aligns with the current regime."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.offer.5",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "penitent",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.offer.5"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 2,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You inspected the social framing before acting.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.5",
+              "option": "penitent"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 160,
+              "insight": 34,
+              "aura": 7,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "penitent was the correct social read for the public regime.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.5",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 50,
+              "miss_penalties": 15
+            },
+            "label": "broker signaled the wrong reading and cost you standing.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.offer.5",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 61,
+              "miss_penalties": 17
+            },
+            "label": "auditor poisoned the trust window.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 12
+            },
+            "label": "The faction offer expired.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "reputation_ladder",
+        "element_id": "cluster_002_reputation",
+        "beat_id": "cluster_002.offer.5",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.4"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0025"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0028",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_001.2",
+          "source_type": "critical_broadcast",
+          "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.001.2.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "glass_choir",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~74); successful use spends 2 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 46,
+              "label": "Debt 46 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.001.2.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~74); successful use spends 12 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 28,
+              "label": "Debt 28 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.2.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 46,
+              "min_reputation": {
+                "glass_choir": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "glass_choir": -2
+              }
+            },
+            "delta": {
+              "yield": 74,
+              "insight": 14,
+              "aura": 0,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.2.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 3,
+              "miss_penalties": 22
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.2.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 28,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 74,
+              "insight": 12,
+              "aura": -12,
+              "debt": 3,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.2.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 6,
+              "miss_penalties": 24
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 18
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_001_hazard",
+        "beat_id": "cluster_001.hazard.2",
+        "precursor_beat_ids": [
+          "cluster_001.clue.2",
+          "cluster_001.hazard.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0008",
+          "S1-T0026"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0029",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_002.payoff_1",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Civic Ward cobalt north quay sector: the cobalt lacquer line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.payoff.1",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.payoff.1"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.1",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 100,
+              "insight": 24,
+              "aura": 5,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "quarantine was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.1",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 34,
+              "miss_penalties": 11
+            },
+            "label": "broker turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.1",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 47,
+              "miss_penalties": 15
+            },
+            "label": "auction was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 9
+            },
+            "label": "The payoff window closed while you watched.",
             "classification": "miss"
           }
         ]
       },
       "annotations": {
         "family": "payoff_gate",
-        "element_id": "vault_authorization",
-        "beat_id": "vault_authorization.choice_1",
+        "element_id": "cluster_002_payoff",
+        "beat_id": "cluster_002.payoff.1",
         "precursor_beat_ids": [
-          "glass_choir.offer_1"
+          "cluster_002.clue.2",
+          "cluster_002.offer.1"
         ],
         "precursor_tick_ids": [
-          "S1-T0002"
+          "S1-T0004",
+          "S1-T0021"
+        ],
+        "memory_distance_min": 8
+      }
+    },
+    {
+      "tick_id": "S1-T0030",
+      "clock_class": "dossier",
+      "duration_ms": 90000,
+      "sources": [
+        {
+          "source_id": "archive_console.cluster_002",
+          "source_type": "archive_console",
+          "text": "Archive console: authorization requires selecting the verified lacquer-line suffix."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.payoff.2",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "scribe",
+            "carrier",
+            "factor",
+            "porter",
+            "binder",
+            "broker",
+            "warden",
+            "auditor"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "scribe"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 40,
+              "insight": 220,
+              "aura": 12,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "The dossier choice bound the whole clue chain together.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 6
+            },
+            "label": "You let the dossier window pass without attempting the authorization choice.",
+            "classification": "miss"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "carrier"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "factor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "porter"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "binder"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "warden"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.2",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_002_payoff",
+        "beat_id": "cluster_002.payoff.2",
+        "precursor_beat_ids": [
+          "cluster_002.offer.2",
+          "cluster_002.clue.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0023",
+          "S1-T0004"
+        ],
+        "memory_distance_min": 7
+      }
+    },
+    {
+      "tick_id": "S1-T0031",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_001.3",
+          "source_type": "critical_broadcast",
+          "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.001.3.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "glass_choir",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~79); successful use spends 2 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 46,
+              "label": "Debt 46 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.001.3.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~82); successful use spends 12 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 28,
+              "label": "Debt 28 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.3.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 46,
+              "min_reputation": {
+                "glass_choir": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "glass_choir": -2
+              }
+            },
+            "delta": {
+              "yield": 79,
+              "insight": 16,
+              "aura": 0,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.3.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 3,
+              "miss_penalties": 24
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.3.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 28,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 82,
+              "insight": 14,
+              "aura": -12,
+              "debt": 3,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.3.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 7,
+              "miss_penalties": 26
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 20
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_001_hazard",
+        "beat_id": "cluster_001.hazard.3",
+        "precursor_beat_ids": [
+          "cluster_001.clue.3",
+          "cluster_001.hazard.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0011",
+          "S1-T0028"
         ],
         "memory_distance_min": 3
+      }
+    },
+    {
+      "tick_id": "S1-T0032",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_002.payoff_3",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Civic Ward cobalt north quay sector: the cobalt lacquer line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.payoff.3",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.payoff.3"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.3",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 140,
+              "insight": 32,
+              "aura": 6,
+              "debt": -4,
+              "miss_penalties": 0
+            },
+            "label": "quarantine was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.3",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 42,
+              "miss_penalties": 13
+            },
+            "label": "broker turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.3",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 57,
+              "miss_penalties": 17
+            },
+            "label": "auction was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 11
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_002_payoff",
+        "beat_id": "cluster_002.payoff.3",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.3",
+          "cluster_002.payoff.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0024",
+          "S1-T0030"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0033",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_001.4",
+          "source_type": "critical_broadcast",
+          "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.001.4.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "glass_choir",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~84); successful use spends 2 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 46,
+              "label": "Debt 46 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.001.4.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~90); successful use spends 12 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 28,
+              "label": "Debt 28 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.4.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 46,
+              "min_reputation": {
+                "glass_choir": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "glass_choir": -2
+              }
+            },
+            "delta": {
+              "yield": 84,
+              "insight": 18,
+              "aura": 0,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.4.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 4,
+              "miss_penalties": 26
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.4.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 28,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 90,
+              "insight": 16,
+              "aura": -12,
+              "debt": 4,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.4.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 8,
+              "miss_penalties": 28
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 22
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_001_hazard",
+        "beat_id": "cluster_001.hazard.4",
+        "precursor_beat_ids": [
+          "cluster_001.clue.4",
+          "cluster_001.hazard.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0015",
+          "S1-T0031"
+        ],
+        "memory_distance_min": 2
+      }
+    },
+    {
+      "tick_id": "S1-T0034",
+      "clock_class": "interrupt",
+      "duration_ms": 20000,
+      "sources": [
+        {
+          "source_id": "critical_broadcast.cluster_001.5",
+          "source_type": "critical_broadcast",
+          "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "hazard.cluster.001.5.stabilize",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "stabilize"
+          ],
+          "public_requirements": [
+            {
+              "metric": "reputation",
+              "scope": "glass_choir",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~89); successful use spends 2 standing."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 46,
+              "label": "Debt 46 or lower preserves trusted response access."
+            }
+          ]
+        },
+        {
+          "opportunity_id": "hazard.cluster.001.5.exploit",
+          "allowed_commands": [
+            "commit"
+          ],
+          "allowed_options": [
+            "exploit"
+          ],
+          "public_requirements": [
+            {
+              "metric": "aura",
+              "operator": "\u003e=",
+              "value": 2,
+              "label": "Aura 2+ unlocks safe exploitation (expected yield ~98); successful use spends 12 aura."
+            },
+            {
+              "metric": "debt",
+              "operator": "\u003c=",
+              "value": 28,
+              "label": "Debt 28 or lower keeps the exploit lane viable."
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.5.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 46,
+              "min_reputation": {
+                "glass_choir": 2
+              }
+            },
+            "effects": {
+              "reputation_delta": {
+                "glass_choir": -2
+              }
+            },
+            "delta": {
+              "yield": 89,
+              "insight": 20,
+              "aura": 0,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.5.stabilize",
+              "option": "stabilize"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 4,
+              "miss_penalties": 28
+            },
+            "label": "You reached for faction cover without enough standing to clear the lane.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.5.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ],
+              "max_debt": 28,
+              "min_aura": 2
+            },
+            "delta": {
+              "yield": 98,
+              "insight": 18,
+              "aura": -12,
+              "debt": 4,
+              "miss_penalties": 0
+            },
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "hazard.cluster.001.5.exploit",
+              "option": "exploit"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 9,
+              "miss_penalties": 30
+            },
+            "label": "You lunged for upside without enough visible margin to survive the blast.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 24
+            },
+            "label": "The interrupt rolled through while you hesitated.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "hazard_interrupt",
+        "element_id": "cluster_001_hazard",
+        "beat_id": "cluster_001.hazard.5",
+        "precursor_beat_ids": [
+          "cluster_001.clue.5",
+          "cluster_001.hazard.4"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0016",
+          "S1-T0033"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0035",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_002.payoff_4",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Civic Ward cobalt north quay sector: the cobalt lacquer line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.payoff.4",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.payoff.4"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.4",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 160,
+              "insight": 36,
+              "aura": 7,
+              "debt": -5,
+              "miss_penalties": 0
+            },
+            "label": "quarantine was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.4",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "broker turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.4",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 62,
+              "miss_penalties": 18
+            },
+            "label": "auction was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 12
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_002_payoff",
+        "beat_id": "cluster_002.payoff.4",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.4",
+          "cluster_002.payoff.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0025",
+          "S1-T0032"
+        ],
+        "memory_distance_min": 3
+      }
+    },
+    {
+      "tick_id": "S1-T0036",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_002.payoff_5",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Civic Ward cobalt north quay sector: the cobalt lacquer line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.002.payoff.5",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.002.payoff.5"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.5",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 180,
+              "insight": 40,
+              "aura": 7,
+              "debt": -5,
+              "miss_penalties": 0
+            },
+            "label": "quarantine was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.5",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 50,
+              "miss_penalties": 15
+            },
+            "label": "broker turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.002.payoff.5",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 67,
+              "miss_penalties": 19
+            },
+            "label": "auction was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 13
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_002_payoff",
+        "beat_id": "cluster_002.payoff.5",
+        "precursor_beat_ids": [
+          "cluster_002.clue.2",
+          "cluster_002.offer.5",
+          "cluster_002.payoff.4"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0004",
+          "S1-T0027",
+          "S1-T0035"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0037",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_001.payoff_1",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Glass Choir amber archive annex sector: the amber resin line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.payoff.1",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.payoff.1"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.1",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 100,
+              "insight": 24,
+              "aura": 5,
+              "debt": -3,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.1",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 34,
+              "miss_penalties": 11
+            },
+            "label": "auction turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.1",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 47,
+              "miss_penalties": 15
+            },
+            "label": "quarantine was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 9
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_001_payoff",
+        "beat_id": "cluster_001.payoff.1",
+        "precursor_beat_ids": [
+          "cluster_001.clue.2",
+          "cluster_001.offer.1"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0008",
+          "S1-T0017"
+        ],
+        "memory_distance_min": 20
+      }
+    },
+    {
+      "tick_id": "S1-T0038",
+      "clock_class": "dossier",
+      "duration_ms": 90000,
+      "sources": [
+        {
+          "source_id": "archive_console.cluster_001",
+          "source_type": "archive_console",
+          "text": "Archive console: authorization requires selecting the verified resin-line suffix."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.payoff.2",
+          "allowed_commands": [
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "warden",
+            "broker",
+            "auditor",
+            "carrier",
+            "scribe",
+            "factor",
+            "porter",
+            "binder"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "warden"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 40,
+              "insight": 220,
+              "aura": 12,
+              "debt": -12,
+              "miss_penalties": 0
+            },
+            "label": "The dossier choice bound the whole clue chain together.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 6
+            },
+            "label": "You let the dossier window pass without attempting the authorization choice.",
+            "classification": "miss"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "auditor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "carrier"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "scribe"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "factor"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "porter"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.2",
+              "option": "binder"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 70,
+              "miss_penalties": 30
+            },
+            "label": "The archive rejected the wrong suffix and charged the attempt against your credibility.",
+            "classification": "bad"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_001_payoff",
+        "beat_id": "cluster_001.payoff.2",
+        "precursor_beat_ids": [
+          "cluster_001.offer.2",
+          "cluster_001.clue.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0018",
+          "S1-T0008"
+        ],
+        "memory_distance_min": 20
+      }
+    },
+    {
+      "tick_id": "S1-T0039",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_001.payoff_3",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Glass Choir amber archive annex sector: the amber resin line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.payoff.3",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.payoff.3"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.3",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 140,
+              "insight": 32,
+              "aura": 6,
+              "debt": -4,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.3",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 42,
+              "miss_penalties": 13
+            },
+            "label": "auction turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.3",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 57,
+              "miss_penalties": 17
+            },
+            "label": "quarantine was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 11
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_001_payoff",
+        "beat_id": "cluster_001.payoff.3",
+        "precursor_beat_ids": [
+          "cluster_001.clue.3",
+          "cluster_001.offer.3",
+          "cluster_001.payoff.2"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0011",
+          "S1-T0019",
+          "S1-T0038"
+        ],
+        "memory_distance_min": 1
+      }
+    },
+    {
+      "tick_id": "S1-T0040",
+      "clock_class": "standard",
+      "duration_ms": 45000,
+      "sources": [
+        {
+          "source_id": "market_gossip.cluster_001.payoff_4",
+          "source_type": "market_gossip",
+          "text": "Market brief for the Glass Choir amber archive annex sector: the amber resin line has fractured into incompatible clearing routes. The regime posted earlier this cycle determines which lane settles."
+        }
+      ],
+      "opportunities": [
+        {
+          "opportunity_id": "quest.cluster.001.payoff.4",
+          "allowed_commands": [
+            "inspect",
+            "commit",
+            "hold"
+          ],
+          "allowed_options": [
+            "broker",
+            "auction",
+            "quarantine"
+          ]
+        }
+      ],
+      "scoring": {
+        "rules": [
+          {
+            "match": {
+              "command": "inspect",
+              "target": "quest.cluster.001.payoff.4"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 3,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 0
+            },
+            "label": "You checked how the public contradiction mapped onto the current payoff window.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.4",
+              "option": "broker"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 160,
+              "insight": 36,
+              "aura": 7,
+              "debt": -5,
+              "miss_penalties": 0
+            },
+            "label": "broker was the correct conversion of the clue pair into immediate value.",
+            "classification": "best"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.4",
+              "option": "auction"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 46,
+              "miss_penalties": 14
+            },
+            "label": "auction turned the public signal into the wrong trade.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "commit",
+              "target": "quest.cluster.001.payoff.4",
+              "option": "quarantine"
+            },
+            "requirements": {
+              "requires_availability": [
+                "available"
+              ]
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 62,
+              "miss_penalties": 18
+            },
+            "label": "quarantine was the expensive misread.",
+            "classification": "bad"
+          },
+          {
+            "match": {
+              "command": "hold"
+            },
+            "delta": {
+              "yield": 0,
+              "insight": 0,
+              "aura": 0,
+              "debt": 0,
+              "miss_penalties": 12
+            },
+            "label": "The payoff window closed while you watched.",
+            "classification": "miss"
+          }
+        ]
+      },
+      "annotations": {
+        "family": "payoff_gate",
+        "element_id": "cluster_001_payoff",
+        "beat_id": "cluster_001.payoff.4",
+        "precursor_beat_ids": [
+          "cluster_001.clue.4",
+          "cluster_001.offer.4",
+          "cluster_001.payoff.3"
+        ],
+        "precursor_tick_ids": [
+          "S1-T0015",
+          "S1-T0022",
+          "S1-T0039"
+        ],
+        "memory_distance_min": 1
       }
     }
   ]

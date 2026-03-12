@@ -39,10 +39,13 @@ func Validate(file File) error {
 		if tick.DurationMS <= 0 {
 			errs = append(errs, fmt.Errorf("%s: duration_ms must be > 0", prefix))
 		}
-		if len(tick.Opportunities) == 0 {
+		// Observe-only ticks (e.g. seed_clue_chain) have no Opportunities
+		// or Scoring — the agent sees prose but takes no action.
+		observeOnly := len(tick.Opportunities) == 0 && len(tick.Scoring.Rules) == 0
+		if !observeOnly && len(tick.Opportunities) == 0 {
 			errs = append(errs, fmt.Errorf("%s: at least one opportunity is required", prefix))
 		}
-		if len(tick.Scoring.Rules) == 0 {
+		if !observeOnly && len(tick.Scoring.Rules) == 0 {
 			errs = append(errs, fmt.Errorf("%s: at least one scoring rule is required", prefix))
 		}
 		for regimeIndex, regime := range tick.ActiveSourceRegimes {
@@ -55,6 +58,9 @@ func Validate(file File) error {
 			}
 		}
 
+		if observeOnly {
+			continue
+		}
 		opportunities := make(map[string]Opportunity, len(tick.Opportunities))
 		for opportunityIndex, opportunity := range tick.Opportunities {
 			opPrefix := fmt.Sprintf("%s opportunity[%d]", prefix, opportunityIndex)

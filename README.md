@@ -1,228 +1,128 @@
 # MAD: Mutual Agent Destruction
 
-Welcome to the foundational design repository for **Mutual Agent Destruction (MAD)**.
+A season-long benchmark for testing long-range memory and multi-step inference in LLM agents. 14K LoC Go, 250+ empirical runs.
 
-MAD is a 24/7 season-long online benchmark where every player (agent or human) receives the same public game stream concurrently and submits actions against it. The server maintains authoritative per-player score state, but the read path is shared and public. It is designed to relentlessly test the epistemic limits, context management, and long-horizon causal reasoning of 2026-era agentic models.
+## Key Result
 
-The large-scale deployment assumption is explicit: immutable public reads should sit behind Cloudflare or an equivalent CDN, while the origin box handles authenticated writes and batch scoring.
+Persistent agents reach **91% of the theoretical score ceiling**. Memoryless agents score at random.
 
-## The Proposal
+| Condition | Score | payoff_gate | reputation_ladder |
+|---|---:|---:|---:|
+| Persistent + reveals | **+8,381** | **96%** | **81%** |
+| Ephemeral (no memory) | +1,696 | 28% | 44% |
+| Greedy-best ceiling | 9,256 | — | — |
+| Random baseline | -2 | — | — |
 
-The complete architectural blueprint, including the `Relentless Tick` cadence, the strict JSON action envelope, and the compounding deterministic scoring model, can be found here:
-**[PROPOSAL.md](./PROPOSAL.md)**
+Tested with Claude Haiku on a focused 90-tick season (clue + ladder + payoff families). Full results in [RESULTS.md](./RESULTS.md).
 
-## The Implementation Plan
+### What it measures
 
-The tractability-focused implementation plan, including the single-box scaling analysis, stack recommendation, polling API, and batch-scoring architecture, can be found here:
-**[IMPLEMENTATION.md](./IMPLEMENTATION.md)**
+Each tick delivers prose narrative, structured state, and action choices. Correct decisions require remembering evidence from prior ticks — no local shortcut exists.
 
-## The Season Generator Map
+| Family | What the agent must do | Memory gap |
+|---|---|---:|
+| **payoff_gate** | Infer regime from 2 prior clue beats, pick correct market option | +68pp |
+| **reputation_ladder** | Same clue recall, pick correct faction offer | +37pp |
+| **hazard_interrupt** | Learn per-faction lane ROI from experience | in progress |
+| **standing_work_loop** | Ambient resource building | low ceiling |
 
-The content-architecture map for story-element families, dependency rules, and skill-ceiling levers can be found here:
-**[SEASON_GENERATOR.md](./SEASON_GENERATOR.md)**
+### How the memory gap was validated
 
-## Handoff
+1. **Eliminated local leakage** — collapsed prose to single answer-neutral templates so tick text contains zero signal about the correct answer. Probe confirms <5% leakage across all families.
+2. **Conjunctive clue evidence** — regime identity is split across 2 clue beats via domain elimination. Neither beat alone identifies the correct action.
+3. **Ephemeral baseline** — same season, same model, but no context history. Scores match random exactly (28% on a 3-way choice = 29% baseline).
 
-The current benchmark state, empirical findings, open problems, and recommended next steps are summarized in:
-**[HANDOFF.md](./HANDOFF.md)**
+## Architecture
 
-## Running Locally
+MAD generates deterministic seasons from a story-element IR. Each season is a sequence of ticks containing interleaved narrative beats from multiple families. A compiler weaves elements respecting precursor dependencies, and a simulator computes offline baselines (greedy, oracle, visible-greedy, random).
 
-Weave the sample story-element IR into a compiled season:
+The harness drives external LLM agents (Claude, Codex, OpenRouter) through a season, recording every prompt, response, and scored outcome.
 
-```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev/season_ir.json -out ./build/season.json
+```
+mad-devgen → season_ir.json → mad-weave → season.json → mad-sim → baselines
+                                                       → mad-harness → run reports
 ```
 
-Generate the larger reusable 1000-tick dev season IR:
+## Quick Start
+
+Generate and compile a dev season:
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-devgen -ticks 1000 -out ./seasons/dev1000/season_ir.json
+go run ./cmd/mad-devgen -ticks 1000 -out ./seasons/dev1000/season_ir.json
+go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
 ```
 
-Compile that larger dev season:
+Simulate baselines:
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-weave -ir ./seasons/dev1000/season_ir.json -out ./seasons/dev1000/season.json
+go run ./cmd/mad-sim -season ./seasons/dev1000/season.json -out ./build/simulation.json
 ```
 
-Dry-run the compiled season to inspect final tick order, reveal timing, derived memory-distance annotations, three baseline policies (`greedy_best`, `visible_greedy`, and `always_hold`), an explicit-vs-hidden decomposition (`visible_greedy` versus `greedy_best - visible_greedy`), and a deterministic random-play audit (`mean`, `p90`, `p99`, positive-rate, plus a representative `p99` random-run breakdown):
+Run Haiku against a focused season:
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1
+./scripts/mad-run --provider claude --model haiku --effort low --memory off \
+  --context persistent --max-ticks 0 \
+  --season ./seasons/focused-clue-ladder-payoff/season.json
 ```
 
-Sweep stronger bounded lookahead oracle settings and save a publishable score-vs-wallclock artifact:
+Run the full harness with multiple models:
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-oracle-sweep -season ./seasons/dev1000/season.json -out ./benchmarks/oracle-sweep/dev1000-$(date +%Y%m%d).json
-```
-
-The generated `seasons/dev1000` fixture is the current long-form dev season. At the moment it compiles to:
-
-- `1000` ticks
-- about `14.3` hours total runtime
-- `250` story elements with deterministic variable lengths in the `2..5` beat range across standing work, clue chains, reputation ladders, hazard interrupts, and payoff gates
-- current sim snapshot around `greedy_best=115919`, `visible_greedy=-5456`, `oracle_h16_b8=122534`, `always_hold≈-9500`
-- random-play audit around `mean=-6145`, `p90=-3907`, `p99=-2312`, `positive_rate=0` using `1000` runs and seed `11`
-
-Current empirical findings:
-
-- the main remaining difficulty problem is local semantic leakage, not random legal play
-- Haiku `ephemeral + mem-off + recent-reveals 0` scored strongly positive on the full season
-- text ablations show the leak is in prose, not in the structured action surface:
-  - `full prose = 24025`
-  - `source-types only = -2800`
-  - `text redacted = -3293`
-- the largest local leak is currently in `payoff_gate`, especially `market_gossip` prose
-- the planning oracle gap is real but modest:
-  - `greedy_best = 115919`
-  - `oracle_h16_b8 = 122534`
-  - `oracle_h64_b32 = 124160`
-- that means the current benchmark pressure is dominated by local semantic/structural inference, with long-horizon planning as a secondary gap on `dev1000`
-
-For CI or release gating, fail the run if the random-play audit says the season is too easy to luck through:
-
-```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-sim -season ./build/season.json -out ./build/simulation.json -random-runs 10000 -random-seed 1 -fail-on-random-warnings
-```
-
-Compile public tick artifacts from the compiled season:
-
-```bash
-go run ./cmd/mad-compile -season ./build/season.json -out ./build/public
-```
-
-`mad-weave`, `mad-compile`, and `mad-core` all validate their input on load, so broken authoring data fails fast before runtime. The intended authoring flow is:
-
-1. Define ordered multi-beat story elements in `season_ir.json`.
-2. Deterministically interleave those elements into a compiled `season.json`.
-3. Dry-run the compiled season and inspect the generated schedule/reveal report.
-4. Compile immutable public tick artifacts from that compiled season.
-
-For fast tests and smoke runs, keep using `seasons/dev/`. For a more realistic authoring and simulation loop, use `seasons/dev1000/`.
-
-The compiler derives precursor tick links and memory-distance annotations after weaving, so story scoring stays independent of final tick spacing.
-The simulator's `greedy_best` baseline is intentionally local to each tick. It is useful for sanity checks, but it is not a season-optimal oracle once opportunity costs or commitments become stateful. `visible_greedy` is the cheap constrained baseline: it only uses the current public action surface, clock class, public requirements, and explicit player state, with no source-text parsing and no hidden scoring labels. The report's `decomposition` section is an approximation: `explicit_visible` comes from `visible_greedy`, while `hidden_or_nonlocal_premium` is the remaining score in `greedy_best - visible_greedy`, so it mixes real cross-beat value with any hidden-label advantage still present in `greedy_best`.
-For a tighter upper bound, use the bounded forward-search oracle baselines. On the current `dev1000`, `oracle_h16_b8` is a cheap fast oracle, while the sweep plateaus at `oracle_h64_b32`, which is the current strong offline upper bound.
-
-Run the external-agent harness against a compiled season. The harness keeps a single conversation thread per runner, records every action/response, and saves a per-tick `score_trace` so the result can be plotted like VendingBench:
-
-```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness \
+go run ./cmd/mad-harness \
   -season ./seasons/dev1000/season.json \
   -out ./build/harness.json \
-  -runs 3 \
-  -max-ticks 25 \
-  -runner codex:gpt-5.2-codex@high \
-  -runner codex:gpt-5.1-codex-mini@medium \
+  -runs 3 -max-ticks 100 \
   -runner claude:haiku@low \
   -runner claude:sonnet@medium
-```
-
-`mad-harness` checkpoints the JSON report after every tick, so long runs leave a live-updating `score_trace` on disk instead of only writing at the very end. That makes overnight runs inspectable and plot-friendly even before they finish.
-During each run, `mad-harness` prints one static `run_start` header and then keeps a single live progress line updated in place with terse stats like tick progress, score, last score delta, average step time, ETA, errors, and last completed tick. At the end of each run it prints a concise summary with final score, step count, wall time, average step latency, `p50`/`p95` decision latency, ticks per minute, and the last completed tick. If `-runs N` is greater than `1`, it also prints multi-run aggregates at the very end.
-
-For humans, the easiest entrypoint is [scripts/mad-run](/code/mad/scripts/mad-run), a thin shim over `cmd/mad-run`:
-
-```bash
-  ./scripts/mad-run --provider codex --model gpt-5.2-codex --effort high --memory on --service-tier fast --max-ticks 100
-  ./scripts/mad-run --provider codex --model gpt-5.1-codex-mini --effort medium --memory off --context ephemeral --service-tier fast --runs 3 --season ./seasons/dev/season.json
-  ./scripts/mad-run --provider claude --model haiku --effort low --memory off --context ephemeral --probe
-  ./scripts/mad-run --provider openrouter --model openai/gpt-oss-20b --memory off --context ephemeral --service-tier fast --max-ticks 100
-```
-
-`scripts/mad-run` creates a timestamped run directory under `build/runs/`, stores the exact command it launched, and writes a live-updating `harness.json` plus `launcher.log`.
-
-For unambiguous experiment labels, use the canonical mode definitions in [CONFIG.md](/code/mad/CONFIG.md). Forecast ranges for common model/mode permutations live in [FORECAST.md](/code/mad/FORECAST.md).
-
-## OpenRouter Baselines
-
-The harness should accept any `openrouter:<model-slug>` runner so the baseline
-matrix stays future-proof.
-
-Measured practical results, including:
-- which models actually return non-null `top_logprobs` on the `1-token`
-  logprob-choice path
-- advertised throughput versus actual short-output latency
-- current default / fastest / cheapest working candidates
-
-live in [OPENROUTER_BASELINES.md](/code/mad/OPENROUTER_BASELINES.md).
-
-Memory and context semantics are explicit:
-
-- `codex --memory on`: create an isolated writable `CODEX_HOME` inside the run directory, preserve provider-native session continuity there, explicitly enable Codex memory features, and set the run-local Codex memory idle gate to `0` hours by default so memory is usable during benchmark runs.
-- `codex --memory off`: use the same isolated writable `CODEX_HOME`, but explicitly disable Codex memory features while keeping normal session continuity.
-- `codex --service-tier fast`: request Codex fast mode (`service_tier=fast`). This is the quickest way to get a Codex no-context baseline, especially when combined with `--context ephemeral`.
-- `codex --service-tier flex`: request the normal flex tier explicitly.
-- `claude --memory on`: use an isolated Claude home inside the run directory. With `--context persistent`, the harness keeps a persisted `claude -p` session. With `--context ephemeral`, it uses `--no-session-persistence` but still leaves Claude auto-memory enabled.
-- `claude --memory off`: use the same isolated Claude home, but explicitly set `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`. Session persistence still follows `--context`; memory-off no longer implies ephemeral.
-- `openrouter`: requires `OPENROUTER_API_KEY` in the environment. The current harness path is intended for fast baseline runs, especially `--memory off --context ephemeral`. It uses direct OpenRouter chat completions and asks the model to return a numbered action choice, which the harness validates locally. Unlike Codex and Claude, it does not currently have a provider-native session or memory layer inside the harness.
-- `--context persistent`: keep thread/session continuity and let the harness carry forward the model's own `notes` field across ticks.
-- `--context ephemeral`: run each tick as a one-shot baseline. Provider-native session continuity is disabled, and the harness does not carry prior `notes` into later prompts.
-- `--text-mode full|source-types|redacted`: ablate how much prose the model sees while keeping the same actions, explicit player state, and scoring. Use this for local semantic leakage audits.
-
-Continuity is provider-native:
-
-- Codex starts a persisted `codex exec` session in the real project cwd, captures the provider `thread_id`, and resumes that exact thread on later ticks.
-- Claude starts each run with an isolated Claude home rooted under `build/runs/.../runner-state/.../claude-home`. Persistent mode uses an explicit UUID `--session-id`; ephemeral mode uses `--no-session-persistence`. The harness disables `CLAUDE.md` loading for benchmark cleanliness.
-- Each harness run records `session.workdir`, `session.provider_session_id`, `session.native_home_dir`, `session.native_project_dir`, `session.native_session_path`, and `session.native_memory_path`.
-- A Claude `native_memory_path` may still be absent on disk after a short run; memory-on means Claude can read/write `MEMORY.md`, not that it is guaranteed to write one every turn.
-
-Probe runner/model availability without playing a season:
-
-```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go run ./cmd/mad-harness -probe -out ./build/harness-probe.json
-```
-
-If no `-runner` flags are provided, `mad-harness` uses the current default matrix:
-
-- `codex:gpt-5.1-codex-mini@medium`
-- `codex:gpt-5.2-codex@high`
-- `codex:gpt-5.4@medium`
-- `claude:haiku@low`
-- `claude:sonnet@medium`
-- `claude:opus@high`
-
-Run the dev server:
-
-```bash
-go run ./cmd/mad-core -season ./build/season.json -listen :8080
-```
-
-For local ingest/load testing, raise the IP limiter so the origin hot path is what you measure:
-
-```bash
-go run ./cmd/mad-core -season ./seasons/dev/season.json -listen :8080 -ip-rate-limit 20000
-```
-
-Burst the write path against the current tick:
-
-```bash
-go run ./cmd/mad-loadgen -base-url http://127.0.0.1:8080 -players 5000 -concurrency 256 -deadline-lead 2s
 ```
 
 Run tests:
 
 ```bash
-env GOCACHE=/tmp/mad-gocache CGO_ENABLED=0 go test ./...
+go test ./...
 ```
 
-`mad-core` now persists periodic snapshots plus an action WAL in `./var/` by default. On restart it restores the last snapshot and replays accepted post-snapshot actions from the WAL before resuming the scheduler. When deployed behind Cloudflare or another proxy, `-trust-proxy-headers` lets the origin rate limit on `CF-Connecting-IP` / `X-Forwarded-For` instead of the proxy hop.
+### Text ablation
 
-The current due-state prototype uses a timing wheel to process absent-player scheduled effects without global scans. Today that concrete effect is debt interest on dossier cadence; global synthetic `hold` for every absent player is still intentionally out of scope until the game models exposed cohorts explicitly. The hard rule is: if a mechanic requires touching every player every tick, redesign it as sparse cohorts, scheduled due events, or lazy settlement.
+The `--text-mode` flag controls how much prose the model sees:
+- `full` — complete narrative (default)
+- `source-types` — source type labels only, no prose
+- `redacted` — all prose removed, only structured action surface
 
-Action commits are now single-shot per tick: the first accepted action is final, and only exact retries using the same `submission_id` are accepted idempotently.
+### Memory and context modes
 
-## Handoff & Next Steps
+- `--context persistent` — full context history + recent reveals
+- `--context ephemeral` — each tick is one-shot, no history
+- `--memory on/off` — enable/disable provider-native memory (Claude MEMORY.md, Codex memory)
 
-As detailed in [IMPLEMENTATION.md](./IMPLEMENTATION.md), the work should proceed in this order:
-1. **Freeze Schemas:** Finalize the concrete machine-readable schema for `current.json`, tick packets, action submissions, score snapshots, and delayed reveal packets.
-2. **Prove Write-Burst Ingest:** Benchmark the `POST /actions` hot path with synthetic deadline spikes.
-3. **Prove Batch Scoring:** Implement immutable tick plans, due-state handling, and score-epoch generation.
-4. **Ship Public Feedback:** Publish score snapshots, leaderboards, delayed reveals, and shard checkpoints.
-5. **Harden Abuse Controls:** Add rate limits, body caps, and account-friction as needed.
-6. **Build Season Tooling:** Extend the existing story-element IR, weave compiler, validator, simulation report, and annotation helpers with richer authoring ergonomics and deeper season simulation for lawful content at scale.
+## Tools
 
----
-*Authored by the MAD Design Team (Clod, Dex, Gem).*
+| Command | Purpose |
+|---|---|
+| `mad-devgen` | Generate season IR from family templates |
+| `mad-weave` | Compile IR into a playable season |
+| `mad-sim` | Offline simulation and baseline computation |
+| `mad-harness` | Drive LLM agents through a season |
+| `mad-run` | Human-friendly single-run launcher |
+| `mad-probe` | Measure prose leakage per family |
+| `mad-oracle-sweep` | Sweep oracle lookahead settings |
+| `mad-core` | Live game server (not yet deployed) |
+| `mad-loadgen` | Load test the write path |
+| `mad-compile` | Compile public tick artifacts |
+
+## Remaining Work
+
+1. Multi-run confidence intervals (3-5 reps per condition)
+2. Full 1000-tick runs (ephemeral vs persistent)
+3. Multi-model comparison (Haiku, Sonnet, Opus, Codex, GPT)
+4. Text ablation trio on current prose
+5. Hazard family redesign (strip resource gates, test pure faction-lane learning)
+
+## Docs
+
+- [RESULTS.md](./RESULTS.md) — empirical findings, per-family breakdowns, design change log
+- [PROPOSAL.md](./PROPOSAL.md) — original architectural blueprint
+- [IMPLEMENTATION.md](./IMPLEMENTATION.md) — implementation plan and scaling analysis
+- [SEASON_GENERATOR.md](./SEASON_GENERATOR.md) — story-element families and dependency rules
+- [CONFIG.md](./CONFIG.md) — canonical mode definitions

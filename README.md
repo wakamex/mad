@@ -4,14 +4,14 @@ A season-long benchmark for testing long-range memory and multi-step inference i
 
 ## Key Result
 
-Persistent agents reach **91% of the theoretical score ceiling**. Memoryless agents score at random.
+Persistent agents reach **91% of the greedy-best ceiling**. Memoryless agents reach 18%.
 
-| Condition | Score | payoff_gate | reputation_ladder |
-|---|---:|---:|---:|
-| Persistent + reveals | **+8,381** | **96%** | **81%** |
-| Ephemeral (no memory) | +1,696 | 28% | 44% |
-| Greedy-best ceiling | 9,256 | — | — |
-| Random baseline | -2 | — | — |
+| Condition | Score | % of ceiling | payoff (rand 29%) | ladder (rand 33%) |
+|---|---:|---:|---:|---:|
+| Persistent + reveals | **+8,381** | **91%** | **96%** | **81%** |
+| Ephemeral (no memory) | +1,696 | 18% | 28% | 44% |
+| Random play | -2 | 0% | 29% | 33% |
+| Greedy-best ceiling | 9,256 | 100% | — | — |
 
 Tested with Claude Haiku on a focused 90-tick season (clue + ladder + payoff families). Full results in [RESULTS.md](./RESULTS.md).
 
@@ -30,7 +30,7 @@ Each tick delivers prose narrative, structured state, and action choices. Correc
 
 1. **Eliminated local leakage** — collapsed prose to single answer-neutral templates so tick text contains zero signal about the correct answer. Probe confirms <5% leakage across all families.
 2. **Conjunctive clue evidence** — regime identity is split across 2 clue beats via domain elimination. Neither beat alone identifies the correct action.
-3. **Ephemeral baseline** — same season, same model, but no context history. Scores match random exactly (28% on a 3-way choice = 29% baseline).
+3. **Ephemeral baseline** — same season, same model, but no context history. Payoff accuracy matches random (28% vs 29% baseline). Ladder shows some within-context learning (44% vs 33%) but still far below persistent (81%).
 
 ## Architecture
 

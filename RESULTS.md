@@ -40,34 +40,27 @@ Three-way market decision where the correct option depends on the active source 
 
 Three-way faction offer where the correct option depends on the active source regime. Same conjunctive evidence mechanism as payoff. Near-random without memory (44%), strong with memory (81%). **+37pp memory gap.**
 
-### hazard_interrupt (REBALANCED — economy fix, awaiting validation)
+### hazard_interrupt (VALIDATED — +21pp memory gap)
 
-Two-lane interrupt event designed to test forward-planning: invest in standing work now, qualify for hazard lanes later, learn per-faction ROI from outcome feedback.
+Binary commit/hold decision per faction. Commit spends 1 faction reputation and gets a hidden reward that varies by faction (3 profitable, 4 traps). Hold takes a small miss penalty. The agent must learn from past outcomes which factions are worth committing resources to.
 
-**Diagnosis (2026-03-15):** Both Haiku and Sonnet scored 45% persistent vs 40% ephemeral on hazard — seemingly below 50% random. We initially attributed this to models being unable to learn threshold-matching.
+**Haiku result (90-tick, seeded resources):**
 
-Investigation revealed the greedy-best oracle also scored only 47.6% (20/42). The "50% random baseline" was wrong — it assumes both lanes are always available. In reality, successful commits spend resources (reputation, aura), standing work replenishes slowly, and every baseline including greedy ran out of resources mid-season. The model was 1 decision from the ceiling. Notes showed perfect reasoning ("Both blocked: CV -1 need >=2, Aura 1 need >=2. Forced hold.").
-
-**Root causes identified:**
-1. **Resource economy too punishing** — stabilize spent 2-7 rep, exploit spent 5-12 aura. Standing work added +1-2 rep and +0-1 aura. Net spend far exceeded replenishment.
-2. **Standing work lock** — committing to standing work locked availability for 1 tick. If a hazard arrived during the lock, the player was forced to hold regardless of resources. This alone blocked ~8 of 42 hazard ticks.
-3. **Silent commit failures** — when a commit failed resource requirements, the engine fell through to the hold rule with the same "you hesitated" label. No learning signal.
-
-**Economy rebalance (2026-03-18):**
-- Resource spend cut ~3× (stabilize rep: 2-7 → 1-2, exploit aura: 5-12 → 2-3)
-- Threshold percentages halved (StabilizeRepPct: 0.06-0.18 → 0.03-0.08, ExploitAuraPct: 0.05-0.12 → 0.03-0.06)
-- Standing work lock removed (was blocking hazard responses during availability lock)
-- Yield labels already stripped from PublicRequirements (agent must learn per-faction ROI from reveal feedback)
-
-| Version | Greedy best-action | Blocked ticks |
+| Condition | Score | Hazard best-action |
 |---|---:|---:|
-| Old economy | 20/42 (47.6%) | 22 |
-| Halved spend | 30/42 (71.4%) | 12 |
-| **Halved spend + no lock** | **41/42 (97.6%)** | **1** |
+| **Persistent** | **696** | **33/42 (78.6%)** |
+| Ephemeral | 664 | 24/42 (57.1%) |
+| Greedy ceiling | 935 | 40/42 (95.2%) |
 
-**What the test should show:** With the ceiling at 97.6% and yield labels hidden, the correct lane depends on per-faction ROI learned from past reveals. Persistent agents track outcomes and learn which lane pays better. Ephemeral agents see two lanes with threshold requirements but no yield information — forced to guess ~50/50. Expected memory gap: 30pp+.
+**Memory gap: +21.4pp** (78.6% vs 57.1%). Ephemeral can't distinguish profitable factions from traps without memory. Persistent learns from reveal feedback.
 
-Haiku persistent + ephemeral runs in progress on the rebalanced 90-tick season.
+**Design journey (2026-03-13 → 2026-03-18):**
+1. Original two-lane design (stabilize vs exploit): greedy ceiling only 47.6% due to resource depletion. Model matched ceiling — no room for gap.
+2. Rebalanced economy (cut spend 3×, removed standing lock): ceiling rose to 97.6% but ephemeral matched persistent at 95% — the model inferred ROI from visible spend labels and opportunity IDs.
+3. Stripped IDs from prompts, made spend uniform: ephemeral still 95% — faction name semantics leaked the answer.
+4. **Simplified to binary commit/hold with hidden per-faction rewards:** ephemeral drops to 57%, persistent holds at 79%. The faction name is no longer predictive because commit/hold is a value judgment, not a lane selection.
+
+**Why binary works:** In the two-lane design, the model could infer the better lane from local signals (spend costs, faction semantics, beat index). In binary, the model sees "commit costs 1 rep" vs "hold costs 8 penalty" — identical across all factions. The only way to know whether committing is worth it for *this* faction is to remember past outcomes.
 
 ### standing_work_loop (LOW PRIORITY)
 
@@ -118,7 +111,7 @@ Each family was tested using focused 90-tick seasons. All runs use Claude Haiku 
 | **payoff_gate** | 29% | 28% | **96%** | **+68pp** |
 | **reputation_ladder** | 33% | 44% | **81%** | **+37pp** |
 | **seed_clue_chain** | — | — | — | observe-only |
-| **hazard_interrupt** | 50% | 40% | 45% | abandoned (+5pp, noise) |
+| **hazard_interrupt** | 50% | 57% | **79%** | **+21pp** |
 | **standing_work_loop** | ~50% | — | 56% | low ceiling, hazard support only |
 
 ### Raw results (current design, 2026-03-12)
@@ -145,7 +138,7 @@ Ladder accuracy jumped from 30% to 81% after removing cosmetic PublicRequirement
 
 Ephemeral payoff also rose (12% → 28%) suggesting the old run had additional bad luck or the gate text was also suppressing ephemeral attempts. 28% matches random baseline exactly — good signal.
 
-**hazard_interrupt** was abandoned after extensive experimentation. With seeded resources and hidden yields, both Haiku and Sonnet score 45% persistent vs 40% ephemeral (below 50% random, +5pp gap = noise). The models fail at the basic prerequisite — matching their state against thresholds — before ROI tracking from memory can matter. The family remains available for future experiments with stronger models.
+**hazard_interrupt** was redesigned from two-lane (stabilize/exploit) to binary (commit/hold) with hidden per-faction rewards. Persistent 79% vs ephemeral 57% — **+21pp memory gap**. The model learns from reveals which factions are profitable vs traps.
 
 ## Key Comparison Table
 
@@ -202,7 +195,7 @@ Ephemeral payoff also rose (12% → 28%) suggesting the old run had additional b
 
 9. **Hazard diagnosis corrected** (2026-03-15): The 45% model score is not a learning failure — greedy-best ceiling is 47.6% due to resource depletion. The resource economy bankrupts every strategy mid-season. Models reason correctly about thresholds (verified via notes).
 
-10. **Hazard economy rebalance** (2026-03-18): Resource spend cut ~3× (stabilize rep: 2-7→1-2, exploit aura: 5-12→2-3). Threshold percentages halved. Standing work lock removed (was blocking hazard on ~8 ticks via availability). Greedy ceiling: 47.6% → 97.6% (41/42). Awaiting Haiku validation run.
+10. **Hazard redesign: binary commit/hold** (2026-03-18): Collapsed two-lane (stabilize/exploit) into binary commit vs hold. Commit costs 1 rep, reward varies by faction (hidden). 3 profitable factions, 4 traps. Stripped opportunity IDs and source IDs from prompts to prevent beat-index leakage. Uniform spend/threshold labels. Greedy ceiling 95.2%. **Haiku: persistent 79%, ephemeral 57%, +21pp gap.**
 
 ## What This Means for Publication
 

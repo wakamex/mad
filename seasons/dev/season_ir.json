@@ -871,18 +871,18 @@
             {
               "source_id": "critical_broadcast.cluster_001.1",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.1.stabilize",
+              "opportunity_id": "hazard.cluster.001.1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -890,36 +890,13 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 46,
-                  "label": "Debt 46 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.001.1.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -929,14 +906,14 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.1",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 46,
+                  "max_debt": 45,
                   "min_reputation": {
                     "glass_choir": 2
                   }
@@ -947,20 +924,20 @@
                   }
                 },
                 "delta": {
-                  "yield": 69,
-                  "insight": 12,
+                  "yield": 60,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -12,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+                "label": "Glass Choir logged your response to the fog cascade incident.",
                 "classification": "best"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.1",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -972,53 +949,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 2,
-                  "miss_penalties": 20
+                  "miss_penalties": 12
                 },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
-                "classification": "bad"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.1.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 66,
-                  "insight": 10,
-                  "aura": -3,
-                  "debt": 2,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.1.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 5,
-                  "miss_penalties": 22
-                },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -1030,9 +963,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 16
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
+                "label": "The incident passed without your involvement.",
                 "classification": "bad"
               }
             ]
@@ -1042,9 +975,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_001.clue.2"
@@ -1057,18 +989,18 @@
             {
               "source_id": "critical_broadcast.cluster_001.2",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.2.stabilize",
+              "opportunity_id": "hazard.cluster.001.2",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -1076,36 +1008,13 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 46,
-                  "label": "Debt 46 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.001.2.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -1115,14 +1024,14 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.2",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 46,
+                  "max_debt": 45,
                   "min_reputation": {
                     "glass_choir": 2
                   }
@@ -1133,20 +1042,20 @@
                   }
                 },
                 "delta": {
-                  "yield": 74,
-                  "insight": 14,
+                  "yield": 60,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -12,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+                "label": "Glass Choir logged your response to the fog cascade incident.",
                 "classification": "best"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.2",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1157,54 +1066,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 22
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
-                "classification": "bad"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.2.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 74,
-                  "insight": 12,
-                  "aura": -3,
-                  "debt": 3,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.2.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 6,
-                  "miss_penalties": 24
-                },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -1216,9 +1081,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 18
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
+                "label": "The incident passed without your involvement.",
                 "classification": "bad"
               }
             ]
@@ -1228,9 +1093,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_001.clue.2",
@@ -1244,18 +1108,18 @@
             {
               "source_id": "critical_broadcast.cluster_001.3",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.3.stabilize",
+              "opportunity_id": "hazard.cluster.001.3",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -1263,36 +1127,13 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 46,
-                  "label": "Debt 46 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.001.3.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -1302,14 +1143,14 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.3",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 46,
+                  "max_debt": 45,
                   "min_reputation": {
                     "glass_choir": 2
                   }
@@ -1320,20 +1161,20 @@
                   }
                 },
                 "delta": {
-                  "yield": 79,
-                  "insight": 16,
+                  "yield": 60,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -12,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+                "label": "Glass Choir logged your response to the fog cascade incident.",
                 "classification": "best"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.3",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1344,54 +1185,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 24
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
-                "classification": "bad"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.3.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 82,
-                  "insight": 14,
-                  "aura": -3,
-                  "debt": 3,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.3.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 7,
-                  "miss_penalties": 26
-                },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -1403,9 +1200,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 20
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
+                "label": "The incident passed without your involvement.",
                 "classification": "bad"
               }
             ]
@@ -1415,9 +1212,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_001.clue.3",
@@ -1431,18 +1227,18 @@
             {
               "source_id": "critical_broadcast.cluster_001.4",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.4.stabilize",
+              "opportunity_id": "hazard.cluster.001.4",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -1450,36 +1246,13 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 46,
-                  "label": "Debt 46 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.001.4.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -1489,14 +1262,14 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.4",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 46,
+                  "max_debt": 45,
                   "min_reputation": {
                     "glass_choir": 2
                   }
@@ -1507,20 +1280,20 @@
                   }
                 },
                 "delta": {
-                  "yield": 84,
-                  "insight": 18,
+                  "yield": 60,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -12,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+                "label": "Glass Choir logged your response to the fog cascade incident.",
                 "classification": "best"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.4",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1531,54 +1304,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 26
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
-                "classification": "bad"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.4.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 90,
-                  "insight": 16,
-                  "aura": -3,
-                  "debt": 4,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.4.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 8,
-                  "miss_penalties": 28
-                },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -1590,9 +1319,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 22
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
+                "label": "The incident passed without your involvement.",
                 "classification": "bad"
               }
             ]
@@ -1602,9 +1331,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_001.clue.4",
@@ -1618,18 +1346,18 @@
             {
               "source_id": "critical_broadcast.cluster_001.5",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.5.stabilize",
+              "opportunity_id": "hazard.cluster.001.5",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -1637,36 +1365,13 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 46,
-                  "label": "Debt 46 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.001.5.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 28,
-                  "label": "Debt 28 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -1676,14 +1381,14 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.5",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 46,
+                  "max_debt": 45,
                   "min_reputation": {
                     "glass_choir": 2
                   }
@@ -1694,20 +1399,20 @@
                   }
                 },
                 "delta": {
-                  "yield": 89,
-                  "insight": 20,
+                  "yield": 60,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -12,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir trusted you to run the glass curtain protocol and contain the spill cleanly.",
+                "label": "Glass Choir logged your response to the fog cascade incident.",
                 "classification": "best"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.001.5",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1718,54 +1423,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 28
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
-                "classification": "bad"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.5.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 28,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 98,
-                  "insight": 18,
-                  "aura": -3,
-                  "debt": 4,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.001.5.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 9,
-                  "miss_penalties": 30
-                },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -1777,9 +1438,9 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 24
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
+                "label": "The incident passed without your involvement.",
                 "classification": "bad"
               }
             ]
@@ -1789,9 +1450,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_001.clue.5",
@@ -3462,18 +3122,18 @@
             {
               "source_id": "critical_broadcast.cluster_002.1",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.1.stabilize",
+              "opportunity_id": "hazard.cluster.002.1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -3481,36 +3141,13 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 48,
-                  "label": "Debt 48 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.002.1.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -3520,82 +3157,38 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.002.1",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 48,
+                  "max_debt": 45,
                   "min_reputation": {
                     "civic_ward": 2
                   }
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -2
+                    "civic_ward": -1
                   }
                 },
                 "delta": {
-                  "yield": 59,
-                  "insight": 12,
+                  "yield": -10,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -9,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.1.stabilize",
-                  "option": "stabilize"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 20
-                },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
+                "label": "Civic Ward logged your response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 70,
-                  "insight": 10,
-                  "aura": -3,
-                  "debt": 2,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.1.exploit",
-                  "option": "exploit"
+                  "target": "hazard.cluster.002.1",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3606,10 +3199,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 5,
-                  "miss_penalties": 22
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -3621,10 +3214,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 16
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
-                "classification": "bad"
+                "label": "The incident passed without your involvement.",
+                "classification": "best"
               }
             ]
           },
@@ -3633,9 +3226,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_002.clue.2"
@@ -3648,18 +3240,18 @@
             {
               "source_id": "critical_broadcast.cluster_002.2",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.2.stabilize",
+              "opportunity_id": "hazard.cluster.002.2",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -3667,36 +3259,13 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 48,
-                  "label": "Debt 48 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.002.2.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -3706,82 +3275,38 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.002.2",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 48,
+                  "max_debt": 45,
                   "min_reputation": {
                     "civic_ward": 2
                   }
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -2
+                    "civic_ward": -1
                   }
                 },
                 "delta": {
-                  "yield": 64,
-                  "insight": 14,
+                  "yield": -10,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -9,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.2.stabilize",
-                  "option": "stabilize"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 22
-                },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
+                "label": "Civic Ward logged your response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 78,
-                  "insight": 12,
-                  "aura": -3,
-                  "debt": 3,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.2.exploit",
-                  "option": "exploit"
+                  "target": "hazard.cluster.002.2",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3792,10 +3317,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 6,
-                  "miss_penalties": 24
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -3807,10 +3332,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 18
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
-                "classification": "bad"
+                "label": "The incident passed without your involvement.",
+                "classification": "best"
               }
             ]
           },
@@ -3819,9 +3344,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_002.clue.2",
@@ -3835,18 +3359,18 @@
             {
               "source_id": "critical_broadcast.cluster_002.3",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.3.stabilize",
+              "opportunity_id": "hazard.cluster.002.3",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -3854,36 +3378,13 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 48,
-                  "label": "Debt 48 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.002.3.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -3893,82 +3394,38 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.002.3",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 48,
+                  "max_debt": 45,
                   "min_reputation": {
                     "civic_ward": 2
                   }
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -2
+                    "civic_ward": -1
                   }
                 },
                 "delta": {
-                  "yield": 69,
-                  "insight": 16,
+                  "yield": -10,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -9,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.3.stabilize",
-                  "option": "stabilize"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 24
-                },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
+                "label": "Civic Ward logged your response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 86,
-                  "insight": 14,
-                  "aura": -3,
-                  "debt": 3,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.3.exploit",
-                  "option": "exploit"
+                  "target": "hazard.cluster.002.3",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3979,10 +3436,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 7,
-                  "miss_penalties": 26
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -3994,10 +3451,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 20
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
-                "classification": "bad"
+                "label": "The incident passed without your involvement.",
+                "classification": "best"
               }
             ]
           },
@@ -4006,9 +3463,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_002.clue.2",
@@ -4022,18 +3478,18 @@
             {
               "source_id": "critical_broadcast.cluster_002.4",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.4.stabilize",
+              "opportunity_id": "hazard.cluster.002.4",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -4041,36 +3497,13 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 48,
-                  "label": "Debt 48 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.002.4.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -4080,82 +3513,38 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.002.4",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 48,
+                  "max_debt": 45,
                   "min_reputation": {
                     "civic_ward": 2
                   }
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -2
+                    "civic_ward": -1
                   }
                 },
                 "delta": {
-                  "yield": 74,
-                  "insight": 18,
+                  "yield": -10,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -9,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.4.stabilize",
-                  "option": "stabilize"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 26
-                },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
+                "label": "Civic Ward logged your response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 94,
-                  "insight": 16,
-                  "aura": -3,
-                  "debt": 4,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.4.exploit",
-                  "option": "exploit"
+                  "target": "hazard.cluster.002.4",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -4166,10 +3555,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 8,
-                  "miss_penalties": 28
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -4181,10 +3570,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 22
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
-                "classification": "bad"
+                "label": "The incident passed without your involvement.",
+                "classification": "best"
               }
             ]
           },
@@ -4193,9 +3582,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_002.clue.2",
@@ -4209,18 +3597,18 @@
             {
               "source_id": "critical_broadcast.cluster_002.5",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
             }
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.5.stabilize",
+              "opportunity_id": "hazard.cluster.002.5",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "stabilize"
+                "respond"
               ],
               "public_requirements": [
                 {
@@ -4228,36 +3616,13 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
                 },
                 {
                   "metric": "debt",
                   "operator": "\u003c=",
-                  "value": 48,
-                  "label": "Debt 48 or lower preserves trusted response access."
-                }
-              ]
-            },
-            {
-              "opportunity_id": "hazard.cluster.002.5.exploit",
-              "allowed_commands": [
-                "commit"
-              ],
-              "allowed_options": [
-                "exploit"
-              ],
-              "public_requirements": [
-                {
-                  "metric": "aura",
-                  "operator": "\u003e=",
-                  "value": 2,
-                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
-                },
-                {
-                  "metric": "debt",
-                  "operator": "\u003c=",
-                  "value": 30,
-                  "label": "Debt 30 or lower keeps the exploit lane viable."
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
                 }
               ]
             }
@@ -4267,82 +3632,38 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5.stabilize",
-                  "option": "stabilize"
+                  "target": "hazard.cluster.002.5",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
                     "available"
                   ],
-                  "max_debt": 48,
+                  "max_debt": 45,
                   "min_reputation": {
                     "civic_ward": 2
                   }
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -2
+                    "civic_ward": -1
                   }
                 },
                 "delta": {
-                  "yield": 79,
-                  "insight": 20,
+                  "yield": -10,
+                  "insight": 5,
                   "aura": 0,
-                  "debt": -9,
+                  "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.5.stabilize",
-                  "option": "stabilize"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ]
-                },
-                "delta": {
-                  "yield": 0,
-                  "insight": 0,
-                  "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 28
-                },
-                "label": "You reached for faction cover without enough standing to clear the lane.",
+                "label": "Civic Ward logged your response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5.exploit",
-                  "option": "exploit"
-                },
-                "requirements": {
-                  "requires_availability": [
-                    "available"
-                  ],
-                  "max_debt": 30,
-                  "min_aura": 2
-                },
-                "delta": {
-                  "yield": 102,
-                  "insight": 18,
-                  "aura": -3,
-                  "debt": 4,
-                  "miss_penalties": 0
-                },
-                "label": "You exploited the disruption for value, burning readiness to do it.",
-                "classification": "best"
-              },
-              {
-                "match": {
-                  "command": "commit",
-                  "target": "hazard.cluster.002.5.exploit",
-                  "option": "exploit"
+                  "target": "hazard.cluster.002.5",
+                  "option": "respond"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -4353,10 +3674,10 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 9,
-                  "miss_penalties": 30
+                  "debt": 2,
+                  "miss_penalties": 12
                 },
-                "label": "You lunged for upside without enough visible margin to survive the blast.",
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
@@ -4368,10 +3689,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 24
+                  "miss_penalties": 8
                 },
-                "label": "The interrupt rolled through while you hesitated.",
-                "classification": "bad"
+                "label": "The incident passed without your involvement.",
+                "classification": "best"
               }
             ]
           },
@@ -4380,9 +3701,8 @@
           ],
           "resource_touches": [
             "availability",
-            "aura",
-            "debt",
-            "reputation"
+            "reputation",
+            "debt"
           ],
           "precursor_beat_ids": [
             "cluster_002.clue.2",

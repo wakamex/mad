@@ -778,7 +778,6 @@ func buildActionChoices(spec RunnerSpec, tick season.TickDefinition, style Actio
 			Index:   i + 1,
 			Summary: actionSummary(action, opportunity),
 			Command: action.Command,
-			Target:  action.Target,
 			Option:  action.Option,
 		})
 	}
@@ -833,9 +832,6 @@ func actionSummary(action season.SimulatedAction, opportunity season.Opportunity
 		return "hold"
 	}
 	summary := action.Command
-	if action.Target != "" {
-		summary += " " + action.Target
-	}
 	if action.Option != "" {
 		summary += " [" + action.Option + "]"
 	}

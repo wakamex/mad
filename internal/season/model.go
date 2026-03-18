@@ -180,13 +180,31 @@ type PublicTick struct {
 }
 
 func (t TickDefinition) Public() PublicTick {
+	// Strip internal identifiers from the public view — opportunity IDs
+	// and source IDs contain cluster/beat indices that leak information
+	// about the correct action.
+	publicOpps := make([]Opportunity, len(t.Opportunities))
+	for i, opp := range t.Opportunities {
+		publicOpps[i] = Opportunity{
+			AllowedCommands:    opp.AllowedCommands,
+			AllowedOptions:     opp.AllowedOptions,
+			PublicRequirements: opp.PublicRequirements,
+		}
+	}
+	publicSources := make([]Source, len(t.Sources))
+	for i, src := range t.Sources {
+		publicSources[i] = Source{
+			SourceType: src.SourceType,
+			Text:       src.Text,
+		}
+	}
 	return PublicTick{
 		TickID:              t.TickID,
 		ClockClass:          t.ClockClass,
 		DeadlineMS:          t.DurationMS,
-		Sources:             t.Sources,
+		Sources:             publicSources,
 		ActiveSourceRegimes: t.ActiveSourceRegimes,
-		Opportunities:       t.Opportunities,
+		Opportunities:       publicOpps,
 	}
 }
 

@@ -13,6 +13,7 @@ type devFaction struct {
 	ID                  string
 	Name                string
 	Protocol            string
+	HazardBonus         int64   // added to base yield on commit; negative = trap faction
 	StabilizeBonus      int64
 	ExploitBonus        int64
 	StabilizeDebtRelief int64
@@ -76,19 +77,23 @@ var devFactions = []devFaction{
 	// Split: 3 stabilize-favored, 1 mixed (crossover at beat 2), 3 exploit-favored.
 	// Thresholds are NOT predictive of best lane — can't infer ROI from entry cost.
 	//
-	//                                                                   stab    stab  stab   expl    expl  expl
-	//                                                          stab  expl  debt  rep   rep   debt   aura  aura  debt
-	//                                                          bonus bonus relief pct  spend  cap    pct  spend  cap
-	// Resource spend and thresholds cut (2026-03-15) so greedy ceiling exceeds 80%.
-	// Old spend bankrupted the player by mid-season (greedy only 47.6%).
-	// Halved spend got greedy to 71%, halved thresholds should push past 80%.
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 46, ExploitAuraPct: 0.06, ExploitAuraSpend: 3, ExploitDebtCap: 28},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.06, StabilizeRepSpend: 2, StabilizeDebtCap: 48, ExploitAuraPct: 0.05, ExploitAuraSpend: 3, ExploitDebtCap: 30},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.04, StabilizeRepSpend: 2, StabilizeDebtCap: 40, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 38},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 42, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 34},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.03, StabilizeRepSpend: 2, StabilizeDebtCap: 38, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 40},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 44, ExploitAuraPct: 0.06, ExploitAuraSpend: 3, ExploitDebtCap: 30},
-	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 42, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 36},
+	// Spend, thresholds, and debt caps are UNIFORM across all factions so the
+	// current tick looks identical regardless of which lane is better. Only
+	// HazardBonus determines per-faction commit value. Base hazard yield = 10.
+	// Commit yield = 10 + HazardBonus. Hold penalty = 8.
+	//   Profitable (commit > hold): bonus > 0 → net commit clearly positive
+	//   Trap (commit < hold): bonus <= -15 → commit yields <= -5, worse than -8 hold
+	// 3 profitable, 4 traps. Agent must learn from reveals which factions pay.
+	//
+	//                                                           hazard  stab  expl  debt   stab  stab stab  expl  expl expl
+	//                                                           bonus  bonus bonus relief  rpct rspnd dcap  apct aspnd dcap
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 50, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: -20, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 30, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: -25, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: -15, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: 20, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: -30, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 }
 
 var devRegimes = []devRegime{
@@ -627,30 +632,31 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 func buildPreparednessHazardElement(cluster int, theme devTheme, plan devClusterPlan, budget resourceBudget) StoryElement {
 	beats := make([]StoryBeat, 0, plan.Hazard)
 
-	// Compute thresholds as fractions of the season's resource budget.
-	// Minimum threshold of 2 prevents zero-threshold degeneracy on tiny seasons.
-	factionRep := budget.RepPerFaction[theme.Faction.ID]
-	stabilizeRepBase := maxInt64(2, int64(theme.Faction.StabilizeRepPct*float64(factionRep)))
-	exploitAuraBase := maxInt64(2, int64(theme.Faction.ExploitAuraPct*float64(budget.TotalAura)))
+	// Simplified binary hazard: commit (spend 1 faction rep, get hidden reward)
+	// vs hold (small miss penalty). Reward varies by faction — 3 factions are
+	// profitable (commit > hold), 4 are traps (commit < hold). The agent must
+	// learn from past outcomes which factions are worth spending resources on.
+	//
+	// Commit reward = 40 + HazardBonus. HazardBonus ranges -30 to +50.
+	//   Profitable factions: bonus >= 0, net yield >= 40 vs hold penalty of 8
+	//   Trap factions: bonus <= -25, net yield <= 15 minus rep cost < hold penalty
+	//
+	// Rep requirement = 2 (uniform). Spend = 1 per commit. With seeded rep of
+	// 2× threshold per faction and standing work replenishing, the budget supports
+	// ~30 commits. Greedy commits on ~24 profitable beats and holds on ~18 traps.
+	const (
+		hazardRepThreshold int64 = 2
+		hazardRepSpend     int64 = 1
+		hazardDebtCap      int64 = 45
+		hazardBaseYield    int64 = 10
+		hazardMissPenalty  int64 = 8
+	)
 
 	for i := 1; i <= plan.Hazard; i++ {
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
-		stabilizeTarget := target + ".stabilize"
-		exploitTarget := target + ".exploit"
-		stabilizeRep := stabilizeRepBase
-		stabilizeRepSpend := theme.Faction.StabilizeRepSpend
-		stabilizeDebtCap := theme.Faction.StabilizeDebtCap
-		exploitAura := exploitAuraBase
-		exploitAuraSpend := theme.Faction.ExploitAuraSpend
-		exploitDebtCap := theme.Faction.ExploitDebtCap
-		// Answer-neutral: describe the hazard event without hinting at
-		// stabilize vs exploit. The right choice depends on visible player
-		// state (reputation, aura, debt) and faction profile learned over time.
-		//
-		// Single template so skeleton is identical across all factions/regimes.
 		sig := clusterSignature(theme)
 		sourceText := fmt.Sprintf(
-			"%s struck the %s sector. %s has posted two response lanes with different standing requirements. Check your current state before committing.",
+			"%s struck the %s sector. %s is requesting an emergency response. Committing spends faction standing.",
 			theme.Hazard,
 			sig,
 			theme.Faction.Name,
@@ -664,79 +670,50 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
 
+		commitYield := hazardBaseYield + theme.Faction.HazardBonus
+		isBest := commitYield > hazardMissPenalty
+		commitClass := "best"
+		holdClass := "bad"
+		if !isBest {
+			commitClass = "bad"
+			holdClass = "best"
+		}
+
 		rules := []Rule{
 			{
-				Match: ActionMatch{Command: "commit", Target: stabilizeTarget, Option: "stabilize"},
+				Match: ActionMatch{Command: "commit", Target: target, Option: "respond"},
 				Requirements: RuleRequirements{
 					RequiresAvailability: []string{defaultAvailability},
-					MinReputation:        map[string]int64{theme.Faction.ID: stabilizeRep},
-					MaxDebt:              stabilizeDebtCap,
+					MinReputation:        map[string]int64{theme.Faction.ID: hazardRepThreshold},
+					MaxDebt:              hazardDebtCap,
 				},
 				Effects: StateEffects{
-					ReputationDelta: map[string]int64{theme.Faction.ID: -stabilizeRepSpend},
+					ReputationDelta: map[string]int64{theme.Faction.ID: -hazardRepSpend},
 				},
 				Delta: ScoreDelta{
-					Yield:         46 + int64(i*5) + theme.Faction.StabilizeBonus,
-					Insight:       10 + int64(i*2),
-					Aura:          0,
-					Debt:          -(5 + theme.Faction.StabilizeDebtRelief/2),
-					MissPenalties: 0,
+					Yield:   commitYield,
+					Insight: 5,
 				},
-				Label:          fmt.Sprintf("%s trusted you to run the %s protocol and contain the spill cleanly.", theme.Faction.Name, theme.Faction.Protocol),
-				Classification: "best",
+				Label:          fmt.Sprintf("%s logged your response to the %s incident.", theme.Faction.Name, theme.Hazard),
+				Classification: commitClass,
 			},
 			{
-				Match: ActionMatch{Command: "commit", Target: stabilizeTarget, Option: "stabilize"},
+				Match: ActionMatch{Command: "commit", Target: target, Option: "respond"},
 				Requirements: RuleRequirements{
 					RequiresAvailability: []string{defaultAvailability},
 				},
 				Delta: ScoreDelta{
-					Yield:         0,
-					Insight:       0,
-					Aura:          0,
-					Debt:          2 + int64(i/2),
-					MissPenalties: 18 + int64(i*2),
+					MissPenalties: 12,
+					Debt:          2,
 				},
-				Label:          "You reached for faction cover without enough standing to clear the lane.",
-				Classification: "bad",
-			},
-			{
-				Match: ActionMatch{Command: "commit", Target: exploitTarget, Option: "exploit"},
-				Requirements: RuleRequirements{
-					RequiresAvailability: []string{defaultAvailability},
-					MinAura:              exploitAura,
-					MaxDebt:              exploitDebtCap,
-				},
-				Delta: ScoreDelta{
-					Yield:         62 + int64(i*8) + theme.Faction.ExploitBonus,
-					Insight:       8 + int64(i*2),
-					Aura:          -exploitAuraSpend,
-					Debt:          2 + int64(i/2),
-					MissPenalties: 0,
-				},
-				Label:          "You exploited the disruption for value, burning readiness to do it.",
-				Classification: "best",
-			},
-			{
-				Match: ActionMatch{Command: "commit", Target: exploitTarget, Option: "exploit"},
-				Requirements: RuleRequirements{
-					RequiresAvailability: []string{defaultAvailability},
-				},
-				Delta: ScoreDelta{
-					Yield:         0,
-					Insight:       0,
-					Aura:          0,
-					Debt:          4 + int64(i),
-					MissPenalties: 20 + int64(i*2),
-				},
-				Label:          "You lunged for upside without enough visible margin to survive the blast.",
+				Label:          "You tried to respond but lacked the standing to act.",
 				Classification: "bad",
 			},
 			{
 				Match:          ActionMatch{Command: "hold"},
-				Delta:          ScoreDelta{Yield: 0, Insight: 0, Aura: 0, Debt: 0, MissPenalties: 14 + int64(i*2)},
-				Label:          "The interrupt rolled through while you hesitated.",
-				Classification: "bad",
+				Delta:          ScoreDelta{MissPenalties: hazardMissPenalty},
+				Label:          "The incident passed without your involvement.",
+				Classification: holdClass,
 			},
 		}
 
@@ -748,7 +725,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			BeatID:           fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i),
 			ClockClass:       "interrupt",
 			ConsumesTags:     hazardConsumes,
-			ResourceTouches:  []string{"availability", "aura", "debt", "reputation"},
+			ResourceTouches:  []string{"availability", "reputation", "debt"},
 			PrecursorBeatIDs: precursors,
 			Sources: []Source{
 				{
@@ -759,41 +736,22 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			},
 			Opportunities: []Opportunity{
 				{
-					OpportunityID:   stabilizeTarget,
+					OpportunityID:   target,
 					AllowedCommands: []string{"commit", "hold"},
-					AllowedOptions:  []string{"stabilize"},
+					AllowedOptions:  []string{"respond"},
 					PublicRequirements: []PublicRequirement{
 						{
 							Metric:   "reputation",
 							Scope:    theme.Faction.ID,
 							Operator: ">=",
-							Value:    stabilizeRep,
-							Label:    fmt.Sprintf("%s standing %d+ unlocks %s; successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, stabilizeRepSpend),
+							Value:    hazardRepThreshold,
+							Label:    fmt.Sprintf("%s standing %d+ required; successful response spends %d standing.", theme.Faction.Name, hazardRepThreshold, hazardRepSpend),
 						},
 						{
 							Metric:   "debt",
 							Operator: "<=",
-							Value:    stabilizeDebtCap,
-							Label:    fmt.Sprintf("Debt %d or lower preserves trusted response access.", stabilizeDebtCap),
-						},
-					},
-				},
-				{
-					OpportunityID:   exploitTarget,
-					AllowedCommands: []string{"commit"},
-					AllowedOptions:  []string{"exploit"},
-					PublicRequirements: []PublicRequirement{
-						{
-							Metric:   "aura",
-							Operator: ">=",
-							Value:    exploitAura,
-							Label:    fmt.Sprintf("Aura %d+ unlocks exploitation; successful use spends %d aura.", exploitAura, exploitAuraSpend),
-						},
-						{
-							Metric:   "debt",
-							Operator: "<=",
-							Value:    exploitDebtCap,
-							Label:    fmt.Sprintf("Debt %d or lower keeps the exploit lane viable.", exploitDebtCap),
+							Value:    hazardDebtCap,
+							Label:    fmt.Sprintf("Debt %d or lower required.", hazardDebtCap),
 						},
 					},
 				},

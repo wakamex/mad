@@ -79,21 +79,32 @@ var devFactions = []devFaction{
 	//
 	// Spend, thresholds, and debt caps are UNIFORM across all factions so the
 	// current tick looks identical regardless of which lane is better. Only
-	// HazardBonus determines per-faction commit value. Base hazard yield = 10.
-	// Commit yield = 10 + HazardBonus. Hold penalty = 8.
-	//   Profitable (commit > hold): bonus > 0 → net commit clearly positive
-	//   Trap (commit < hold): bonus <= -15 → commit yields <= -5, worse than -8 hold
-	// 3 profitable, 4 traps. Agent must learn from reveals which factions pay.
+	// HazardBonus is the MEAN reward for committing to this faction's hazards.
+	// Mix of profitable (positive mean) and trap (negative mean) factions.
+	// Per-beat reward = HazardBonus + beat variation (±5, hidden from model).
+	// Hold penalty = 3. Commit is best when reward > 3, hold when reward <= 3.
+	//
+	// Faction names are deliberately counter-intuitive to the bonus mapping
+	// to prevent the model from using name semantics to infer the answer.
+	// Beat variation ensures single observations are unreliable.
+	//
+	//   Glass Choir:    mean +30 → range [25, 35]  (profitable)
+	//   Harbor Union:   mean +20 → range [15, 25]  (profitable)
+	//   Archive Office: mean +12 → range [7, 17]   (profitable)
+	//   Civic Ward:     mean  -8 → range [-13, -3] (trap)
+	//   Silt Exchange:  mean -12 → range [-17, -7] (trap)
+	//   Relay Guild:    mean -18 → range [-23, -13](trap)
+	//   Copper Terrace: mean -25 → range [-30, -20](trap)
 	//
 	//                                                           hazard  stab  expl  debt   stab  stab stab  expl  expl expl
 	//                                                           bonus  bonus bonus relief  rpct rspnd dcap  apct aspnd dcap
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 50, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: -20, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 30, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: 20, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: -15, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: -25, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: -30, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 30, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: -8, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 20, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: 12, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: -12, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: -18, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: -25, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 }
 
 var devRegimes = []devRegime{
@@ -632,23 +643,16 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 func buildPreparednessHazardElement(cluster int, theme devTheme, plan devClusterPlan, budget resourceBudget) StoryElement {
 	beats := make([]StoryBeat, 0, plan.Hazard)
 
-	// Simplified binary hazard: commit (spend 1 faction rep, get hidden reward)
-	// vs hold (small miss penalty). Reward varies by faction — 3 factions are
-	// profitable (commit > hold), 4 are traps (commit < hold). The agent must
-	// learn from past outcomes which factions are worth spending resources on.
-	//
-	// Commit reward = 40 + HazardBonus. HazardBonus ranges -30 to +50.
-	//   Profitable factions: bonus >= 0, net yield >= 40 vs hold penalty of 8
-	//   Trap factions: bonus <= -25, net yield <= 15 minus rep cost < hold penalty
-	//
-	// Rep requirement = 2 (uniform). Spend = 1 per commit. With seeded rep of
-	// 2× threshold per faction and standing work replenishing, the budget supports
-	// ~30 commits. Greedy commits on ~24 profitable beats and holds on ~18 traps.
+	// Binary commit/hold hazard with profitable and trap factions.
+	// Reward = HazardBonus + beat variation (±5). Hold penalty = 3.
+	// Commit is best when reward > hold penalty. Trap factions give
+	// negative yield — committing actively hurts. The model must learn
+	// from reveal feedback which factions are worth committing to.
 	const (
 		hazardRepThreshold int64 = 2
+		hazardRepCost      int64 = 1
 		hazardDebtCap      int64 = 45
-		hazardBaseYield    int64 = 10
-		hazardMissPenalty  int64 = 8
+		hazardMissPenalty  int64 = 3
 	)
 
 	for i := 1; i <= plan.Hazard; i++ {
@@ -669,12 +673,13 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
 
-		// Yield varies with beat index (hidden from model since IDs are
-		// stripped). This prevents single-observation memorization — the model
-		// sees varying rewards for the same faction and must average over time.
-		beatVariation := int64((i - 3) * 5)  // -10, -5, 0, +5, +10
-		commitYield := hazardBaseYield + theme.Faction.HazardBonus + beatVariation
-		repSpend := int64(1)
+		// Reward = faction mean + beat variation (±5, hidden from model).
+		// Profitable factions: all beats well above hold penalty.
+		// Trap factions: all beats negative, well below hold penalty.
+		// Beat variation adds noise but doesn't flip the answer for most factions.
+		beatVariation := int64((i-3)*3 + (i%2)*2 - 1) // range roughly -7 to +5
+		commitYield := theme.Faction.HazardBonus + beatVariation
+		repSpend := hazardRepCost
 		isBest := commitYield > hazardMissPenalty
 		commitClass := "best"
 		holdClass := "bad"

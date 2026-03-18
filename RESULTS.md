@@ -48,11 +48,11 @@ Binary commit/hold decision per faction. Commit spends 1 faction reputation and 
 
 | Condition | Score | Hazard best-action |
 |---|---:|---:|
-| **Persistent** | **696** | **33/42 (78.6%)** |
-| Ephemeral | 664 | 24/42 (57.1%) |
-| Greedy ceiling | 935 | 40/42 (95.2%) |
+| **Persistent** | **~500** | **35/42 (83.3%)** |
+| Ephemeral | 228 | 26/42 (61.9%) |
+| Greedy ceiling | 530 | 40/42 (95.2%) |
 
-**Memory gap: +21.4pp** (78.6% vs 57.1%). Ephemeral can't distinguish profitable factions from traps without memory. Persistent learns from reveal feedback.
+**Memory gap: +21pp** (83% vs 62%). Ephemeral can't distinguish profitable factions from traps without memory. Persistent learns from reveal feedback. Beat variation (±5) prevents single-observation memorization.
 
 **Design journey (2026-03-13 → 2026-03-18):**
 1. Original two-lane design (stabilize vs exploit): greedy ceiling only 47.6% due to resource depletion. Model matched ceiling — no room for gap.
@@ -111,7 +111,7 @@ Each family was tested using focused 90-tick seasons. All runs use Claude Haiku 
 | **payoff_gate** | 29% | 28% | **96%** | **+68pp** |
 | **reputation_ladder** | 33% | 44% | **81%** | **+37pp** |
 | **seed_clue_chain** | — | — | — | observe-only |
-| **hazard_interrupt** | 50% | 57% | **79%** | **+21pp** |
+| **hazard_interrupt** | 50% | 62% | **83%** | **+21pp** |
 | **standing_work_loop** | ~50% | — | 56% | low ceiling, hazard support only |
 
 ### Raw results (current design, 2026-03-12)
@@ -138,7 +138,7 @@ Ladder accuracy jumped from 30% to 81% after removing cosmetic PublicRequirement
 
 Ephemeral payoff also rose (12% → 28%) suggesting the old run had additional bad luck or the gate text was also suppressing ephemeral attempts. 28% matches random baseline exactly — good signal.
 
-**hazard_interrupt** was redesigned from two-lane (stabilize/exploit) to binary (commit/hold) with hidden per-faction rewards. Persistent 79% vs ephemeral 57% — **+21pp memory gap**. The model learns from reveals which factions are profitable vs traps.
+**hazard_interrupt** was redesigned from two-lane (stabilize/exploit) to binary (commit/hold) with hidden per-faction rewards. Persistent 83% vs ephemeral 62% — **+21pp memory gap**. The model learns from reveals which factions are profitable vs traps.
 
 ## Key Comparison Table
 

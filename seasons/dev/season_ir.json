@@ -924,7 +924,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 50,
+                  "yield": 25,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -963,7 +963,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1042,7 +1042,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 55,
+                  "yield": 26,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -1081,7 +1081,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1161,7 +1161,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 60,
+                  "yield": 31,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -1200,7 +1200,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1280,7 +1280,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 65,
+                  "yield": 32,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -1319,7 +1319,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1399,7 +1399,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 70,
+                  "yield": 37,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -1438,7 +1438,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -3175,7 +3175,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -20,
+                  "yield": -13,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -3214,7 +3214,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3293,7 +3293,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -15,
+                  "yield": -12,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -3332,7 +3332,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3412,7 +3412,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -10,
+                  "yield": -7,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -3451,7 +3451,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3531,7 +3531,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -5,
+                  "yield": -6,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -3570,7 +3570,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3650,7 +3650,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 0,
+                  "yield": -1,
                   "insight": 5,
                   "aura": 0,
                   "debt": 0,
@@ -3689,7 +3689,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 8
+                  "miss_penalties": 3
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"

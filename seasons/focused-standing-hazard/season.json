@@ -155,7 +155,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -20,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -572,7 +572,7 @@
               }
             },
             "delta": {
-              "yield": -20,
+              "yield": -30,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -685,7 +685,7 @@
               }
             },
             "delta": {
-              "yield": 40,
+              "yield": 30,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -874,7 +874,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 50,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -1139,7 +1139,7 @@
               }
             },
             "delta": {
-              "yield": -5,
+              "yield": -15,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -1252,7 +1252,7 @@
               }
             },
             "delta": {
-              "yield": 40,
+              "yield": 35,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -1796,7 +1796,7 @@
               }
             },
             "delta": {
-              "yield": -20,
+              "yield": -25,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -1916,7 +1916,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -15,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -2764,7 +2764,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 50,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -2877,7 +2877,7 @@
               }
             },
             "delta": {
-              "yield": -5,
+              "yield": -10,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -3073,14 +3073,14 @@
               }
             },
             "delta": {
-              "yield": -15,
+              "yield": 20,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Archive Office logged your response to the silt collapse incident.",
-            "classification": "bad"
+            "classification": "best"
           },
           {
             "match": {
@@ -3115,7 +3115,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "best"
+            "classification": "bad"
           }
         ]
       },
@@ -3426,7 +3426,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -5,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -3698,7 +3698,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": 0,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -3894,7 +3894,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 55,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -4438,14 +4438,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": -25,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -4480,7 +4480,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },
@@ -4703,7 +4703,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -20,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -4816,7 +4816,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 55,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -5056,7 +5056,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 65,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -5176,7 +5176,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -15,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -5416,14 +5416,14 @@
               }
             },
             "delta": {
-              "yield": -15,
+              "yield": 25,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Archive Office logged your response to the silt collapse incident.",
-            "classification": "bad"
+            "classification": "best"
           },
           {
             "match": {
@@ -5458,7 +5458,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "best"
+            "classification": "bad"
           }
         ]
       },
@@ -5612,7 +5612,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 65,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -5732,7 +5732,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 70,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -5852,14 +5852,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": -20,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -5894,7 +5894,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },
@@ -6124,7 +6124,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 75,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -6244,14 +6244,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": -15,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -6286,7 +6286,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },
@@ -6364,14 +6364,14 @@
               }
             },
             "delta": {
-              "yield": -15,
+              "yield": 30,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Archive Office logged your response to the silt collapse incident.",
-            "classification": "bad"
+            "classification": "best"
           },
           {
             "match": {
@@ -6406,7 +6406,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "best"
+            "classification": "bad"
           }
         ]
       },
@@ -6484,7 +6484,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 80,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -6604,7 +6604,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -5,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -6724,14 +6724,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": -10,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -6766,7 +6766,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },
@@ -7300,14 +7300,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": -5,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -7342,7 +7342,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },
@@ -7572,7 +7572,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 70,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -7768,7 +7768,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 75,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -7964,14 +7964,14 @@
               }
             },
             "delta": {
-              "yield": -15,
+              "yield": 35,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Archive Office logged your response to the silt collapse incident.",
-            "classification": "bad"
+            "classification": "best"
           },
           {
             "match": {
@@ -8006,7 +8006,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "best"
+            "classification": "bad"
           }
         ]
       },
@@ -8084,14 +8084,14 @@
               }
             },
             "delta": {
-              "yield": -15,
+              "yield": 40,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Archive Office logged your response to the silt collapse incident.",
-            "classification": "bad"
+            "classification": "best"
           },
           {
             "match": {
@@ -8126,7 +8126,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "best"
+            "classification": "bad"
           }
         ]
       },
@@ -8432,14 +8432,14 @@
               }
             },
             "delta": {
-              "yield": 30,
+              "yield": 0,
               "insight": 5,
               "aura": 0,
               "debt": 0,
               "miss_penalties": 0
             },
             "label": "Relay Guild logged your response to the copper burn incident.",
-            "classification": "best"
+            "classification": "bad"
           },
           {
             "match": {
@@ -8474,7 +8474,7 @@
               "miss_penalties": 8
             },
             "label": "The incident passed without your involvement.",
-            "classification": "bad"
+            "classification": "best"
           }
         ]
       },

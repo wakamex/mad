@@ -261,7 +261,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -20,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -381,7 +381,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -15,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -667,7 +667,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": -5,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -810,7 +810,7 @@
               }
             },
             "delta": {
-              "yield": -10,
+              "yield": 0,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -2298,7 +2298,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 50,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -2555,7 +2555,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 55,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -3306,7 +3306,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 65,
               "insight": 5,
               "aura": 0,
               "debt": 0,
@@ -3428,7 +3428,7 @@
               }
             },
             "delta": {
-              "yield": 60,
+              "yield": 70,
               "insight": 5,
               "aura": 0,
               "debt": 0,

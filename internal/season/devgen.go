@@ -90,9 +90,9 @@ var devFactions = []devFaction{
 	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 50, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: -20, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 30, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: -25, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: 20, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: -15, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: 20, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: -25, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: -30, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 }
 
@@ -646,7 +646,6 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 	// ~30 commits. Greedy commits on ~24 profitable beats and holds on ~18 traps.
 	const (
 		hazardRepThreshold int64 = 2
-		hazardRepSpend     int64 = 1
 		hazardDebtCap      int64 = 45
 		hazardBaseYield    int64 = 10
 		hazardMissPenalty  int64 = 8
@@ -670,7 +669,12 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
 
-		commitYield := hazardBaseYield + theme.Faction.HazardBonus
+		// Yield varies with beat index (hidden from model since IDs are
+		// stripped). This prevents single-observation memorization — the model
+		// sees varying rewards for the same faction and must average over time.
+		beatVariation := int64((i - 3) * 5)  // -10, -5, 0, +5, +10
+		commitYield := hazardBaseYield + theme.Faction.HazardBonus + beatVariation
+		repSpend := int64(1)
 		isBest := commitYield > hazardMissPenalty
 		commitClass := "best"
 		holdClass := "bad"
@@ -688,7 +692,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					MaxDebt:              hazardDebtCap,
 				},
 				Effects: StateEffects{
-					ReputationDelta: map[string]int64{theme.Faction.ID: -hazardRepSpend},
+					ReputationDelta: map[string]int64{theme.Faction.ID: -repSpend},
 				},
 				Delta: ScoreDelta{
 					Yield:   commitYield,
@@ -745,7 +749,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Scope:    theme.Faction.ID,
 							Operator: ">=",
 							Value:    hazardRepThreshold,
-							Label:    fmt.Sprintf("%s standing %d+ required; successful response spends %d standing.", theme.Faction.Name, hazardRepThreshold, hazardRepSpend),
+							Label:    fmt.Sprintf("%s standing %d+ required; successful response spends %d standing.", theme.Faction.Name, hazardRepThreshold, repSpend),
 						},
 						{
 							Metric:   "debt",

@@ -14,6 +14,7 @@ type IRFile struct {
 	RevealLagTicks  int              `json:"reveal_lag_ticks"`
 	ShardCount      int              `json:"shard_count"`
 	ClockDefaults   map[string]int64 `json:"clock_defaults"`
+	InitialState    *InitialState    `json:"initial_state,omitempty"`
 	Elements        []StoryElement   `json:"elements"`
 }
 
@@ -165,6 +166,7 @@ func CompileIR(ir IRFile) (File, error) {
 		ScoreEpochTicks: ir.ScoreEpochTicks,
 		RevealLagTicks:  ir.RevealLagTicks,
 		ShardCount:      ir.ShardCount,
+		InitialState:    ir.InitialState,
 		Ticks:           compiled,
 	}
 	return file, Validate(file)

@@ -1,0 +1,3363 @@
+{
+  "generated_at": "2026-03-18T17:30:25.315536776Z",
+  "season_path": "/code/mad/seasons/focused-standing-hazard/season.json",
+  "season_id": "dev-standing+hazard-90tick",
+  "season_title": "Focused standing+hazard (90-Tick Dev)",
+  "runs": [
+    {
+      "runner": {
+        "provider": "claude",
+        "model": "haiku",
+        "effort": "low",
+        "memory_mode": "off",
+        "context_mode": "ephemeral",
+        "service_tier": "inherit"
+      },
+      "text_mode": "full",
+      "run_number": 1,
+      "run_count": 1,
+      "session": {
+        "workdir": "/code/mad",
+        "native_home_dir": "/code/mad/runs/runner-state/claude-haiku-low-mem-off-ctx-ephemeral/run-001/claude-home/.claude",
+        "native_project_dir": "/code/mad/runs/runner-state/claude-haiku-low-mem-off-ctx-ephemeral/run-001/claude-home/.claude/projects/-code-mad",
+        "native_memory_path": "/code/mad/runs/runner-state/claude-haiku-low-mem-off-ctx-ephemeral/run-001/claude-home/.claude/projects/-code-mad/memory/MEMORY.md"
+      },
+      "season_id": "dev-standing+hazard-90tick",
+      "season_title": "Focused standing+hazard (90-Tick Dev)",
+      "start_tick": 0,
+      "end_tick": 90,
+      "step_count": 12,
+      "started_at": "2026-03-18T17:27:24.325337886Z",
+      "completed_at": "2026-03-18T17:30:25.315536246Z",
+      "final_state": {
+        "current_tick": 11,
+        "ledger": {
+          "score": 278,
+          "yield": 227,
+          "insight": 48,
+          "aura": 5,
+          "debt": 2,
+          "miss_penalties": 0
+        },
+        "reputation": {
+          "archive_office": 8,
+          "civic_ward": 4,
+          "copper_terrace": 3,
+          "glass_choir": 7,
+          "harbor_union": 2,
+          "relay_guild": 6,
+          "silt_exchange": 4
+        },
+        "availability": "available",
+        "cooldowns": {
+          "archive_office.004.standing": 16,
+          "glass_choir.008.standing": 14
+        }
+      },
+      "final_score": {
+        "score": 278,
+        "yield": 227,
+        "insight": 48,
+        "aura": 5,
+        "debt": 2,
+        "miss_penalties": 0
+      },
+      "breakdown": {
+        "by_family": [
+          {
+            "key": "hazard_interrupt",
+            "score": 292,
+            "yield": 227,
+            "insight": 46,
+            "aura": -3,
+            "debt": -22,
+            "miss_penalties": 0,
+            "occurrences": 4,
+            "best_count": 4,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "standing_work_loop",
+            "score": 3,
+            "yield": 0,
+            "insight": 2,
+            "aura": 4,
+            "debt": 3,
+            "miss_penalties": 0,
+            "occurrences": 8,
+            "best_count": 6,
+            "bad_count": 0,
+            "miss_count": 2
+          }
+        ],
+        "by_element": [
+          {
+            "key": "cluster_002_hazard",
+            "score": 80,
+            "yield": 59,
+            "insight": 12,
+            "aura": 0,
+            "debt": -9,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_007_hazard",
+            "score": 73,
+            "yield": 53,
+            "insight": 12,
+            "aura": 0,
+            "debt": -8,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_001_hazard",
+            "score": 71,
+            "yield": 66,
+            "insight": 10,
+            "aura": -3,
+            "debt": 2,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_003_hazard",
+            "score": 68,
+            "yield": 49,
+            "insight": 12,
+            "aura": 0,
+            "debt": -7,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_008_standing",
+            "score": 2,
+            "yield": 0,
+            "insight": 1,
+            "aura": 1,
+            "debt": 0,
+            "miss_penalties": 0,
+            "occurrences": 4,
+            "best_count": 2,
+            "bad_count": 0,
+            "miss_count": 2
+          },
+          {
+            "key": "cluster_004_standing",
+            "score": 1,
+            "yield": 0,
+            "insight": 1,
+            "aura": 1,
+            "debt": 1,
+            "miss_penalties": 0,
+            "occurrences": 2,
+            "best_count": 2,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_006_standing",
+            "score": 0,
+            "yield": 0,
+            "insight": 0,
+            "aura": 1,
+            "debt": 1,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "cluster_009_standing",
+            "score": 0,
+            "yield": 0,
+            "insight": 0,
+            "aura": 1,
+            "debt": 1,
+            "miss_penalties": 0,
+            "occurrences": 1,
+            "best_count": 1,
+            "bad_count": 0,
+            "miss_count": 0
+          }
+        ],
+        "by_source_type": [
+          {
+            "key": "critical_broadcast",
+            "score": 292,
+            "yield": 227,
+            "insight": 46,
+            "aura": -3,
+            "debt": -22,
+            "miss_penalties": 0,
+            "occurrences": 4,
+            "best_count": 4,
+            "bad_count": 0,
+            "miss_count": 0
+          },
+          {
+            "key": "public_notice",
+            "score": 3,
+            "yield": 0,
+            "insight": 2,
+            "aura": 4,
+            "debt": 3,
+            "miss_penalties": 0,
+            "occurrences": 8,
+            "best_count": 6,
+            "bad_count": 0,
+            "miss_count": 2
+          }
+        ]
+      },
+      "score_trace": [
+        {
+          "tick_index": 0,
+          "tick_id": "S1-T0001",
+          "ledger": {
+            "score": 4,
+            "yield": 0,
+            "insight": 0,
+            "aura": 4,
+            "debt": 0,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 1,
+          "tick_id": "S1-T0002",
+          "ledger": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 4,
+            "debt": 0,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 2,
+          "tick_id": "S1-T0003",
+          "ledger": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 5,
+            "debt": 1,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 3,
+          "tick_id": "S1-T0004",
+          "ledger": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 6,
+            "debt": 2,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 4,
+          "tick_id": "S1-T0005",
+          "ledger": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 7,
+            "debt": 3,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 5,
+          "tick_id": "S1-T0006",
+          "ledger": {
+            "score": 76,
+            "yield": 59,
+            "insight": 13,
+            "aura": 7,
+            "debt": 3,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 6,
+          "tick_id": "S1-T0007",
+          "ledger": {
+            "score": 144,
+            "yield": 112,
+            "insight": 25,
+            "aura": 7,
+            "debt": 0,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 7,
+          "tick_id": "S1-T0008",
+          "ledger": {
+            "score": 205,
+            "yield": 161,
+            "insight": 37,
+            "aura": 7,
+            "debt": 0,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 8,
+          "tick_id": "S1-T0009",
+          "ledger": {
+            "score": 206,
+            "yield": 161,
+            "insight": 37,
+            "aura": 8,
+            "debt": 0,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 9,
+          "tick_id": "S1-T0010",
+          "ledger": {
+            "score": 277,
+            "yield": 227,
+            "insight": 47,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 10,
+          "tick_id": "S1-T0011",
+          "ledger": {
+            "score": 277,
+            "yield": 227,
+            "insight": 47,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          }
+        },
+        {
+          "tick_index": 11,
+          "tick_id": "S1-T0012",
+          "ledger": {
+            "score": 278,
+            "yield": 227,
+            "insight": 48,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          }
+        }
+      ],
+      "steps": [
+        {
+          "tick_index": 0,
+          "tick_id": "S1-T0001",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 0,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0001",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_008.work_1",
+                  "source_type": "public_notice",
+                  "text": "Glass Choir posted another low-pay registry shift in the relay row. The work is ordinary, the memory of who showed up is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "registry"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.008.work.1 [registry]",
+                "command": "commit",
+                "target": "quest.cluster.008.work.1",
+                "option": "registry"
+              }
+            ],
+            "current_state": {
+              "current_tick": 0,
+              "ledger": {
+                "score": 4,
+                "yield": 0,
+                "insight": 0,
+                "aura": 4,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {}
+            }
+          },
+          "decision": {
+            "action_index": 1
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "hold"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "hold"
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 0,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "label": "You ignored the routine work.",
+              "classification": "miss"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_008_standing",
+              "beat_id": "cluster_008.standing.1"
+            },
+            "correct": false,
+            "label": "You ignored the routine work.",
+            "score_before": 4,
+            "score_after": 4,
+            "score_delta": 0,
+            "state": {
+              "current_tick": 0,
+              "ledger": {
+                "score": 4,
+                "yield": 0,
+                "insight": 0,
+                "aura": 4,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {}
+            }
+          },
+          "score": {
+            "score": 4,
+            "yield": 0,
+            "insight": 0,
+            "aura": 4,
+            "debt": 0,
+            "miss_penalties": 0
+          },
+          "raw_response": "1",
+          "duration_ms": 5208
+        },
+        {
+          "tick_index": 1,
+          "tick_id": "S1-T0002",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 1,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0002",
+              "clock_class": "interrupt",
+              "deadline_ms": 20000,
+              "sources": [
+                {
+                  "source_id": "critical_broadcast.cluster_002.1",
+                  "source_type": "critical_broadcast",
+                  "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward has posted two response lanes with different standing requirements. Check your current state before committing."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "stabilize"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "reputation",
+                      "scope": "civic_ward",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 48,
+                      "label": "Debt 48 or lower preserves trusted response access."
+                    }
+                  ]
+                },
+                {
+                  "opportunity_id": "hazard.cluster.002.1.exploit",
+                  "allowed_commands": [
+                    "commit"
+                  ],
+                  "allowed_options": [
+                    "exploit"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "aura",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 30,
+                      "label": "Debt 30 or lower keeps the exploit lane viable."
+                    }
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit hazard.cluster.002.1.stabilize [stabilize] | req: Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing.; Debt 48 or lower preserves trusted response access.",
+                "command": "commit",
+                "target": "hazard.cluster.002.1.stabilize",
+                "option": "stabilize"
+              },
+              {
+                "label": "3",
+                "index": 3,
+                "summary": "commit hazard.cluster.002.1.exploit [exploit] | req: Aura 2+ unlocks exploitation; successful use spends 3 aura.; Debt 30 or lower keeps the exploit lane viable.",
+                "command": "commit",
+                "target": "hazard.cluster.002.1.exploit",
+                "option": "exploit"
+              }
+            ],
+            "current_state": {
+              "current_tick": 1,
+              "ledger": {
+                "score": 4,
+                "yield": 0,
+                "insight": 0,
+                "aura": 4,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {}
+            }
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "hazard.cluster.002.1.stabilize",
+              "option": "stabilize"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "hazard.cluster.002.1.stabilize",
+                "option": "stabilize"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ],
+                "max_debt": 48,
+                "min_reputation": {
+                  "civic_ward": 2
+                }
+              },
+              "effects": {
+                "reputation_delta": {
+                  "civic_ward": -2
+                }
+              },
+              "delta": {
+                "yield": 59,
+                "insight": 12,
+                "aura": 0,
+                "debt": -9,
+                "miss_penalties": 0
+              },
+              "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "hazard_interrupt",
+              "element_id": "cluster_002_hazard",
+              "beat_id": "cluster_002.hazard.1"
+            },
+            "correct": true,
+            "label": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly.",
+            "score_before": 4,
+            "score_after": 75,
+            "score_delta": 71,
+            "state": {
+              "current_tick": 1,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 4,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 2,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {}
+            }
+          },
+          "score": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 4,
+            "debt": 0,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 17722
+        },
+        {
+          "tick_index": 2,
+          "tick_id": "S1-T0003",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 2,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0003",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_009.work_1",
+                  "source_type": "public_notice",
+                  "text": "Civic Ward posted another low-pay survey shift in the blind alley. The work is ordinary, the memory of who showed up is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "survey"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.009.work.1 [survey]",
+                "command": "commit",
+                "target": "quest.cluster.009.work.1",
+                "option": "survey"
+              }
+            ],
+            "current_state": {
+              "current_tick": 2,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 4,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 2,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {}
+            }
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.009.work.1",
+              "option": "survey"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.009.work.1",
+                "option": "survey"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "civic_ward.009.standing": 3
+                },
+                "reputation_delta": {
+                  "civic_ward": 2
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 1,
+                "debt": 1,
+                "miss_penalties": 0
+              },
+              "label": "You took the survey shift. The immediate return was small, but Civic Ward logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_009_standing",
+              "beat_id": "cluster_009.standing.1"
+            },
+            "correct": true,
+            "label": "You took the survey shift. The immediate return was small, but Civic Ward logged your name.",
+            "score_before": 75,
+            "score_after": 75,
+            "score_delta": 0,
+            "state": {
+              "current_tick": 2,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 5,
+                "debt": 1,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "civic_ward.009.standing": 6
+              }
+            }
+          },
+          "score": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 5,
+            "debt": 1,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 17713
+        },
+        {
+          "tick_index": 3,
+          "tick_id": "S1-T0004",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 3,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0004",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_004.work_1",
+                  "source_type": "public_notice",
+                  "text": "Archive Office posted another low-pay sorting shift in the ember causeway. The work is ordinary, the memory of who showed up is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "sorting"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.004.work.1 [sorting]",
+                "command": "commit",
+                "target": "quest.cluster.004.work.1",
+                "option": "sorting"
+              }
+            ],
+            "current_state": {
+              "current_tick": 3,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 5,
+                "debt": 1,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 4,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "civic_ward.009.standing": 6
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.004.work.1",
+              "option": "sorting"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.004.work.1",
+                "option": "sorting"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "archive_office.004.standing": 3
+                },
+                "reputation_delta": {
+                  "archive_office": 2
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 1,
+                "debt": 1,
+                "miss_penalties": 0
+              },
+              "label": "You took the sorting shift. The immediate return was small, but Archive Office logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_004_standing",
+              "beat_id": "cluster_004.standing.1"
+            },
+            "correct": true,
+            "label": "You took the sorting shift. The immediate return was small, but Archive Office logged your name.",
+            "score_before": 75,
+            "score_after": 75,
+            "score_delta": 0,
+            "state": {
+              "current_tick": 3,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 6,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "civic_ward.009.standing": 6
+              }
+            }
+          },
+          "score": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 6,
+            "debt": 2,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 6955
+        },
+        {
+          "tick_index": 4,
+          "tick_id": "S1-T0005",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 4,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0005",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_006.work_1",
+                  "source_type": "public_notice",
+                  "text": "Relay Guild posted another low-pay repair shift in the chimney court. The work is ordinary, the memory of who showed up is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "repair"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.006.work.1 [repair]",
+                "command": "commit",
+                "target": "quest.cluster.006.work.1",
+                "option": "repair"
+              }
+            ],
+            "current_state": {
+              "current_tick": 4,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 6,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 4,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "civic_ward.009.standing": 6
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.006.work.1",
+              "option": "repair"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.006.work.1",
+                "option": "repair"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "relay_guild.006.standing": 3
+                },
+                "reputation_delta": {
+                  "relay_guild": 2
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 1,
+                "debt": 1,
+                "miss_penalties": 0
+              },
+              "label": "You took the repair shift. The immediate return was small, but Relay Guild logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_006_standing",
+              "beat_id": "cluster_006.standing.1"
+            },
+            "correct": true,
+            "label": "You took the repair shift. The immediate return was small, but Relay Guild logged your name.",
+            "score_before": 75,
+            "score_after": 75,
+            "score_delta": 0,
+            "state": {
+              "current_tick": 4,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 7,
+                "debt": 3,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "civic_ward.009.standing": 6,
+                "relay_guild.006.standing": 8
+              }
+            }
+          },
+          "score": {
+            "score": 75,
+            "yield": 59,
+            "insight": 12,
+            "aura": 7,
+            "debt": 3,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 16695
+        },
+        {
+          "tick_index": 5,
+          "tick_id": "S1-T0006",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 5,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0006",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_008.work_2",
+                  "source_type": "public_notice",
+                  "text": "A second stocktake rota opened near the relay row. Nobody promises a prize, only that reliable names keep resurfacing later."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.008.work.2",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "stocktake"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.008.work.2 [stocktake]",
+                "command": "commit",
+                "target": "quest.cluster.008.work.2",
+                "option": "stocktake"
+              }
+            ],
+            "current_state": {
+              "current_tick": 5,
+              "ledger": {
+                "score": 75,
+                "yield": 59,
+                "insight": 12,
+                "aura": 7,
+                "debt": 3,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 4,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "civic_ward.009.standing": 6,
+                "relay_guild.006.standing": 8
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              },
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.008.work.2",
+              "option": "stocktake"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.008.work.2",
+                "option": "stocktake"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "glass_choir.008.standing": 4
+                },
+                "reputation_delta": {
+                  "glass_choir": 2
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 1,
+                "aura": 0,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "label": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_008_standing",
+              "beat_id": "cluster_008.standing.2"
+            },
+            "correct": true,
+            "label": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name.",
+            "score_before": 75,
+            "score_after": 76,
+            "score_delta": 1,
+            "state": {
+              "current_tick": 5,
+              "ledger": {
+                "score": 76,
+                "yield": 59,
+                "insight": 13,
+                "aura": 7,
+                "debt": 3,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 6,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "civic_ward.009.standing": 6,
+                "glass_choir.008.standing": 10,
+                "relay_guild.006.standing": 8
+              }
+            }
+          },
+          "score": {
+            "score": 76,
+            "yield": 59,
+            "insight": 13,
+            "aura": 7,
+            "debt": 3,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 10595
+        },
+        {
+          "tick_index": 6,
+          "tick_id": "S1-T0007",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 6,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0007",
+              "clock_class": "interrupt",
+              "deadline_ms": 20000,
+              "sources": [
+                {
+                  "source_id": "critical_broadcast.cluster_007.1",
+                  "source_type": "critical_broadcast",
+                  "text": "relay fracture struck the Copper Terrace vermilion river stairs sector. Copper Terrace has posted two response lanes with different standing requirements. Check your current state before committing."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "hazard.cluster.007.1.stabilize",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "stabilize"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "reputation",
+                      "scope": "copper_terrace",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Copper Terrace standing 2+ unlocks trace brace; successful use spends 1 standing."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 42,
+                      "label": "Debt 42 or lower preserves trusted response access."
+                    }
+                  ]
+                },
+                {
+                  "opportunity_id": "hazard.cluster.007.1.exploit",
+                  "allowed_commands": [
+                    "commit"
+                  ],
+                  "allowed_options": [
+                    "exploit"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "aura",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Aura 2+ unlocks exploitation; successful use spends 2 aura."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 36,
+                      "label": "Debt 36 or lower keeps the exploit lane viable."
+                    }
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit hazard.cluster.007.1.stabilize [stabilize] | req: Copper Terrace standing 2+ unlocks trace brace; successful use spends 1 standing.; Debt 42 or lower preserves trusted response access.",
+                "command": "commit",
+                "target": "hazard.cluster.007.1.stabilize",
+                "option": "stabilize"
+              },
+              {
+                "label": "3",
+                "index": 3,
+                "summary": "commit hazard.cluster.007.1.exploit [exploit] | req: Aura 2+ unlocks exploitation; successful use spends 2 aura.; Debt 36 or lower keeps the exploit lane viable.",
+                "command": "commit",
+                "target": "hazard.cluster.007.1.exploit",
+                "option": "exploit"
+              }
+            ],
+            "current_state": {
+              "current_tick": 6,
+              "ledger": {
+                "score": 76,
+                "yield": 59,
+                "insight": 13,
+                "aura": 7,
+                "debt": 3,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 4,
+                "glass_choir": 6,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "glass_choir.008.standing": 10,
+                "relay_guild.006.standing": 8
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              },
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "hazard.cluster.007.1.stabilize",
+              "option": "stabilize"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "hazard.cluster.007.1.stabilize",
+                "option": "stabilize"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ],
+                "max_debt": 42,
+                "min_reputation": {
+                  "copper_terrace": 2
+                }
+              },
+              "effects": {
+                "reputation_delta": {
+                  "copper_terrace": -1
+                }
+              },
+              "delta": {
+                "yield": 53,
+                "insight": 12,
+                "aura": 0,
+                "debt": -8,
+                "miss_penalties": 0
+              },
+              "label": "Copper Terrace trusted you to run the trace brace protocol and contain the spill cleanly.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "hazard_interrupt",
+              "element_id": "cluster_007_hazard",
+              "beat_id": "cluster_007.hazard.1"
+            },
+            "correct": true,
+            "label": "Copper Terrace trusted you to run the trace brace protocol and contain the spill cleanly.",
+            "score_before": 76,
+            "score_after": 144,
+            "score_delta": 68,
+            "state": {
+              "current_tick": 6,
+              "ledger": {
+                "score": 144,
+                "yield": 112,
+                "insight": 25,
+                "aura": 7,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 6,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 7,
+                "glass_choir.008.standing": 10,
+                "relay_guild.006.standing": 8
+              }
+            }
+          },
+          "score": {
+            "score": 144,
+            "yield": 112,
+            "insight": 25,
+            "aura": 7,
+            "debt": 0,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 12412
+        },
+        {
+          "tick_index": 7,
+          "tick_id": "S1-T0008",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 7,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0008",
+              "clock_class": "interrupt",
+              "deadline_ms": 20000,
+              "sources": [
+                {
+                  "source_id": "critical_broadcast.cluster_003.1",
+                  "source_type": "critical_broadcast",
+                  "text": "tide breach struck the Harbor Union ashen salt flat sector. Harbor Union has posted two response lanes with different standing requirements. Check your current state before committing."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "hazard.cluster.003.1.stabilize",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "stabilize"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "reputation",
+                      "scope": "harbor_union",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Harbor Union standing 2+ unlocks dock brace; successful use spends 2 standing."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 40,
+                      "label": "Debt 40 or lower preserves trusted response access."
+                    }
+                  ]
+                },
+                {
+                  "opportunity_id": "hazard.cluster.003.1.exploit",
+                  "allowed_commands": [
+                    "commit"
+                  ],
+                  "allowed_options": [
+                    "exploit"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "aura",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Aura 2+ unlocks exploitation; successful use spends 2 aura."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 38,
+                      "label": "Debt 38 or lower keeps the exploit lane viable."
+                    }
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit hazard.cluster.003.1.stabilize [stabilize] | req: Harbor Union standing 2+ unlocks dock brace; successful use spends 2 standing.; Debt 40 or lower preserves trusted response access.",
+                "command": "commit",
+                "target": "hazard.cluster.003.1.stabilize",
+                "option": "stabilize"
+              },
+              {
+                "label": "3",
+                "index": 3,
+                "summary": "commit hazard.cluster.003.1.exploit [exploit] | req: Aura 2+ unlocks exploitation; successful use spends 2 aura.; Debt 38 or lower keeps the exploit lane viable.",
+                "command": "commit",
+                "target": "hazard.cluster.003.1.exploit",
+                "option": "exploit"
+              }
+            ],
+            "current_state": {
+              "current_tick": 7,
+              "ledger": {
+                "score": 144,
+                "yield": 112,
+                "insight": 25,
+                "aura": 7,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 6,
+                "harbor_union": 4,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 10,
+                "relay_guild.006.standing": 8
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              },
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0005",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0007",
+                "published_after_index": 6,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.006.work.1",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Relay Guild logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "hazard.cluster.003.1.stabilize",
+              "option": "stabilize"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "hazard.cluster.003.1.stabilize",
+                "option": "stabilize"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ],
+                "max_debt": 40,
+                "min_reputation": {
+                  "harbor_union": 2
+                }
+              },
+              "effects": {
+                "reputation_delta": {
+                  "harbor_union": -2
+                }
+              },
+              "delta": {
+                "yield": 49,
+                "insight": 12,
+                "aura": 0,
+                "debt": -7,
+                "miss_penalties": 0
+              },
+              "label": "Harbor Union trusted you to run the dock brace protocol and contain the spill cleanly.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "hazard_interrupt",
+              "element_id": "cluster_003_hazard",
+              "beat_id": "cluster_003.hazard.1"
+            },
+            "correct": true,
+            "label": "Harbor Union trusted you to run the dock brace protocol and contain the spill cleanly.",
+            "score_before": 144,
+            "score_after": 205,
+            "score_delta": 61,
+            "state": {
+              "current_tick": 7,
+              "ledger": {
+                "score": 205,
+                "yield": 161,
+                "insight": 37,
+                "aura": 7,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 6,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 10,
+                "relay_guild.006.standing": 8
+              }
+            }
+          },
+          "score": {
+            "score": 205,
+            "yield": 161,
+            "insight": 37,
+            "aura": 7,
+            "debt": 0,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 21084
+        },
+        {
+          "tick_index": 8,
+          "tick_id": "S1-T0009",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 8,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0009",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_008.work_3",
+                  "source_type": "public_notice",
+                  "text": "Another repair rota opened under Glass Choir supervision. The wage is forgettable, the optionality is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.008.work.3",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "repair"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.008.work.3 [repair]",
+                "command": "commit",
+                "target": "quest.cluster.008.work.3",
+                "option": "repair"
+              }
+            ],
+            "current_state": {
+              "current_tick": 8,
+              "ledger": {
+                "score": 205,
+                "yield": 161,
+                "insight": 37,
+                "aura": 7,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 6,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 10
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0001",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0003",
+                "published_after_index": 2,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.1",
+                    "option": "registry"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the registry shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              },
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0005",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0007",
+                "published_after_index": 6,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.006.work.1",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Relay Guild logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0006",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0008",
+                "published_after_index": 7,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.2",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.2",
+                    "option": "stocktake"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.008.work.3",
+              "option": "repair"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.008.work.3",
+                "option": "repair"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "glass_choir.008.standing": 5
+                },
+                "reputation_delta": {
+                  "glass_choir": 1
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 1,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "label": "You took the repair shift. The immediate return was small, but Glass Choir logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_008_standing",
+              "beat_id": "cluster_008.standing.3"
+            },
+            "correct": true,
+            "label": "You took the repair shift. The immediate return was small, but Glass Choir logged your name.",
+            "score_before": 205,
+            "score_after": 206,
+            "score_delta": 1,
+            "state": {
+              "current_tick": 8,
+              "ledger": {
+                "score": 206,
+                "yield": 161,
+                "insight": 37,
+                "aura": 8,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            }
+          },
+          "score": {
+            "score": 206,
+            "yield": 161,
+            "insight": 37,
+            "aura": 8,
+            "debt": 0,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 20766
+        },
+        {
+          "tick_index": 9,
+          "tick_id": "S1-T0010",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 9,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0010",
+              "clock_class": "interrupt",
+              "deadline_ms": 20000,
+              "sources": [
+                {
+                  "source_id": "critical_broadcast.cluster_001.1",
+                  "source_type": "critical_broadcast",
+                  "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir has posted two response lanes with different standing requirements. Check your current state before committing."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "hazard.cluster.001.1.stabilize",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "stabilize"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "reputation",
+                      "scope": "glass_choir",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 46,
+                      "label": "Debt 46 or lower preserves trusted response access."
+                    }
+                  ]
+                },
+                {
+                  "opportunity_id": "hazard.cluster.001.1.exploit",
+                  "allowed_commands": [
+                    "commit"
+                  ],
+                  "allowed_options": [
+                    "exploit"
+                  ],
+                  "public_requirements": [
+                    {
+                      "metric": "aura",
+                      "operator": "\u003e=",
+                      "value": 2,
+                      "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
+                    },
+                    {
+                      "metric": "debt",
+                      "operator": "\u003c=",
+                      "value": 28,
+                      "label": "Debt 28 or lower keeps the exploit lane viable."
+                    }
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit hazard.cluster.001.1.stabilize [stabilize] | req: Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing.; Debt 46 or lower preserves trusted response access.",
+                "command": "commit",
+                "target": "hazard.cluster.001.1.stabilize",
+                "option": "stabilize"
+              },
+              {
+                "label": "3",
+                "index": 3,
+                "summary": "commit hazard.cluster.001.1.exploit [exploit] | req: Aura 2+ unlocks exploitation; successful use spends 3 aura.; Debt 28 or lower keeps the exploit lane viable.",
+                "command": "commit",
+                "target": "hazard.cluster.001.1.exploit",
+                "option": "exploit"
+              }
+            ],
+            "current_state": {
+              "current_tick": 9,
+              "ledger": {
+                "score": 206,
+                "yield": 161,
+                "insight": 37,
+                "aura": 8,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0002",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0004",
+                "published_after_index": 3,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.002.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.002.1.stabilize",
+                    "option": "stabilize"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "Civic Ward trusted you to run the civic cordon protocol and contain the spill cleanly."
+                }
+              },
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0005",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0007",
+                "published_after_index": 6,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.006.work.1",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Relay Guild logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0006",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0008",
+                "published_after_index": 7,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.2",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.2",
+                    "option": "stocktake"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0007",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0009",
+                "published_after_index": 8,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.007.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.007.1.exploit",
+                    "option": "exploit"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "You exploited the disruption for value, burning readiness to do it."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 3
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "hazard.cluster.001.1.exploit",
+              "option": "exploit"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "hazard.cluster.001.1.exploit",
+                "option": "exploit"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ],
+                "max_debt": 28,
+                "min_aura": 2
+              },
+              "delta": {
+                "yield": 66,
+                "insight": 10,
+                "aura": -3,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "label": "You exploited the disruption for value, burning readiness to do it.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "hazard_interrupt",
+              "element_id": "cluster_001_hazard",
+              "beat_id": "cluster_001.hazard.1"
+            },
+            "correct": true,
+            "label": "You exploited the disruption for value, burning readiness to do it.",
+            "score_before": 206,
+            "score_after": 277,
+            "score_delta": 71,
+            "state": {
+              "current_tick": 9,
+              "ledger": {
+                "score": 277,
+                "yield": 227,
+                "insight": 47,
+                "aura": 5,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            }
+          },
+          "score": {
+            "score": 277,
+            "yield": 227,
+            "insight": 47,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          },
+          "raw_response": "3",
+          "duration_ms": 24762
+        },
+        {
+          "tick_index": 10,
+          "tick_id": "S1-T0011",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 10,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0011",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_008.work_4",
+                  "source_type": "public_notice",
+                  "text": "Another survey rota opened under Glass Choir supervision. The wage is forgettable, the optionality is not."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.008.work.4",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "survey"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.008.work.4 [survey]",
+                "command": "commit",
+                "target": "quest.cluster.008.work.4",
+                "option": "survey"
+              }
+            ],
+            "current_state": {
+              "current_tick": 10,
+              "ledger": {
+                "score": 277,
+                "yield": 227,
+                "insight": 47,
+                "aura": 5,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0003",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0005",
+                "published_after_index": 4,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.009.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.009.work.1",
+                    "option": "survey"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the survey shift. The immediate return was small, but Civic Ward logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0005",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0007",
+                "published_after_index": 6,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.006.work.1",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Relay Guild logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0006",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0008",
+                "published_after_index": 7,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.2",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.2",
+                    "option": "stocktake"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0007",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0009",
+                "published_after_index": 8,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.007.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.007.1.exploit",
+                    "option": "exploit"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "You exploited the disruption for value, burning readiness to do it."
+                }
+              },
+              {
+                "tick_id": "S1-T0008",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0010",
+                "published_after_index": 9,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.003.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.003.1.exploit",
+                    "option": "exploit"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "You exploited the disruption for value, burning readiness to do it."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 1
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "hold"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "hold"
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 0,
+                "aura": 0,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "label": "You ignored the routine work.",
+              "classification": "miss"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_008_standing",
+              "beat_id": "cluster_008.standing.4"
+            },
+            "correct": false,
+            "label": "You ignored the routine work.",
+            "score_before": 277,
+            "score_after": 277,
+            "score_delta": 0,
+            "state": {
+              "current_tick": 10,
+              "ledger": {
+                "score": 277,
+                "yield": 227,
+                "insight": 47,
+                "aura": 5,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            }
+          },
+          "score": {
+            "score": 277,
+            "yield": 227,
+            "insight": 47,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          },
+          "raw_response": "1",
+          "duration_ms": 16891
+        },
+        {
+          "tick_index": 11,
+          "tick_id": "S1-T0012",
+          "prompt": {
+            "season_id": "dev-standing+hazard-90tick",
+            "season_title": "Focused standing+hazard (90-Tick Dev)",
+            "tick_index": 11,
+            "tick_count": 90,
+            "current_tick": {
+              "tick_id": "S1-T0012",
+              "clock_class": "standard",
+              "deadline_ms": 45000,
+              "sources": [
+                {
+                  "source_id": "public_notice.cluster_004.work_2",
+                  "source_type": "public_notice",
+                  "text": "A second triage rota opened near the ember causeway. Nobody promises a prize, only that reliable names keep resurfacing later."
+                }
+              ],
+              "opportunities": [
+                {
+                  "opportunity_id": "quest.cluster.004.work.2",
+                  "allowed_commands": [
+                    "commit",
+                    "hold"
+                  ],
+                  "allowed_options": [
+                    "triage"
+                  ]
+                }
+              ]
+            },
+            "action_choices": [
+              {
+                "label": "1",
+                "index": 1,
+                "summary": "hold",
+                "command": "hold"
+              },
+              {
+                "label": "2",
+                "index": 2,
+                "summary": "commit quest.cluster.004.work.2 [triage]",
+                "command": "commit",
+                "target": "quest.cluster.004.work.2",
+                "option": "triage"
+              }
+            ],
+            "current_state": {
+              "current_tick": 11,
+              "ledger": {
+                "score": 277,
+                "yield": 227,
+                "insight": 47,
+                "aura": 5,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 6,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "glass_choir.008.standing": 14
+              }
+            },
+            "recent_reveals": [
+              {
+                "tick_id": "S1-T0004",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0006",
+                "published_after_index": 5,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.004.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.004.work.1",
+                    "option": "sorting"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the sorting shift. The immediate return was small, but Archive Office logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0005",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0007",
+                "published_after_index": 6,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.006.work.1",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.006.work.1",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Relay Guild logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0006",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0008",
+                "published_after_index": 7,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.2",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.2",
+                    "option": "stocktake"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the stocktake shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              },
+              {
+                "tick_id": "S1-T0007",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0009",
+                "published_after_index": 8,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.007.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.007.1.exploit",
+                    "option": "exploit"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "You exploited the disruption for value, burning readiness to do it."
+                }
+              },
+              {
+                "tick_id": "S1-T0008",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0010",
+                "published_after_index": 9,
+                "resolution_preview": {
+                  "opportunity_id": "hazard.cluster.003.1.stabilize",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "hazard.cluster.003.1.exploit",
+                    "option": "exploit"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "commit",
+                      "option": "stabilize",
+                      "outcome": "You reached for faction cover without enough standing to clear the lane."
+                    },
+                    {
+                      "command": "commit",
+                      "option": "exploit",
+                      "outcome": "You lunged for upside without enough visible margin to survive the blast."
+                    },
+                    {
+                      "command": "hold",
+                      "outcome": "The interrupt rolled through while you hesitated."
+                    }
+                  ],
+                  "public_explanation": "You exploited the disruption for value, burning readiness to do it."
+                }
+              },
+              {
+                "tick_id": "S1-T0009",
+                "reveal_lag_ticks": 3,
+                "published_after_tick_id": "S1-T0011",
+                "published_after_index": 10,
+                "resolution_preview": {
+                  "opportunity_id": "quest.cluster.008.work.3",
+                  "best_known_action": {
+                    "command": "commit",
+                    "target": "quest.cluster.008.work.3",
+                    "option": "repair"
+                  },
+                  "bad_action_classes": [
+                    {
+                      "command": "hold",
+                      "outcome": "You ignored the routine work."
+                    }
+                  ],
+                  "public_explanation": "You took the repair shift. The immediate return was small, but Glass Choir logged your name."
+                }
+              }
+            ]
+          },
+          "decision": {
+            "action_index": 2
+          },
+          "outcome": {
+            "applied_action": {
+              "command": "commit",
+              "target": "quest.cluster.004.work.2",
+              "option": "triage"
+            },
+            "applied_rule": {
+              "match": {
+                "command": "commit",
+                "target": "quest.cluster.004.work.2",
+                "option": "triage"
+              },
+              "requirements": {
+                "requires_availability": [
+                  "available"
+                ]
+              },
+              "effects": {
+                "set_cooldowns": {
+                  "archive_office.004.standing": 4
+                },
+                "reputation_delta": {
+                  "archive_office": 2
+                }
+              },
+              "delta": {
+                "yield": 0,
+                "insight": 1,
+                "aura": 0,
+                "debt": 0,
+                "miss_penalties": 0
+              },
+              "label": "You took the triage shift. The immediate return was small, but Archive Office logged your name.",
+              "classification": "best"
+            },
+            "annotations": {
+              "family": "standing_work_loop",
+              "element_id": "cluster_004_standing",
+              "beat_id": "cluster_004.standing.2"
+            },
+            "correct": true,
+            "label": "You took the triage shift. The immediate return was small, but Archive Office logged your name.",
+            "score_before": 277,
+            "score_after": 278,
+            "score_delta": 1,
+            "state": {
+              "current_tick": 11,
+              "ledger": {
+                "score": 278,
+                "yield": 227,
+                "insight": 48,
+                "aura": 5,
+                "debt": 2,
+                "miss_penalties": 0
+              },
+              "reputation": {
+                "archive_office": 8,
+                "civic_ward": 4,
+                "copper_terrace": 3,
+                "glass_choir": 7,
+                "harbor_union": 2,
+                "relay_guild": 6,
+                "silt_exchange": 4
+              },
+              "availability": "available",
+              "cooldowns": {
+                "archive_office.004.standing": 16,
+                "glass_choir.008.standing": 14
+              }
+            }
+          },
+          "score": {
+            "score": 278,
+            "yield": 227,
+            "insight": 48,
+            "aura": 5,
+            "debt": 2,
+            "miss_penalties": 0
+          },
+          "raw_response": "2",
+          "duration_ms": 10171
+        }
+      ]
+    }
+  ]
+}

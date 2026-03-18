@@ -385,7 +385,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 		StartedAt:      time.Now().UTC(),
 	}
 
-	state := season.NewHarnessState()
+	state := season.NewHarnessStateWith(file.InitialState)
 	breakdown := season.NewScoreBreakdownAccumulator()
 	visibleReveals, revealsByStart := revealWindows(report, startTick, options.RecentRevealCount)
 	notes := ""

@@ -23,8 +23,7 @@ Each tick delivers prose narrative, structured state, and action choices. Correc
 |---|---|---:|
 | **payoff_gate** | Infer regime from 2 prior clue beats, pick correct market option | +68pp |
 | **reputation_ladder** | Same clue recall, pick correct faction offer | +37pp |
-| **hazard_interrupt** | Learn per-faction lane ROI from experience | in progress |
-| **standing_work_loop** | Ambient resource building | low ceiling |
+| **hazard_interrupt** | Learn per-faction lane ROI from outcome feedback | in progress |
 
 ### How the memory gap was validated
 
@@ -117,7 +116,6 @@ The `--text-mode` flag controls how much prose the model sees:
 2. Full 1000-tick runs (ephemeral vs persistent)
 3. Multi-model comparison (Haiku, Sonnet, Opus, Codex, GPT)
 4. Text ablation trio on current prose
-5. Hazard family redesign (strip resource gates, test pure faction-lane learning)
 
 ## Docs
 

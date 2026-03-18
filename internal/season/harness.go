@@ -28,7 +28,11 @@ type HarnessOutcome struct {
 }
 
 func NewHarnessState() HarnessState {
-	return HarnessState{sim: newSimulatedPlayerState()}
+	return NewHarnessStateWith(nil)
+}
+
+func NewHarnessStateWith(initial *InitialState) HarnessState {
+	return HarnessState{sim: newSimulatedPlayerStateWith(initial)}
 }
 
 func (h *HarnessState) AdvanceToTick(tickIndex int) {

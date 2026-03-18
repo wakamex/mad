@@ -12,7 +12,17 @@ type File struct {
 	ScoreEpochTicks int              `json:"score_epoch_ticks"`
 	RevealLagTicks  int              `json:"reveal_lag_ticks"`
 	ShardCount      int              `json:"shard_count"`
+	InitialState    *InitialState    `json:"initial_state,omitempty"`
 	Ticks           []TickDefinition `json:"ticks"`
+}
+
+// InitialState seeds player resources before tick 1. Used to skip the
+// cold-start grind so hazard families can test forward-planning without
+// requiring dozens of standing-work ticks first.
+type InitialState struct {
+	Reputation map[string]int64 `json:"reputation,omitempty"`
+	Aura       int64            `json:"aura,omitempty"`
+	Debt       int64            `json:"debt,omitempty"`
 }
 
 type TickDefinition struct {

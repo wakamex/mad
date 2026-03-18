@@ -62,8 +62,6 @@
                   ]
                 },
                 "effects": {
-                  "lock_ticks": 1,
-                  "availability_delta": "on_shift",
                   "set_cooldowns": {
                     "glass_choir.001.standing": 3
                   },
@@ -140,8 +138,6 @@
                   ]
                 },
                 "effects": {
-                  "lock_ticks": 1,
-                  "availability_delta": "on_shift",
                   "set_cooldowns": {
                     "glass_choir.001.standing": 4
                   },
@@ -894,7 +890,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~69); successful use spends 2 standing."
+                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
                 },
                 {
                   "metric": "debt",
@@ -917,7 +913,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~66); successful use spends 12 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -947,7 +943,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "glass_choir": -2
+                    "glass_choir": -1
                   }
                 },
                 "delta": {
@@ -997,7 +993,7 @@
                 "delta": {
                   "yield": 66,
                   "insight": 10,
-                  "aura": -12,
+                  "aura": -3,
                   "debt": 2,
                   "miss_penalties": 0
                 },
@@ -1080,7 +1076,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~74); successful use spends 2 standing."
+                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
                 },
                 {
                   "metric": "debt",
@@ -1103,7 +1099,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~74); successful use spends 12 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -1133,7 +1129,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "glass_choir": -2
+                    "glass_choir": -1
                   }
                 },
                 "delta": {
@@ -1183,7 +1179,7 @@
                 "delta": {
                   "yield": 74,
                   "insight": 12,
-                  "aura": -12,
+                  "aura": -3,
                   "debt": 3,
                   "miss_penalties": 0
                 },
@@ -1267,7 +1263,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~79); successful use spends 2 standing."
+                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
                 },
                 {
                   "metric": "debt",
@@ -1290,7 +1286,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~82); successful use spends 12 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -1320,7 +1316,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "glass_choir": -2
+                    "glass_choir": -1
                   }
                 },
                 "delta": {
@@ -1370,7 +1366,7 @@
                 "delta": {
                   "yield": 82,
                   "insight": 14,
-                  "aura": -12,
+                  "aura": -3,
                   "debt": 3,
                   "miss_penalties": 0
                 },
@@ -1454,7 +1450,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~84); successful use spends 2 standing."
+                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
                 },
                 {
                   "metric": "debt",
@@ -1477,7 +1473,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~90); successful use spends 12 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -1507,7 +1503,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "glass_choir": -2
+                    "glass_choir": -1
                   }
                 },
                 "delta": {
@@ -1557,7 +1553,7 @@
                 "delta": {
                   "yield": 90,
                   "insight": 16,
-                  "aura": -12,
+                  "aura": -3,
                   "debt": 4,
                   "miss_penalties": 0
                 },
@@ -1641,7 +1637,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ unlocks glass curtain (expected yield ~89); successful use spends 2 standing."
+                  "label": "Glass Choir standing 2+ unlocks glass curtain; successful use spends 1 standing."
                 },
                 {
                   "metric": "debt",
@@ -1664,7 +1660,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~98); successful use spends 12 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -1694,7 +1690,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "glass_choir": -2
+                    "glass_choir": -1
                   }
                 },
                 "delta": {
@@ -1744,7 +1740,7 @@
                 "delta": {
                   "yield": 98,
                   "insight": 18,
-                  "aura": -12,
+                  "aura": -3,
                   "debt": 4,
                   "miss_penalties": 0
                 },
@@ -2510,8 +2506,6 @@
                   ]
                 },
                 "effects": {
-                  "lock_ticks": 1,
-                  "availability_delta": "on_shift",
                   "set_cooldowns": {
                     "civic_ward.002.standing": 3
                   },
@@ -2588,8 +2582,6 @@
                   ]
                 },
                 "effects": {
-                  "lock_ticks": 1,
-                  "availability_delta": "on_shift",
                   "set_cooldowns": {
                     "civic_ward.002.standing": 4
                   },
@@ -2666,8 +2658,6 @@
                   ]
                 },
                 "effects": {
-                  "lock_ticks": 1,
-                  "availability_delta": "on_shift",
                   "set_cooldowns": {
                     "civic_ward.002.standing": 5
                   },
@@ -3491,7 +3481,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~59); successful use spends 5 standing."
+                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
                 },
                 {
                   "metric": "debt",
@@ -3514,7 +3504,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~70); successful use spends 9 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -3544,7 +3534,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -5
+                    "civic_ward": -2
                   }
                 },
                 "delta": {
@@ -3594,7 +3584,7 @@
                 "delta": {
                   "yield": 70,
                   "insight": 10,
-                  "aura": -9,
+                  "aura": -3,
                   "debt": 2,
                   "miss_penalties": 0
                 },
@@ -3677,7 +3667,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~64); successful use spends 5 standing."
+                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
                 },
                 {
                   "metric": "debt",
@@ -3700,7 +3690,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~78); successful use spends 9 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -3730,7 +3720,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -5
+                    "civic_ward": -2
                   }
                 },
                 "delta": {
@@ -3780,7 +3770,7 @@
                 "delta": {
                   "yield": 78,
                   "insight": 12,
-                  "aura": -9,
+                  "aura": -3,
                   "debt": 3,
                   "miss_penalties": 0
                 },
@@ -3864,7 +3854,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~69); successful use spends 5 standing."
+                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
                 },
                 {
                   "metric": "debt",
@@ -3887,7 +3877,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~86); successful use spends 9 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -3917,7 +3907,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -5
+                    "civic_ward": -2
                   }
                 },
                 "delta": {
@@ -3967,7 +3957,7 @@
                 "delta": {
                   "yield": 86,
                   "insight": 14,
-                  "aura": -9,
+                  "aura": -3,
                   "debt": 3,
                   "miss_penalties": 0
                 },
@@ -4051,7 +4041,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~74); successful use spends 5 standing."
+                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
                 },
                 {
                   "metric": "debt",
@@ -4074,7 +4064,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~94); successful use spends 9 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -4104,7 +4094,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -5
+                    "civic_ward": -2
                   }
                 },
                 "delta": {
@@ -4154,7 +4144,7 @@
                 "delta": {
                   "yield": 94,
                   "insight": 16,
-                  "aura": -9,
+                  "aura": -3,
                   "debt": 4,
                   "miss_penalties": 0
                 },
@@ -4238,7 +4228,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ unlocks civic cordon (expected yield ~79); successful use spends 5 standing."
+                  "label": "Civic Ward standing 2+ unlocks civic cordon; successful use spends 2 standing."
                 },
                 {
                   "metric": "debt",
@@ -4261,7 +4251,7 @@
                   "metric": "aura",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Aura 2+ unlocks safe exploitation (expected yield ~102); successful use spends 9 aura."
+                  "label": "Aura 2+ unlocks exploitation; successful use spends 3 aura."
                 },
                 {
                   "metric": "debt",
@@ -4291,7 +4281,7 @@
                 },
                 "effects": {
                   "reputation_delta": {
-                    "civic_ward": -5
+                    "civic_ward": -2
                   }
                 },
                 "delta": {
@@ -4341,7 +4331,7 @@
                 "delta": {
                   "yield": 102,
                   "insight": 18,
-                  "aura": -9,
+                  "aura": -3,
                   "debt": 4,
                   "miss_penalties": 0
                 },

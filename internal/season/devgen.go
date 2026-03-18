@@ -79,13 +79,16 @@ var devFactions = []devFaction{
 	//                                                                   stab    stab  stab   expl    expl  expl
 	//                                                          stab  expl  debt  rep   rep   debt   aura  aura  debt
 	//                                                          bonus bonus relief pct  spend  cap    pct  spend  cap
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.18, StabilizeRepSpend: 2, StabilizeDebtCap: 46, ExploitAuraPct: 0.12, ExploitAuraSpend: 12, ExploitDebtCap: 28},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.12, StabilizeRepSpend: 5, StabilizeDebtCap: 48, ExploitAuraPct: 0.10, ExploitAuraSpend: 9, ExploitDebtCap: 30},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.08, StabilizeRepSpend: 6, StabilizeDebtCap: 40, ExploitAuraPct: 0.05, ExploitAuraSpend: 5, ExploitDebtCap: 38},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.16, StabilizeRepSpend: 3, StabilizeDebtCap: 42, ExploitAuraPct: 0.08, ExploitAuraSpend: 6, ExploitDebtCap: 34},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.06, StabilizeRepSpend: 7, StabilizeDebtCap: 38, ExploitAuraPct: 0.05, ExploitAuraSpend: 6, ExploitDebtCap: 40},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.15, StabilizeRepSpend: 2, StabilizeDebtCap: 44, ExploitAuraPct: 0.12, ExploitAuraSpend: 10, ExploitDebtCap: 30},
-	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.10, StabilizeRepSpend: 4, StabilizeDebtCap: 42, ExploitAuraPct: 0.06, ExploitAuraSpend: 5, ExploitDebtCap: 36},
+	// Resource spend and thresholds cut (2026-03-15) so greedy ceiling exceeds 80%.
+	// Old spend bankrupted the player by mid-season (greedy only 47.6%).
+	// Halved spend got greedy to 71%, halved thresholds should push past 80%.
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 46, ExploitAuraPct: 0.06, ExploitAuraSpend: 3, ExploitDebtCap: 28},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.06, StabilizeRepSpend: 2, StabilizeDebtCap: 48, ExploitAuraPct: 0.05, ExploitAuraSpend: 3, ExploitDebtCap: 30},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.04, StabilizeRepSpend: 2, StabilizeDebtCap: 40, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 38},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 42, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 34},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.03, StabilizeRepSpend: 2, StabilizeDebtCap: 38, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 40},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.08, StabilizeRepSpend: 1, StabilizeDebtCap: 44, ExploitAuraPct: 0.06, ExploitAuraSpend: 3, ExploitDebtCap: 30},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 42, ExploitAuraPct: 0.03, ExploitAuraSpend: 2, ExploitDebtCap: 36},
 }
 
 var devRegimes = []devRegime{
@@ -214,6 +217,32 @@ func BuildFocusedDevSeasonIR(tickCount int, families []string) (IRFile, error) {
 		}
 	}
 	budget := computeResourceBudget(clusterCount, plans, themes)
+
+	// Seed initial resources when hazard is present so the agent can qualify
+	// for hazard lanes from tick 1. Without this, the agent starts at zero
+	// and must discover that standing work builds resources before hazard
+	// becomes testable — a feedback loop too long for short focused seasons.
+	if wantSet["hazard"] {
+		seedRep := make(map[string]int64)
+		var seedAura int64
+		for _, theme := range themes {
+			factionRep := budget.RepPerFaction[theme.Faction.ID]
+			// Seed 50% of the budget: enough to qualify for early beats,
+			// but the agent still needs standing work to sustain access.
+			needed := maxInt64(2, int64(theme.Faction.StabilizeRepPct*float64(factionRep)))
+			if existing, ok := seedRep[theme.Faction.ID]; !ok || existing < needed*2 {
+				seedRep[theme.Faction.ID] = needed * 2
+			}
+			auraNeeded := maxInt64(2, int64(theme.Faction.ExploitAuraPct*float64(budget.TotalAura)))
+			if auraNeeded*2 > seedAura {
+				seedAura = auraNeeded * 2
+			}
+		}
+		ir.InitialState = &InitialState{
+			Reputation: seedRep,
+			Aura:       seedAura,
+		}
+	}
 
 	// Second pass: build story elements.
 	for cluster := 0; cluster < clusterCount; cluster++ {
@@ -427,10 +456,8 @@ func buildStandingWorkElement(cluster int, theme devTheme, plan devClusterPlan) 
 							RequiresAvailability: []string{defaultAvailability},
 						},
 						Effects: StateEffects{
-							LockTicks:         1,
-							AvailabilityDelta: "on_shift",
-							SetCooldowns:      map[string]int{cooldownName: 2 + i},
-							ReputationDelta:   map[string]int64{theme.Faction.ID: repDelta},
+							SetCooldowns:    map[string]int{cooldownName: 2 + i},
+							ReputationDelta: map[string]int64{theme.Faction.ID: repDelta},
 						},
 						Delta:          delta,
 						Label:          fmt.Sprintf("You took the %s shift. The immediate return was small, but %s logged your name.", workName, theme.Faction.Name),
@@ -741,7 +768,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Scope:    theme.Faction.ID,
 							Operator: ">=",
 							Value:    stabilizeRep,
-							Label:    fmt.Sprintf("%s standing %d+ unlocks %s (expected yield ~%d); successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, 46+int64(i*5)+theme.Faction.StabilizeBonus, stabilizeRepSpend),
+							Label:    fmt.Sprintf("%s standing %d+ unlocks %s; successful use spends %d standing.", theme.Faction.Name, stabilizeRep, theme.Faction.Protocol, stabilizeRepSpend),
 						},
 						{
 							Metric:   "debt",
@@ -760,7 +787,7 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 							Metric:   "aura",
 							Operator: ">=",
 							Value:    exploitAura,
-							Label:    fmt.Sprintf("Aura %d+ unlocks safe exploitation (expected yield ~%d); successful use spends %d aura.", exploitAura, 62+int64(i*8)+theme.Faction.ExploitBonus, exploitAuraSpend),
+							Label:    fmt.Sprintf("Aura %d+ unlocks exploitation; successful use spends %d aura.", exploitAura, exploitAuraSpend),
 						},
 						{
 							Metric:   "debt",

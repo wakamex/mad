@@ -267,10 +267,10 @@ func SimulateWithOptions(file File, options SimulationOptions) (SimulationReport
 		Ticks: make([]SimulatedTick, 0, len(file.Ticks)),
 	}
 
-	greedyState := newSimulatedPlayerState()
-	holdState := newSimulatedPlayerState()
-	visibleState := newSimulatedPlayerState()
-	oracleState := newSimulatedPlayerState()
+	greedyState := newSimulatedPlayerStateWith(file.InitialState)
+	holdState := newSimulatedPlayerStateWith(file.InitialState)
+	visibleState := newSimulatedPlayerStateWith(file.InitialState)
+	oracleState := newSimulatedPlayerStateWith(file.InitialState)
 	greedyBreakdown := NewScoreBreakdownAccumulator()
 	holdBreakdown := NewScoreBreakdownAccumulator()
 	visibleBreakdown := NewScoreBreakdownAccumulator()
@@ -798,7 +798,7 @@ func simulateRandomAudit(file File, options SimulationOptions) *SimulatedRandomA
 }
 
 func simulateRandomRun(file File, rng *rand.Rand, captureBreakdown bool) (int64, int, ScoreBreakdown) {
-	state := newSimulatedPlayerState()
+	state := newSimulatedPlayerStateWith(file.InitialState)
 	beatBestHits := 0
 	var breakdown ScoreBreakdown
 	var accumulator ScoreBreakdownAccumulator
@@ -880,12 +880,25 @@ func applyLedgerDelta(ledger *SimulatedLedger, delta ScoreDelta) {
 }
 
 func newSimulatedPlayerState() simulatedPlayerState {
-	return simulatedPlayerState{
+	return newSimulatedPlayerStateWith(nil)
+}
+
+func newSimulatedPlayerStateWith(initial *InitialState) simulatedPlayerState {
+	state := simulatedPlayerState{
 		Tags:                    make(map[string]struct{}),
 		Reputation:              make(map[string]int64),
 		Availability:            defaultAvailability,
 		CooldownReadyTickByName: make(map[string]int),
 	}
+	if initial != nil {
+		for faction, rep := range initial.Reputation {
+			state.Reputation[faction] = rep
+		}
+		state.Ledger.Aura = initial.Aura
+		state.Ledger.Debt = initial.Debt
+		state.Ledger.Score = state.Ledger.Aura - state.Ledger.Debt
+	}
+	return state
 }
 
 func cloneSimulatedPlayerState(state simulatedPlayerState) simulatedPlayerState {
@@ -1076,7 +1089,7 @@ func deriveHazardTimingAudit(file File) *HazardTimingAudit {
 func deriveHazardAccessAudit(file File) *HazardAccessAudit {
 	const targetFamily = "hazard_interrupt"
 
-	state := newSimulatedPlayerState()
+	state := newSimulatedPlayerStateWith(file.InitialState)
 	laneStats := make(map[hazardLaneKey]*hazardLaneSummary)
 	blockReasons := make(map[string]int)
 	factionReasons := make(map[string]map[string]int)

@@ -40,17 +40,34 @@ Three-way market decision where the correct option depends on the active source 
 
 Three-way faction offer where the correct option depends on the active source regime. Same conjunctive evidence mechanism as payoff. Near-random without memory (44%), strong with memory (81%). **+37pp memory gap.**
 
-### hazard_interrupt (PARTIALLY VALIDATED)
+### hazard_interrupt (REBALANCED — economy fix, awaiting validation)
 
-Two-lane interrupt event. Each lane has explicit resource gates (reputation or aura thresholds) and visible expected yields. The agent must:
-1. Read its current state to see which lanes it qualifies for
-2. Compare visible yields to pick the better lane
-3. Learn per-faction which lane has better ROI (stabilize vs exploit)
-4. Plan resource investment across ticks to unlock high-value lanes
+Two-lane interrupt event designed to test forward-planning: invest in standing work now, qualify for hazard lanes later, learn per-faction ROI from outcome feedback.
 
-**Faction ROI split (2026-03-12):** Base yields narrowed (stabilize 46+5i, exploit 62+8i, was 32/74) so faction bonuses determine which lane wins. 7 factions split 3 stabilize-favored / 1 mixed / 3 exploit-favored. Civic_ward crosses over at beat 2 (stabilize early, exploit late). Greedy sim best-action split: 38 stabilize, 182 exploit, 24 ineligible.
+**Diagnosis (2026-03-15):** Both Haiku and Sonnet scored 45% persistent vs 40% ephemeral on hazard — seemingly below 50% random. We initially attributed this to models being unable to learn threshold-matching.
 
-**Haiku result (persistent, 90-tick):** score=+37, hazard 19% (8/42), standing 56% (27/48). First positive score — above random — but best-action rate still low. Hazard requires cross-tick planning that Haiku at low effort may not support.
+Investigation revealed the greedy-best oracle also scored only 47.6% (20/42). The "50% random baseline" was wrong — it assumes both lanes are always available. In reality, successful commits spend resources (reputation, aura), standing work replenishes slowly, and every baseline including greedy ran out of resources mid-season. The model was 1 decision from the ceiling. Notes showed perfect reasoning ("Both blocked: CV -1 need >=2, Aura 1 need >=2. Forced hold.").
+
+**Root causes identified:**
+1. **Resource economy too punishing** — stabilize spent 2-7 rep, exploit spent 5-12 aura. Standing work added +1-2 rep and +0-1 aura. Net spend far exceeded replenishment.
+2. **Standing work lock** — committing to standing work locked availability for 1 tick. If a hazard arrived during the lock, the player was forced to hold regardless of resources. This alone blocked ~8 of 42 hazard ticks.
+3. **Silent commit failures** — when a commit failed resource requirements, the engine fell through to the hold rule with the same "you hesitated" label. No learning signal.
+
+**Economy rebalance (2026-03-18):**
+- Resource spend cut ~3× (stabilize rep: 2-7 → 1-2, exploit aura: 5-12 → 2-3)
+- Threshold percentages halved (StabilizeRepPct: 0.06-0.18 → 0.03-0.08, ExploitAuraPct: 0.05-0.12 → 0.03-0.06)
+- Standing work lock removed (was blocking hazard responses during availability lock)
+- Yield labels already stripped from PublicRequirements (agent must learn per-faction ROI from reveal feedback)
+
+| Version | Greedy best-action | Blocked ticks |
+|---|---:|---:|
+| Old economy | 20/42 (47.6%) | 22 |
+| Halved spend | 30/42 (71.4%) | 12 |
+| **Halved spend + no lock** | **41/42 (97.6%)** | **1** |
+
+**What the test should show:** With the ceiling at 97.6% and yield labels hidden, the correct lane depends on per-faction ROI learned from past reveals. Persistent agents track outcomes and learn which lane pays better. Ephemeral agents see two lanes with threshold requirements but no yield information — forced to guess ~50/50. Expected memory gap: 30pp+.
+
+Haiku persistent + ephemeral runs in progress on the rebalanced 90-tick season.
 
 ### standing_work_loop (LOW PRIORITY)
 
@@ -101,8 +118,8 @@ Each family was tested using focused 90-tick seasons. All runs use Claude Haiku 
 | **payoff_gate** | 29% | 28% | **96%** | **+68pp** |
 | **reputation_ladder** | 33% | 44% | **81%** | **+37pp** |
 | **seed_clue_chain** | — | — | — | observe-only |
-| **hazard_interrupt** | 50% | — | 19% | needs stronger model |
-| **standing_work_loop** | ~50% | — | 56% | low ceiling |
+| **hazard_interrupt** | 50% | 40% | 45% | abandoned (+5pp, noise) |
+| **standing_work_loop** | ~50% | — | 56% | low ceiling, hazard support only |
 
 ### Raw results (current design, 2026-03-12)
 
@@ -110,7 +127,9 @@ Each family was tested using focused 90-tick seasons. All runs use Claude Haiku 
 
 **clue+ladder+payoff (ephemeral)**: score=+1,696, payoff 7/25 (28%), ladder 12/27 (44%)
 
-**standing+hazard (persistent+reveals)**: score=+37, hazard 8/42 (19%), standing 27/48 (56%)
+**standing+hazard, seeded (persistent)**: score=+1,165, hazard 19/42 (45%), standing 27/48 (56%)
+
+**standing+hazard, seeded (ephemeral)**: score=+995, hazard 17/42 (40%), standing 26/48 (54%)
 
 ### Previous results (pre-gate-fix, for comparison)
 
@@ -126,7 +145,7 @@ Ladder accuracy jumped from 30% to 81% after removing cosmetic PublicRequirement
 
 Ephemeral payoff also rose (12% → 28%) suggesting the old run had additional bad luck or the gate text was also suppressing ephemeral attempts. 28% matches random baseline exactly — good signal.
 
-**hazard_interrupt** scored +37 (19% best-action), Haiku's first positive hazard score. The old design scored -1,800 (0%). Progress is real but the family likely needs a stronger model to show clear learning.
+**hazard_interrupt** was abandoned after extensive experimentation. With seeded resources and hidden yields, both Haiku and Sonnet score 45% persistent vs 40% ephemeral (below 50% random, +5pp gap = noise). The models fail at the basic prerequisite — matching their state against thresholds — before ROI tracking from memory can matter. The family remains available for future experiments with stronger models.
 
 ## Key Comparison Table
 
@@ -177,6 +196,14 @@ Ephemeral payoff also rose (12% → 28%) suggesting the old run had additional b
 
 6. **Ladder fake-gate removal** (2026-03-12): Removed cosmetic PublicRequirements from reputation_ladder opportunities. These displayed standing/debt thresholds that the engine never enforced, causing the model to hold on 63% of ladder ticks. Also removed the premium-tier scoring rule (unreachable without standing family). Ladder accuracy: 30% → 81%.
 
+7. **Hazard initial-state seeding** (2026-03-13): Added `InitialState` to season model — seeds reputation/aura before tick 1 so agents can qualify for hazard lanes without cold-start grind. Seeding at 2× minimum threshold per faction.
+
+8. **Hazard yield labels stripped** (2026-03-13): Removed expected yield numbers from PublicRequirements labels. Agent must learn per-faction ROI from reveal feedback, not from visible labels.
+
+9. **Hazard diagnosis corrected** (2026-03-15): The 45% model score is not a learning failure — greedy-best ceiling is 47.6% due to resource depletion. The resource economy bankrupts every strategy mid-season. Models reason correctly about thresholds (verified via notes).
+
+10. **Hazard economy rebalance** (2026-03-18): Resource spend cut ~3× (stabilize rep: 2-7→1-2, exploit aura: 5-12→2-3). Threshold percentages halved. Standing work lock removed (was blocking hazard on ~8 ticks via availability). Greedy ceiling: 47.6% → 97.6% (41/42). Awaiting Haiku validation run.
+
 ## What This Means for Publication
 
 The central empirical result is the **memory gap**: the difference between ephemeral and persistent performance on the same season.
@@ -191,6 +218,5 @@ The persistent Haiku run reaches **90.5% of the greedy-best ceiling** (8,381 / 9
 1. Full 1000-tick runs with new prose: ephemeral vs persistent vs persistent+memory
 2. Multi-model comparison (Haiku, Sonnet, Opus, Codex Mini, GPT-5.2)
 3. Text ablation trio on new prose (full, source-types-only, redacted)
-4. Confidence intervals from multiple runs
-5. Decide: fix hazard_interrupt further or cut it from the core claim
-6. Motivate the 4 resource types (yield, insight, aura, debt) — are they all needed or duplicative?
+4. Confidence intervals from multiple runs (3-5 reps per condition)
+5. Motivate the 4 resource types (yield, insight, aura, debt) — are they all needed or duplicative?

@@ -15,7 +15,7 @@ On hazard (function learning), structured memory lets Haiku score **259% of gree
 | payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling | — |
 | hazard | ROI function learning | negative | 94% of greedy | **259%** of greedy |
 
-MAD stress-tests memory systems with tasks where uncurated memory **underperforms** the local-optimal baseline (raw persistent scores 3,061 on hazard vs greedy's 3,247) while curated memory **vastly outperforms** it (structured history scores 8,420). Memory curation systems — RAG, summarization, learn-to-forget, tool-augmented memory — compete in the gap between 3,061 and 8,420.
+MAD includes families where **lacking memory** costs the model (payoff/ladder: 18% of ceiling without memory, 91% with it) and families where **having too much unstructured memory** costs the model (hazard: raw persistent underperforms greedy at 3,061 vs 3,247, while curated memory reaches 8,420). This makes it a benchmark for memory curation systems — RAG, summarization, learn-to-forget, tool-augmented memory — which must solve both: recall what matters, discard what doesn't.
 
 Full results in [RESULTS.md](./RESULTS.md).
 

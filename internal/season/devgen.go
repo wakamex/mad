@@ -1,6 +1,9 @@
 package season
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 const (
 	devClusterBeatCount   = 20
@@ -77,34 +80,30 @@ var devFactions = []devFaction{
 	// Split: 3 stabilize-favored, 1 mixed (crossover at beat 2), 3 exploit-favored.
 	// Thresholds are NOT predictive of best lane — can't infer ROI from entry cost.
 	//
-	// Spend, thresholds, and debt caps are UNIFORM across all factions so the
-	// current tick looks identical regardless of which lane is better. Only
-	// HazardBonus is the MEAN reward for committing to this faction's hazards.
-	// Mix of profitable (positive mean) and trap (negative mean) factions.
-	// Per-beat reward = HazardBonus + beat variation (±5, hidden from model).
-	// Hold penalty = 3. Commit is best when reward > 3, hold when reward <= 3.
+	// HazardBonus is the 'a' parameter in reward = a * ln(1+x) - 5x + noise.
+	// Higher a → higher optimal investment. The model must estimate a from
+	// noisy observations to choose the right investment level per faction.
 	//
-	// Faction names are deliberately counter-intuitive to the bonus mapping
-	// to prevent the model from using name semantics to infer the answer.
-	// Beat variation ensures single observations are unreliable.
+	//   Glass Choir:    a=25 → optimal invest 3-4 (high returns)
+	//   Harbor Union:   a=18 → optimal invest 2-3
+	//   Archive Office: a=14 → optimal invest 1-2
+	//   Civic Ward:     a=10 → optimal invest 1 or hold
+	//   Relay Guild:    a=7  → mostly hold
+	//   Silt Exchange:  a=4  → almost always hold
+	//   Copper Terrace: a=2  → always hold
 	//
-	//   Glass Choir:    mean +30 → range [25, 35]  (profitable)
-	//   Harbor Union:   mean +20 → range [15, 25]  (profitable)
-	//   Archive Office: mean +12 → range [7, 17]   (profitable)
-	//   Civic Ward:     mean  -8 → range [-13, -3] (trap)
-	//   Silt Exchange:  mean -12 → range [-17, -7] (trap)
-	//   Relay Guild:    mean -18 → range [-23, -13](trap)
-	//   Copper Terrace: mean -25 → range [-30, -20](trap)
+	//   Random play scores ~5% of optimal. Optimal requires ~3+ observations
+	//   per faction to estimate a through the noise (range ±10).
 	//
-	//                                                           hazard  stab  expl  debt   stab  stab stab  expl  expl expl
-	//                                                           bonus  bonus bonus relief  rpct rspnd dcap  apct aspnd dcap
-	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 30, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: -8, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 20, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: 12, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: -12, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: -18, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
-	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: -25, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	//                                                          hazard   stab  expl  debt   stab  stab stab  expl  expl expl
+	//                                                            a     bonus bonus relief  rpct rspnd dcap  apct aspnd dcap
+	{ID: "glass_choir", Name: "Glass Choir", Protocol: "glass curtain", HazardBonus: 25, StabilizeBonus: 18, ExploitBonus: -4, StabilizeDebtRelief: 14, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "civic_ward", Name: "Civic Ward", Protocol: "civic cordon", HazardBonus: 10, StabilizeBonus: 8, ExploitBonus: 0, StabilizeDebtRelief: 8, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "harbor_union", Name: "Harbor Union", Protocol: "dock brace", HazardBonus: 18, StabilizeBonus: -2, ExploitBonus: 16, StabilizeDebtRelief: 4, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "archive_office", Name: "Archive Office", Protocol: "checksum lock", HazardBonus: 14, StabilizeBonus: 12, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "silt_exchange", Name: "Silt Exchange", Protocol: "market divert", HazardBonus: 4, StabilizeBonus: -4, ExploitBonus: 18, StabilizeDebtRelief: 2, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "relay_guild", Name: "Relay Guild", Protocol: "relay brace", HazardBonus: 7, StabilizeBonus: 14, ExploitBonus: -4, StabilizeDebtRelief: 12, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
+	{ID: "copper_terrace", Name: "Copper Terrace", Protocol: "trace brace", HazardBonus: 2, StabilizeBonus: 2, ExploitBonus: 12, StabilizeDebtRelief: 6, StabilizeRepPct: 0.05, StabilizeRepSpend: 1, StabilizeDebtCap: 45, ExploitAuraPct: 0.04, ExploitAuraSpend: 2, ExploitDebtCap: 35},
 }
 
 var devRegimes = []devRegime{
@@ -643,23 +642,29 @@ func buildReputationLadderElement(cluster int, theme devTheme, plan devClusterPl
 func buildPreparednessHazardElement(cluster int, theme devTheme, plan devClusterPlan, budget resourceBudget) StoryElement {
 	beats := make([]StoryBeat, 0, plan.Hazard)
 
-	// Binary commit/hold hazard with profitable and trap factions.
-	// Reward = HazardBonus + beat variation (±5). Hold penalty = 3.
-	// Commit is best when reward > hold penalty. Trap factions give
-	// negative yield — committing actively hurts. The model must learn
-	// from reveal feedback which factions are worth committing to.
+	// Multi-level investment hazard. Each tick offers 4 investment levels
+	// (spend 1-4 rep) plus hold. Reward = 3*a * ln(1+x) - 15*x + noise.
+	// The ln curve has diminishing returns, so the optimal investment level
+	// varies by faction: high-a factions reward max investment, low-a factions
+	// reward minimal or no investment. The model must learn each faction's
+	// hidden 'a' parameter from multiple noisy observations to pick the
+	// optimal level. Random play scores ~9% of optimal. Greedy ceiling ~700.
 	const (
 		hazardRepThreshold int64 = 2
-		hazardRepCost      int64 = 1
 		hazardDebtCap      int64 = 45
-		hazardMissPenalty  int64 = 3
+		hazardRewardScale  int   = 3
+		hazardCostPer      int64 = 15
+		hazardMaxInvest    int   = 4
 	)
+
+	// Beat noise: deterministic per beat index, range -20 to +14.
+	beatNoise := []int64{-20, -8, 0, 6, 14}
 
 	for i := 1; i <= plan.Hazard; i++ {
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
 		sig := clusterSignature(theme)
 		sourceText := fmt.Sprintf(
-			"%s struck the %s sector. %s is requesting an emergency response. Committing spends faction standing.",
+			"%s struck the %s sector. %s is requesting an emergency response. Choose your investment level carefully.",
 			theme.Hazard,
 			sig,
 			theme.Faction.Name,
@@ -673,63 +678,128 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 			precursors = append(precursors, fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i-1))
 		}
 
-		// Reward = faction mean + beat variation (±5, hidden from model).
-		// Profitable factions: all beats well above hold penalty.
-		// Trap factions: all beats negative, well below hold penalty.
-		// Beat variation adds noise but doesn't flip the answer for most factions.
-		beatVariation := int64((i-3)*3 + (i%2)*2 - 1) // range roughly -7 to +5
-		commitYield := theme.Faction.HazardBonus + beatVariation
-		repSpend := hazardRepCost
-		isBest := commitYield > hazardMissPenalty
-		commitClass := "best"
-		holdClass := "bad"
-		if !isBest {
-			commitClass = "bad"
-			holdClass = "best"
+		noise := beatNoise[(i-1)%len(beatNoise)]
+		a := float64(theme.Faction.HazardBonus)
+
+		// Compute net yield for each investment level:
+		// net(x) = round(scale * a * ln(1+x) - cost_per * x + noise)
+		type investOption struct {
+			level    int
+			option   string
+			repCost  int64
+			netYield int64
+		}
+		options := make([]investOption, 0, hazardMaxInvest+1)
+		options = append(options, investOption{level: 0, option: "hold", repCost: 0, netYield: 0})
+		for x := 1; x <= hazardMaxInvest; x++ {
+			net := int64(math.Round(float64(hazardRewardScale)*a*math.Log(float64(1+x)) - float64(hazardCostPer*int64(x)) + float64(noise)))
+			options = append(options, investOption{
+				level:    x,
+				option:   fmt.Sprintf("invest_%d", x),
+				repCost:  int64(x),
+				netYield: net,
+			})
 		}
 
-		rules := []Rule{
-			{
-				Match: ActionMatch{Command: "commit", Target: target, Option: "respond"},
+		// Find the best option (highest net yield).
+		bestIdx := 0
+		for j := 1; j < len(options); j++ {
+			if options[j].netYield > options[bestIdx].netYield {
+				bestIdx = j
+			}
+		}
+
+		// Build scoring rules: one per investment level + hold.
+		rules := make([]Rule, 0, 2*hazardMaxInvest+1)
+		allowedOptions := make([]string, 0, hazardMaxInvest)
+		for _, opt := range options {
+			if opt.level == 0 {
+				continue // hold handled separately
+			}
+			allowedOptions = append(allowedOptions, opt.option)
+			class := "bad"
+			if opt.level == options[bestIdx].level && opt.netYield == options[bestIdx].netYield {
+				class = "best"
+			}
+			// Rule with requirements (has faction rep).
+			optTarget := fmt.Sprintf("%s.%s", target, opt.option)
+			rules = append(rules, Rule{
+				Match: ActionMatch{Command: "commit", Target: optTarget, Option: opt.option},
 				Requirements: RuleRequirements{
 					RequiresAvailability: []string{defaultAvailability},
-					MinReputation:        map[string]int64{theme.Faction.ID: hazardRepThreshold},
+					MinReputation:        map[string]int64{theme.Faction.ID: maxInt64(hazardRepThreshold, opt.repCost)},
 					MaxDebt:              hazardDebtCap,
 				},
 				Effects: StateEffects{
-					ReputationDelta: map[string]int64{theme.Faction.ID: -repSpend},
+					ReputationDelta: map[string]int64{theme.Faction.ID: -opt.repCost},
 				},
 				Delta: ScoreDelta{
-					Yield:   commitYield,
-					Insight: 5,
+					Yield:   opt.netYield,
+					Insight: int64(opt.level),
 				},
-				Label:          fmt.Sprintf("%s logged your response to the %s incident.", theme.Faction.Name, theme.Hazard),
-				Classification: commitClass,
-			},
-			{
-				Match: ActionMatch{Command: "commit", Target: target, Option: "respond"},
+				Label:          fmt.Sprintf("%s logged your level-%d response to the %s incident.", theme.Faction.Name, opt.level, theme.Hazard),
+				Classification: class,
+			})
+			// Fallback rule without rep (bounced).
+			rules = append(rules, Rule{
+				Match: ActionMatch{Command: "commit", Target: optTarget, Option: opt.option},
 				Requirements: RuleRequirements{
 					RequiresAvailability: []string{defaultAvailability},
 				},
 				Delta: ScoreDelta{
-					MissPenalties: 12,
-					Debt:          2,
+					MissPenalties: 8 + int64(opt.level*2),
+					Debt:          int64(opt.level),
 				},
 				Label:          "You tried to respond but lacked the standing to act.",
 				Classification: "bad",
-			},
-			{
-				Match:          ActionMatch{Command: "hold"},
-				Delta:          ScoreDelta{MissPenalties: hazardMissPenalty},
-				Label:          "The incident passed without your involvement.",
-				Classification: holdClass,
-			},
+			})
 		}
+		// Hold rule.
+		holdClass := "bad"
+		if bestIdx == 0 {
+			holdClass = "best"
+		}
+		rules = append(rules, Rule{
+			Match:          ActionMatch{Command: "hold"},
+			Delta:          ScoreDelta{},
+			Label:          "The incident passed without your involvement.",
+			Classification: holdClass,
+		})
 
 		var hazardConsumes []string
 		if plan.Clue > 0 {
 			hazardConsumes = []string{clueTag(cluster, minInt(maxInt(plan.Clue, 2), maxInt(2, i)))}
 		}
+
+		// Build one opportunity per investment level with explicit cost.
+		// The model sees exactly what each level costs; only the reward is hidden.
+		opportunities := make([]Opportunity, 0, hazardMaxInvest+1)
+		for _, opt := range options {
+			if opt.level == 0 {
+				continue // hold is implicit via AllowedCommands
+			}
+			opportunities = append(opportunities, Opportunity{
+				OpportunityID:   fmt.Sprintf("%s.%s", target, opt.option),
+				AllowedCommands: []string{"commit", "hold"},
+				AllowedOptions:  []string{opt.option},
+				PublicRequirements: []PublicRequirement{
+					{
+						Metric:   "reputation",
+						Scope:    theme.Faction.ID,
+						Operator: ">=",
+						Value:    maxInt64(hazardRepThreshold, opt.repCost),
+						Label:    fmt.Sprintf("%s standing %d+ required; spends %d standing.", theme.Faction.Name, maxInt64(hazardRepThreshold, opt.repCost), opt.repCost),
+					},
+					{
+						Metric:   "debt",
+						Operator: "<=",
+						Value:    hazardDebtCap,
+						Label:    fmt.Sprintf("Debt %d or lower required.", hazardDebtCap),
+					},
+				},
+			})
+		}
+
 		beats = append(beats, StoryBeat{
 			BeatID:           fmt.Sprintf("cluster_%03d.hazard.%d", cluster+1, i),
 			ClockClass:       "interrupt",
@@ -743,29 +813,8 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					Text:       sourceText,
 				},
 			},
-			Opportunities: []Opportunity{
-				{
-					OpportunityID:   target,
-					AllowedCommands: []string{"commit", "hold"},
-					AllowedOptions:  []string{"respond"},
-					PublicRequirements: []PublicRequirement{
-						{
-							Metric:   "reputation",
-							Scope:    theme.Faction.ID,
-							Operator: ">=",
-							Value:    hazardRepThreshold,
-							Label:    fmt.Sprintf("%s standing %d+ required; successful response spends %d standing.", theme.Faction.Name, hazardRepThreshold, repSpend),
-						},
-						{
-							Metric:   "debt",
-							Operator: "<=",
-							Value:    hazardDebtCap,
-							Label:    fmt.Sprintf("Debt %d or lower required.", hazardDebtCap),
-						},
-					},
-				},
-			},
-			Scoring: ScoringPlan{Rules: rules},
+			Opportunities: opportunities,
+			Scoring:       ScoringPlan{Rules: rules},
 		})
 	}
 

@@ -871,7 +871,7 @@
             {
               "source_id": "critical_broadcast.cluster_001.1",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -882,7 +882,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -890,7 +893,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
+                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -907,7 +910,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.1",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -924,20 +927,71 @@
                   }
                 },
                 "delta": {
-                  "yield": 25,
-                  "insight": 5,
+                  "yield": 17,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir logged your response to the fog cascade incident.",
-                "classification": "best"
+                "label": "Glass Choir logged your level-1 response to the fog cascade incident.",
+                "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.1",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -2
+                  }
+                },
+                "delta": {
+                  "yield": 32,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-2 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -956,6 +1010,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -3
+                  }
+                },
+                "delta": {
+                  "yield": 39,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-3 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -4
+                  }
+                },
+                "delta": {
+                  "yield": 41,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-4 response to the fog cascade incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.1",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -963,7 +1119,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -989,7 +1145,7 @@
             {
               "source_id": "critical_broadcast.cluster_001.2",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -1000,7 +1156,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -1008,7 +1167,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
+                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -1025,7 +1184,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.2",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1042,20 +1201,71 @@
                   }
                 },
                 "delta": {
-                  "yield": 26,
-                  "insight": 5,
+                  "yield": 29,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir logged your response to the fog cascade incident.",
-                "classification": "best"
+                "label": "Glass Choir logged your level-1 response to the fog cascade incident.",
+                "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.2",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -2
+                  }
+                },
+                "delta": {
+                  "yield": 44,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-2 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1074,6 +1284,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -3
+                  }
+                },
+                "delta": {
+                  "yield": 51,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-3 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -4
+                  }
+                },
+                "delta": {
+                  "yield": 53,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-4 response to the fog cascade incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.2",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -1081,7 +1393,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1108,7 +1420,7 @@
             {
               "source_id": "critical_broadcast.cluster_001.3",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -1119,7 +1431,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -1127,7 +1442,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
+                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -1144,7 +1459,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.3",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1161,20 +1476,71 @@
                   }
                 },
                 "delta": {
-                  "yield": 31,
-                  "insight": 5,
+                  "yield": 37,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir logged your response to the fog cascade incident.",
-                "classification": "best"
+                "label": "Glass Choir logged your level-1 response to the fog cascade incident.",
+                "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.3",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -2
+                  }
+                },
+                "delta": {
+                  "yield": 52,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-2 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1193,6 +1559,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -3
+                  }
+                },
+                "delta": {
+                  "yield": 59,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-3 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -4
+                  }
+                },
+                "delta": {
+                  "yield": 61,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-4 response to the fog cascade incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.3",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -1200,7 +1668,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1227,7 +1695,7 @@
             {
               "source_id": "critical_broadcast.cluster_001.4",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -1238,7 +1706,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -1246,7 +1717,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
+                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -1263,7 +1734,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.4",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1280,20 +1751,71 @@
                   }
                 },
                 "delta": {
-                  "yield": 32,
-                  "insight": 5,
+                  "yield": 43,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir logged your response to the fog cascade incident.",
-                "classification": "best"
+                "label": "Glass Choir logged your level-1 response to the fog cascade incident.",
+                "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.4",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -2
+                  }
+                },
+                "delta": {
+                  "yield": 58,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-2 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1312,6 +1834,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -3
+                  }
+                },
+                "delta": {
+                  "yield": 65,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-3 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -4
+                  }
+                },
+                "delta": {
+                  "yield": 67,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-4 response to the fog cascade incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.4",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -1319,7 +1943,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -1346,7 +1970,7 @@
             {
               "source_id": "critical_broadcast.cluster_001.5",
               "source_type": "critical_broadcast",
-              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Committing spends faction standing."
+              "text": "fog cascade struck the Glass Choir amber archive annex sector. Glass Choir is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -1357,7 +1981,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -1365,7 +1992,7 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required; successful response spends 1 standing."
+                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -1382,7 +2009,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.5",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1399,20 +2026,71 @@
                   }
                 },
                 "delta": {
-                  "yield": 37,
-                  "insight": 5,
+                  "yield": 51,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Glass Choir logged your response to the fog cascade incident.",
-                "classification": "best"
+                "label": "Glass Choir logged your level-1 response to the fog cascade incident.",
+                "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.001.5",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -2
+                  }
+                },
+                "delta": {
+                  "yield": 66,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-2 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -1431,6 +2109,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -3
+                  }
+                },
+                "delta": {
+                  "yield": 73,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-3 response to the fog cascade incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "glass_choir": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "glass_choir": -4
+                  }
+                },
+                "delta": {
+                  "yield": 75,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Glass Choir logged your level-4 response to the fog cascade incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.001.5",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -1438,7 +2218,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "bad"
@@ -3122,7 +3902,7 @@
             {
               "source_id": "critical_broadcast.cluster_002.1",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -3133,7 +3913,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -3141,7 +3924,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
+                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -3158,7 +3941,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.1",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3175,20 +3958,71 @@
                   }
                 },
                 "delta": {
-                  "yield": -13,
-                  "insight": 5,
+                  "yield": -14,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward logged your response to the spore bloom incident.",
+                "label": "Civic Ward logged your level-1 response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.1",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -2
+                  }
+                },
+                "delta": {
+                  "yield": -17,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-2 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3207,6 +4041,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -3
+                  }
+                },
+                "delta": {
+                  "yield": -23,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-3 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -4
+                  }
+                },
+                "delta": {
+                  "yield": -32,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-4 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.1",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -3214,7 +4150,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3240,7 +4176,7 @@
             {
               "source_id": "critical_broadcast.cluster_002.2",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -3251,7 +4187,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -3259,7 +4198,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
+                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -3276,7 +4215,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.2",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3293,20 +4232,71 @@
                   }
                 },
                 "delta": {
-                  "yield": -12,
-                  "insight": 5,
+                  "yield": -2,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward logged your response to the spore bloom incident.",
+                "label": "Civic Ward logged your level-1 response to the spore bloom incident.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.2",
-                  "option": "respond"
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -2
+                  }
+                },
+                "delta": {
+                  "yield": -5,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-2 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3325,6 +4315,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -3
+                  }
+                },
+                "delta": {
+                  "yield": -11,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-3 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -4
+                  }
+                },
+                "delta": {
+                  "yield": -20,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-4 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.2",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -3332,7 +4424,7 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
                 "classification": "best"
@@ -3359,7 +4451,7 @@
             {
               "source_id": "critical_broadcast.cluster_002.3",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -3370,7 +4462,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -3378,7 +4473,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
+                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -3395,7 +4490,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.3",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3412,20 +4507,71 @@
                   }
                 },
                 "delta": {
-                  "yield": -7,
-                  "insight": 5,
+                  "yield": 6,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward logged your response to the spore bloom incident.",
+                "label": "Civic Ward logged your level-1 response to the spore bloom incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.3",
-                  "option": "respond"
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -2
+                  }
+                },
+                "delta": {
+                  "yield": 3,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-2 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3444,6 +4590,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -3
+                  }
+                },
+                "delta": {
+                  "yield": -3,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-3 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -4
+                  }
+                },
+                "delta": {
+                  "yield": -12,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-4 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.3",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -3451,10 +4699,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
-                "classification": "best"
+                "classification": "bad"
               }
             ]
           },
@@ -3478,7 +4726,7 @@
             {
               "source_id": "critical_broadcast.cluster_002.4",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -3489,7 +4737,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -3497,7 +4748,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
+                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -3514,7 +4765,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.4",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3531,20 +4782,71 @@
                   }
                 },
                 "delta": {
-                  "yield": -6,
-                  "insight": 5,
+                  "yield": 12,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward logged your response to the spore bloom incident.",
+                "label": "Civic Ward logged your level-1 response to the spore bloom incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.4",
-                  "option": "respond"
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -2
+                  }
+                },
+                "delta": {
+                  "yield": 9,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-2 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3563,6 +4865,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -3
+                  }
+                },
+                "delta": {
+                  "yield": 3,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-3 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -4
+                  }
+                },
+                "delta": {
+                  "yield": -6,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-4 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.4",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -3570,10 +4974,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
-                "classification": "best"
+                "classification": "bad"
               }
             ]
           },
@@ -3597,7 +5001,7 @@
             {
               "source_id": "critical_broadcast.cluster_002.5",
               "source_type": "critical_broadcast",
-              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Committing spends faction standing."
+              "text": "spore bloom struck the Civic Ward cobalt north quay sector. Civic Ward is requesting an emergency response. Choose your investment level carefully."
             }
           ],
           "opportunities": [
@@ -3608,7 +5012,10 @@
                 "hold"
               ],
               "allowed_options": [
-                "respond"
+                "invest_1",
+                "invest_2",
+                "invest_3",
+                "invest_4"
               ],
               "public_requirements": [
                 {
@@ -3616,7 +5023,7 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required; successful response spends 1 standing."
+                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
                 },
                 {
                   "metric": "debt",
@@ -3633,7 +5040,7 @@
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.5",
-                  "option": "respond"
+                  "option": "invest_1"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3650,20 +5057,71 @@
                   }
                 },
                 "delta": {
-                  "yield": -1,
-                  "insight": 5,
+                  "yield": 20,
+                  "insight": 1,
                   "aura": 0,
                   "debt": 0,
                   "miss_penalties": 0
                 },
-                "label": "Civic Ward logged your response to the spore bloom incident.",
+                "label": "Civic Ward logged your level-1 response to the spore bloom incident.",
+                "classification": "best"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_1"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 1,
+                  "miss_penalties": 10
+                },
+                "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
               },
               {
                 "match": {
                   "command": "commit",
                   "target": "hazard.cluster.002.5",
-                  "option": "respond"
+                  "option": "invest_2"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -2
+                  }
+                },
+                "delta": {
+                  "yield": 17,
+                  "insight": 2,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-2 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_2"
                 },
                 "requirements": {
                   "requires_availability": [
@@ -3682,6 +5140,108 @@
               },
               {
                 "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -3
+                  }
+                },
+                "delta": {
+                  "yield": 11,
+                  "insight": 3,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-3 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_3"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 3,
+                  "miss_penalties": 14
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ],
+                  "max_debt": 45,
+                  "min_reputation": {
+                    "civic_ward": 2
+                  }
+                },
+                "effects": {
+                  "reputation_delta": {
+                    "civic_ward": -4
+                  }
+                },
+                "delta": {
+                  "yield": 2,
+                  "insight": 4,
+                  "aura": 0,
+                  "debt": 0,
+                  "miss_penalties": 0
+                },
+                "label": "Civic Ward logged your level-4 response to the spore bloom incident.",
+                "classification": "bad"
+              },
+              {
+                "match": {
+                  "command": "commit",
+                  "target": "hazard.cluster.002.5",
+                  "option": "invest_4"
+                },
+                "requirements": {
+                  "requires_availability": [
+                    "available"
+                  ]
+                },
+                "delta": {
+                  "yield": 0,
+                  "insight": 0,
+                  "aura": 0,
+                  "debt": 4,
+                  "miss_penalties": 16
+                },
+                "label": "You tried to respond but lacked the standing to act.",
+                "classification": "bad"
+              },
+              {
+                "match": {
                   "command": "hold"
                 },
                 "delta": {
@@ -3689,10 +5249,10 @@
                   "insight": 0,
                   "aura": 0,
                   "debt": 0,
-                  "miss_penalties": 3
+                  "miss_penalties": 0
                 },
                 "label": "The incident passed without your involvement.",
-                "classification": "best"
+                "classification": "bad"
               }
             ]
           },

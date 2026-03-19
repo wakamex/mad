@@ -999,7 +999,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 340,
+                  "yield": 374,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1023,8 +1023,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1050,7 +1050,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 648,
+                  "yield": 713,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1074,8 +1074,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1101,7 +1101,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 779,
+                  "yield": 857,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1125,8 +1125,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1152,7 +1152,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 814,
+                  "yield": 896,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1176,8 +1176,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1345,7 +1345,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 580,
+                  "yield": 638,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1369,8 +1369,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1396,7 +1396,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 888,
+                  "yield": 977,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1420,8 +1420,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1447,7 +1447,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1019,
+                  "yield": 1121,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1471,8 +1471,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1498,7 +1498,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1054,
+                  "yield": 1160,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1522,8 +1522,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1692,7 +1692,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 740,
+                  "yield": 814,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1716,8 +1716,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1743,7 +1743,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1048,
+                  "yield": 1153,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1767,8 +1767,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1794,7 +1794,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1179,
+                  "yield": 1297,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1818,8 +1818,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1845,7 +1845,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1214,
+                  "yield": 1336,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1869,8 +1869,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2039,7 +2039,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 860,
+                  "yield": 946,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -2063,8 +2063,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2090,7 +2090,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1168,
+                  "yield": 1285,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -2114,8 +2114,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2141,7 +2141,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1299,
+                  "yield": 1429,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -2165,8 +2165,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2192,7 +2192,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1334,
+                  "yield": 1468,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -2216,8 +2216,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2386,7 +2386,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1020,
+                  "yield": 1122,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -2410,8 +2410,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2437,7 +2437,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1328,
+                  "yield": 1461,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -2461,8 +2461,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2488,7 +2488,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1459,
+                  "yield": 1605,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -2512,8 +2512,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2539,7 +2539,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 1494,
+                  "yield": 1644,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -2563,8 +2563,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4390,7 +4390,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -284,
+                  "yield": -313,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -4414,8 +4414,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4441,7 +4441,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -341,
+                  "yield": -375,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4465,8 +4465,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4492,7 +4492,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -468,
+                  "yield": -515,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4516,8 +4516,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4543,7 +4543,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -634,
+                  "yield": -698,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4567,8 +4567,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4736,7 +4736,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -44,
+                  "yield": -49,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -4760,8 +4760,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4787,7 +4787,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -101,
+                  "yield": -111,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4811,8 +4811,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4838,7 +4838,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -228,
+                  "yield": -251,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4862,8 +4862,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4889,7 +4889,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -394,
+                  "yield": -434,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4913,8 +4913,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5083,7 +5083,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 116,
+                  "yield": 127,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -5107,8 +5107,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5134,7 +5134,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 59,
+                  "yield": 65,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -5158,8 +5158,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5185,7 +5185,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -68,
+                  "yield": -75,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -5209,8 +5209,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5236,7 +5236,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -234,
+                  "yield": -258,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -5260,8 +5260,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5430,7 +5430,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 236,
+                  "yield": 259,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -5454,8 +5454,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5481,7 +5481,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 179,
+                  "yield": 197,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -5505,8 +5505,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5532,7 +5532,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 52,
+                  "yield": 57,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -5556,8 +5556,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5583,7 +5583,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -114,
+                  "yield": -126,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -5607,8 +5607,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5777,7 +5777,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 396,
+                  "yield": 435,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -5801,8 +5801,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 20,
-                  "miss_penalties": 200
+                  "debt": 22,
+                  "miss_penalties": 220
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5828,7 +5828,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 339,
+                  "yield": 373,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -5852,8 +5852,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 40,
-                  "miss_penalties": 240
+                  "debt": 44,
+                  "miss_penalties": 264
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5879,7 +5879,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 212,
+                  "yield": 233,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -5903,8 +5903,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 60,
-                  "miss_penalties": 280
+                  "debt": 66,
+                  "miss_penalties": 308
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5930,7 +5930,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 46,
+                  "yield": 50,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -5954,8 +5954,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 80,
-                  "miss_penalties": 320
+                  "debt": 88,
+                  "miss_penalties": 352
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"

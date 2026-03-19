@@ -652,13 +652,13 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 	const (
 		hazardRepThreshold int64 = 2
 		hazardDebtCap      int64 = 45
-		hazardRewardScale  int   = 30
-		hazardCostPer      int64 = 150
+		hazardRewardScale  int   = 60
+		hazardCostPer      int64 = 300
 		hazardMaxInvest    int   = 4
 	)
 
-	// Beat noise: deterministic per beat index, range -200 to +140.
-	beatNoise := []int64{-200, -80, 0, 60, 140}
+	// Beat noise: deterministic per beat index, range -400 to +280.
+	beatNoise := []int64{-400, -160, 0, 120, 280}
 
 	for i := 1; i <= plan.Hazard; i++ {
 		target := fmt.Sprintf("hazard.cluster.%03d.%d", cluster+1, i)
@@ -747,8 +747,8 @@ func buildPreparednessHazardElement(cluster int, theme devTheme, plan devCluster
 					RequiresAvailability: []string{defaultAvailability},
 				},
 				Delta: ScoreDelta{
-					MissPenalties: 80 + int64(opt.level*20),
-					Debt:          int64(opt.level * 10),
+					MissPenalties: 160 + int64(opt.level*40),
+					Debt:          int64(opt.level * 20),
 				},
 				Label:          "You tried to respond but lacked the standing to act.",
 				Classification: "bad",

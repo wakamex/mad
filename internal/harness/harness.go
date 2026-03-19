@@ -155,6 +155,17 @@ type PromptPacket struct {
 	CurrentState  season.HarnessStateSnapshot `json:"current_state"`
 	RecentReveals []season.SimulatedReveal    `json:"recent_reveals,omitempty"`
 	Notes         string                      `json:"notes,omitempty"`
+	HazardHistory []HazardOutcomeRecord       `json:"hazard_history,omitempty"`
+}
+
+// HazardOutcomeRecord is a structured memory of past hazard investment outcomes.
+// Appended to the prompt so the model can track per-faction ROI without
+// having to parse reveals or manage its own notes.
+type HazardOutcomeRecord struct {
+	Faction    string `json:"faction"`
+	Investment int    `json:"investment"` // 0=hold, 1-4=invest level
+	Yield      int64  `json:"yield"`
+	ScoreDelta int64  `json:"score_delta"`
 }
 
 type PromptActionChoice struct {
@@ -393,6 +404,7 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 	actionStyle := actionLabelStyleForRunner(runner.Spec(), tickActionCount(file))
 
 	var pendingObservations []season.PublicTick
+	var hazardHistory []HazardOutcomeRecord
 
 	for tickIndex := startTick; tickIndex < endTick; tickIndex++ {
 		for _, reveal := range revealsByStart[tickIndex] {
@@ -422,6 +434,9 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			CurrentState:  state.Snapshot(),
 			RecentReveals: applyTextModeReveals(cloneReveals(visibleReveals), options.TextMode),
 		}
+		if len(hazardHistory) > 0 {
+			packet.HazardHistory = hazardHistory
+		}
 		pendingObservations = nil
 		if persistNotes {
 			packet.Notes = notes
@@ -448,6 +463,28 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 
 		outcome := state.ApplyAction(tick, resolveDecisionAction(decision, tick, runner.Spec()))
 		breakdown.Add(tick, outcome.AppliedRule)
+
+		// Record hazard outcomes for structured memory.
+		if tick.Annotations.Family == "hazard_interrupt" {
+			investLevel := 0
+			if outcome.AppliedAction.Option != "" && outcome.AppliedAction.Command == "commit" {
+				// Parse "invest_N" → N
+				if n := len(outcome.AppliedAction.Option); n > 7 && outcome.AppliedAction.Option[:7] == "invest_" {
+					investLevel = int(outcome.AppliedAction.Option[7] - '0')
+				}
+			}
+			// Extract faction from source text.
+			faction := ""
+			if len(tick.Sources) > 0 {
+				faction = extractFactionFromSource(tick.Sources[0].Text)
+			}
+			hazardHistory = append(hazardHistory, HazardOutcomeRecord{
+				Faction:    faction,
+				Investment: investLevel,
+				Yield:      outcome.AppliedRule.Delta.Yield,
+				ScoreDelta: outcome.ScoreDelta,
+			})
+		}
 
 		step := StepTrace{
 			TickIndex:   tickIndex,
@@ -730,6 +767,22 @@ func containsString(values []string, target string) bool {
 		}
 	}
 	return false
+}
+
+// extractFactionFromSource pulls the faction name from hazard source text.
+// Expected format: "... struck the X sector. FACTION is requesting ..."
+func extractFactionFromSource(text string) string {
+	// Find text between "sector. " and " is requesting"
+	start := strings.Index(text, "sector. ")
+	if start < 0 {
+		return "unknown"
+	}
+	start += len("sector. ")
+	end := strings.Index(text[start:], " is requesting")
+	if end < 0 {
+		return "unknown"
+	}
+	return text[start : start+end]
 }
 
 func clampText(value string, limit int) string {

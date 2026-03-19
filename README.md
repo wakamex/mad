@@ -23,7 +23,7 @@ Each tick delivers prose narrative, structured state, and action choices. Correc
 |---|---|---:|
 | **payoff_gate** | Infer regime from 2 prior clue beats, pick correct market option | +68pp |
 | **reputation_ladder** | Same clue recall, pick correct faction offer | +37pp |
-| **hazard_interrupt** | Learn which factions are profitable vs traps from outcome feedback | +21pp |
+| **hazard_interrupt** | Learn per-faction ROI function from noisy observations, optimize investment | forward planning |
 
 ### How the memory gap was validated
 

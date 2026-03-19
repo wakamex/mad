@@ -40,27 +40,34 @@ Three-way market decision where the correct option depends on the active source 
 
 Three-way faction offer where the correct option depends on the active source regime. Same conjunctive evidence mechanism as payoff. Near-random without memory (44%), strong with memory (81%). **+37pp memory gap.**
 
-### hazard_interrupt (VALIDATED — +21pp memory gap)
+### hazard_interrupt (VALIDATED — ln reward function)
 
-Binary commit/hold decision per faction. Commit spends 1 faction reputation and gets a hidden reward that varies by faction (3 profitable, 4 traps). Hold takes a small miss penalty. The agent must learn from past outcomes which factions are worth committing resources to.
+Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 rep) plus hold. Reward follows `66 × a × ln(1+x) - 330×x + noise`, where `a` is a hidden per-faction parameter (2-25), `x` is investment level, and noise varies per beat (±440). The ln curve has diminishing returns — optimal investment level varies by faction. The model must learn each faction's `a` from noisy observations to optimize.
 
-**Haiku result (90-tick, seeded resources):**
+**Key property:** Greedy (tick-local) is NOT the ceiling. An agent that learns per-faction ROI and manages resources across ticks can beat greedy through strategic resource conservation. This tests genuine forward planning.
 
-| Condition | Score | Hazard best-action |
+**Haiku results (90-tick standing+hazard season):**
+
+| Condition | Score | vs Greedy (3,247) |
 |---|---:|---:|
-| **Persistent** | **~500** | **35/42 (83.3%)** |
-| Ephemeral | 228 | 26/42 (61.9%) |
-| Greedy ceiling | 530 | 40/42 (95.2%) |
+| **Ephemeral + structured history** | **8,420** | **259%** |
+| Ephemeral (no history) | 4,026 | 124% |
+| Persistent + history | 3,061 | 94% |
+| Greedy (tick-local) | 3,247 | 100% |
+| Random | -4,857 | negative |
 
-**Memory gap: +21pp** (83% vs 62%). Ephemeral can't distinguish profitable factions from traps without memory. Persistent learns from reveal feedback. Beat variation (±5) prevents single-observation memorization.
+**Findings (2026-03-19):**
+1. With a structured `hazard_history` table of (faction, investment, yield) tuples, Haiku learns the ROI function and scores **2.6× greedy** through forward planning.
+2. Without structured history, persistent context alone (3,061) barely matches greedy — the signal drowns in the conversation noise.
+3. Ephemeral no-history (4,026) beats greedy through variance (lucky big bets), not learning.
+4. The bottleneck is **memory format**, not model capability. The model can do the math when given clean data.
 
-**Design journey (2026-03-13 → 2026-03-18):**
-1. Original two-lane design (stabilize vs exploit): greedy ceiling only 47.6% due to resource depletion. Model matched ceiling — no room for gap.
-2. Rebalanced economy (cut spend 3×, removed standing lock): ceiling rose to 97.6% but ephemeral matched persistent at 95% — the model inferred ROI from visible spend labels and opportunity IDs.
-3. Stripped IDs from prompts, made spend uniform: ephemeral still 95% — faction name semantics leaked the answer.
-4. **Simplified to binary commit/hold with hidden per-faction rewards:** ephemeral drops to 57%, persistent holds at 79%. The faction name is no longer predictive because commit/hold is a value judgment, not a lane selection.
+**Season composition:** Hazard contributes 31% of full-season greedy score at 1000 ticks (payoff 35%, ladder 34%, hazard 31%).
 
-**Why binary works:** In the two-lane design, the model could infer the better lane from local signals (spend costs, faction semantics, beat index). In binary, the model sees "commit costs 1 rep" vs "hold costs 8 penalty" — identical across all factions. The only way to know whether committing is worth it for *this* faction is to remember past outcomes.
+**Design journey (2026-03-13 → 2026-03-19):**
+1. Binary commit/hold with traps: +21pp gap (persistent 83% vs ephemeral 62%), but simple label memorization.
+2. ln reward function with multi-level investment: tests actual function learning, random scores negative, visible_greedy deeply negative.
+3. Structured hazard history: proves the model can learn the function — the gap is between organized memory (8,420) and unorganized context (3,061).
 
 ### standing_work_loop (LOW PRIORITY)
 
@@ -111,7 +118,7 @@ Each family was tested using focused 90-tick seasons. All runs use Claude Haiku 
 | **payoff_gate** | 29% | 28% | **96%** | **+68pp** |
 | **reputation_ladder** | 33% | 44% | **81%** | **+37pp** |
 | **seed_clue_chain** | — | — | — | observe-only |
-| **hazard_interrupt** | 50% | 62% | **83%** | **+21pp** |
+| **hazard_interrupt** | negative | negative | **259% of greedy** (with structured history) | forward planning |
 | **standing_work_loop** | ~50% | — | 56% | low ceiling, hazard support only |
 
 ### Raw results (current design, 2026-03-12)

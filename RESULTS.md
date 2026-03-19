@@ -61,15 +61,18 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 ```
 Random play:                       -4,857  — actively destroys value
 Persistent (raw accumulation):      3,061  — worst informed strategy
-Ephemeral (no memory, no history):  4,026  — outperforms persistent
+Ephemeral (no memory, no history):  4,026  — variance gambling beats noise
 ??? (curated memory systems):       ???    — the gap frameworks compete on
 Structured table (oracle memory):   8,420  — proves the task is solvable
-Greedy (tick-local, perfect info):  3,247  — local-optimal baseline
+
+Reference: greedy (tick-local)      3,247  — local-optimal with perfect per-tick info
 ```
 
 The ordering is counterintuitive: persistent (3,061) < greedy (3,247) < ephemeral (4,026) < structured (8,420). Raw accumulation is actively harmful — 90 ticks of prose, state snapshots, standing work decisions, and reveal text drown the 42 hazard observations the model actually needs.
 
-**Why ephemeral beats persistent (4,026 vs 3,061):** The ln reward function is asymmetric — high-investment commits on high-a factions yield up to +1,643 while hold yields 0. An ephemeral model that occasionally gambles on max investment hits a few of these jackpots, and the upside outweighs the downside. A persistent model, burdened by accumulated context, becomes conservative and misses the big payoffs. Ephemeral's advantage is variance, not learning — it can't systematically identify high-a factions.
+**Why ephemeral beats persistent (4,026 vs 3,061):** The ln reward function is asymmetric — high-investment commits on high-a factions yield up to +1,643 while hold yields 0. Empirically, persistent holds on 74% of hazard ticks vs ephemeral's 67%. When ephemeral does invest, it gambles on higher levels (6 invest_3 picks vs persistent's 2). The accumulated context makes persistent slightly more cautious, and the few big wins ephemeral stumbles into through variance outweigh the losses. Ephemeral's advantage is asymmetric risk-taking, not learning — it can't systematically identify high-a factions.
+
+For comparison, ephemeral+history holds on only 60% of ticks and overwhelmingly picks invest_1 (14/42) — it has learned that conservative investment is optimal for most factions, investing big only when the data supports it.
 
 This establishes hazard as a benchmark for **memory curation systems** — frameworks that select, compress, or reorganize context rather than accumulating it raw. Approaches that could compete:
 - **RAG over conversation**: retrieve relevant past hazard observations, discard standing work noise

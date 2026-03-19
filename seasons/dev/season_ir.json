@@ -876,16 +876,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.1",
+              "opportunity_id": "hazard.cluster.001.1.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -893,7 +890,82 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Glass Choir standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.1.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Glass Choir standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.1.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Glass Choir standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.1.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Glass Choir standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -909,7 +981,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -927,7 +999,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 17,
+                  "yield": 170,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -939,7 +1011,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -951,8 +1023,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -960,7 +1032,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -978,7 +1050,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 32,
+                  "yield": 324,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -990,7 +1062,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1002,8 +1074,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1011,7 +1083,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1020,7 +1092,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 3
                   }
                 },
                 "effects": {
@@ -1029,7 +1101,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 39,
+                  "yield": 390,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1041,7 +1113,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1053,8 +1125,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1062,7 +1134,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1071,7 +1143,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 4
                   }
                 },
                 "effects": {
@@ -1080,7 +1152,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 41,
+                  "yield": 407,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1092,7 +1164,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.1",
+                  "target": "hazard.cluster.001.1.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1104,8 +1176,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1150,16 +1222,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.2",
+              "opportunity_id": "hazard.cluster.001.2.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -1167,7 +1236,82 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Glass Choir standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.2.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Glass Choir standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.2.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Glass Choir standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.2.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Glass Choir standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -1183,7 +1327,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1201,7 +1345,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 29,
+                  "yield": 290,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1213,7 +1357,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1225,8 +1369,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1234,7 +1378,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1252,7 +1396,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 44,
+                  "yield": 444,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1264,7 +1408,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1276,8 +1420,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1285,7 +1429,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1294,7 +1438,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 3
                   }
                 },
                 "effects": {
@@ -1303,7 +1447,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 51,
+                  "yield": 510,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1315,7 +1459,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1327,8 +1471,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1336,7 +1480,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1345,7 +1489,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 4
                   }
                 },
                 "effects": {
@@ -1354,7 +1498,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 53,
+                  "yield": 527,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1366,7 +1510,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.2",
+                  "target": "hazard.cluster.001.2.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1378,8 +1522,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1425,16 +1569,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.3",
+              "opportunity_id": "hazard.cluster.001.3.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -1442,7 +1583,82 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Glass Choir standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.3.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Glass Choir standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.3.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Glass Choir standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.3.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Glass Choir standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -1458,7 +1674,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1476,7 +1692,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 37,
+                  "yield": 370,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1488,7 +1704,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1500,8 +1716,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1509,7 +1725,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1527,7 +1743,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 52,
+                  "yield": 524,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1539,7 +1755,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1551,8 +1767,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1560,7 +1776,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1569,7 +1785,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 3
                   }
                 },
                 "effects": {
@@ -1578,7 +1794,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 59,
+                  "yield": 590,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1590,7 +1806,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1602,8 +1818,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1611,7 +1827,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1620,7 +1836,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 4
                   }
                 },
                 "effects": {
@@ -1629,7 +1845,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 61,
+                  "yield": 607,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1641,7 +1857,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.3",
+                  "target": "hazard.cluster.001.3.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1653,8 +1869,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1700,16 +1916,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.4",
+              "opportunity_id": "hazard.cluster.001.4.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -1717,7 +1930,82 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Glass Choir standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.4.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Glass Choir standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.4.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Glass Choir standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.4.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Glass Choir standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -1733,7 +2021,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1751,7 +2039,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 43,
+                  "yield": 430,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -1763,7 +2051,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -1775,8 +2063,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1784,7 +2072,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1802,7 +2090,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 58,
+                  "yield": 584,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -1814,7 +2102,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -1826,8 +2114,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1835,7 +2123,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1844,7 +2132,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 3
                   }
                 },
                 "effects": {
@@ -1853,7 +2141,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 65,
+                  "yield": 650,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -1865,7 +2153,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -1877,8 +2165,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1886,7 +2174,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1895,7 +2183,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 4
                   }
                 },
                 "effects": {
@@ -1904,7 +2192,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 67,
+                  "yield": 667,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -1916,7 +2204,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.4",
+                  "target": "hazard.cluster.001.4.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -1928,8 +2216,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -1975,16 +2263,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.001.5",
+              "opportunity_id": "hazard.cluster.001.5.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -1992,7 +2277,82 @@
                   "scope": "glass_choir",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Glass Choir standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Glass Choir standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.5.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Glass Choir standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.5.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Glass Choir standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.001.5.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "glass_choir",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Glass Choir standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -2008,7 +2368,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -2026,7 +2386,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 51,
+                  "yield": 510,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -2038,7 +2398,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -2050,8 +2410,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2059,7 +2419,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -2077,7 +2437,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 66,
+                  "yield": 664,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -2089,7 +2449,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -2101,8 +2461,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2110,7 +2470,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -2119,7 +2479,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 3
                   }
                 },
                 "effects": {
@@ -2128,7 +2488,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 73,
+                  "yield": 730,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -2140,7 +2500,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -2152,8 +2512,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -2161,7 +2521,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -2170,7 +2530,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "glass_choir": 2
+                    "glass_choir": 4
                   }
                 },
                 "effects": {
@@ -2179,7 +2539,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 75,
+                  "yield": 747,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -2191,7 +2551,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.001.5",
+                  "target": "hazard.cluster.001.5.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -2203,8 +2563,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -3907,16 +4267,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.1",
+              "opportunity_id": "hazard.cluster.002.1.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -3924,7 +4281,82 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Civic Ward standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.1.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Civic Ward standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.1.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Civic Ward standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.1.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Civic Ward standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -3940,7 +4372,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -3958,7 +4390,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -14,
+                  "yield": -142,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -3970,7 +4402,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -3982,8 +4414,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -3991,7 +4423,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4009,7 +4441,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -17,
+                  "yield": -170,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4021,7 +4453,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4033,8 +4465,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4042,7 +4474,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4051,7 +4483,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 3
                   }
                 },
                 "effects": {
@@ -4060,7 +4492,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -23,
+                  "yield": -234,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4072,7 +4504,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4084,8 +4516,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4093,7 +4525,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4102,7 +4534,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 4
                   }
                 },
                 "effects": {
@@ -4111,7 +4543,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -32,
+                  "yield": -317,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4123,7 +4555,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.1",
+                  "target": "hazard.cluster.002.1.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4135,8 +4567,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4181,16 +4613,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.2",
+              "opportunity_id": "hazard.cluster.002.2.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -4198,7 +4627,82 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Civic Ward standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.2.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Civic Ward standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.2.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Civic Ward standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.2.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Civic Ward standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -4214,7 +4718,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4232,7 +4736,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -2,
+                  "yield": -22,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -4244,7 +4748,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4256,8 +4760,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4265,7 +4769,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4283,7 +4787,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -5,
+                  "yield": -50,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4295,7 +4799,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4307,8 +4811,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4316,7 +4820,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4325,7 +4829,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 3
                   }
                 },
                 "effects": {
@@ -4334,7 +4838,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -11,
+                  "yield": -114,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4346,7 +4850,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4358,8 +4862,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4367,7 +4871,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4376,7 +4880,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 4
                   }
                 },
                 "effects": {
@@ -4385,7 +4889,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -20,
+                  "yield": -197,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4397,7 +4901,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.2",
+                  "target": "hazard.cluster.002.2.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4409,8 +4913,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4456,16 +4960,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.3",
+              "opportunity_id": "hazard.cluster.002.3.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -4473,7 +4974,82 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Civic Ward standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.3.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Civic Ward standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.3.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Civic Ward standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.3.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Civic Ward standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -4489,7 +5065,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4507,7 +5083,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 6,
+                  "yield": 58,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -4519,7 +5095,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4531,8 +5107,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4540,7 +5116,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4558,7 +5134,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 3,
+                  "yield": 30,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4570,7 +5146,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4582,8 +5158,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4591,7 +5167,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4600,7 +5176,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 3
                   }
                 },
                 "effects": {
@@ -4609,7 +5185,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -3,
+                  "yield": -34,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4621,7 +5197,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4633,8 +5209,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4642,7 +5218,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4651,7 +5227,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 4
                   }
                 },
                 "effects": {
@@ -4660,7 +5236,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -12,
+                  "yield": -117,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4672,7 +5248,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.3",
+                  "target": "hazard.cluster.002.3.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4684,8 +5260,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4731,16 +5307,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.4",
+              "opportunity_id": "hazard.cluster.002.4.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -4748,7 +5321,82 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Civic Ward standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.4.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Civic Ward standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.4.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Civic Ward standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.4.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Civic Ward standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -4764,7 +5412,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4782,7 +5430,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 12,
+                  "yield": 118,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -4794,7 +5442,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -4806,8 +5454,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4815,7 +5463,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4833,7 +5481,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 9,
+                  "yield": 90,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -4845,7 +5493,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -4857,8 +5505,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4866,7 +5514,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4875,7 +5523,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 3
                   }
                 },
                 "effects": {
@@ -4884,7 +5532,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 3,
+                  "yield": 26,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -4896,7 +5544,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -4908,8 +5556,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -4917,7 +5565,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4926,7 +5574,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 4
                   }
                 },
                 "effects": {
@@ -4935,7 +5583,7 @@
                   }
                 },
                 "delta": {
-                  "yield": -6,
+                  "yield": -57,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -4947,7 +5595,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.4",
+                  "target": "hazard.cluster.002.4.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -4959,8 +5607,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5006,16 +5654,13 @@
           ],
           "opportunities": [
             {
-              "opportunity_id": "hazard.cluster.002.5",
+              "opportunity_id": "hazard.cluster.002.5.invest_1",
               "allowed_commands": [
                 "commit",
                 "hold"
               ],
               "allowed_options": [
-                "invest_1",
-                "invest_2",
-                "invest_3",
-                "invest_4"
+                "invest_1"
               ],
               "public_requirements": [
                 {
@@ -5023,7 +5668,82 @@
                   "scope": "civic_ward",
                   "operator": "\u003e=",
                   "value": 2,
-                  "label": "Civic Ward standing 2+ required. Higher investment levels spend more standing."
+                  "label": "Civic Ward standing 2+ required; spends 1 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.5.invest_2",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_2"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 2,
+                  "label": "Civic Ward standing 2+ required; spends 2 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.5.invest_3",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_3"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 3,
+                  "label": "Civic Ward standing 3+ required; spends 3 standing."
+                },
+                {
+                  "metric": "debt",
+                  "operator": "\u003c=",
+                  "value": 45,
+                  "label": "Debt 45 or lower required."
+                }
+              ]
+            },
+            {
+              "opportunity_id": "hazard.cluster.002.5.invest_4",
+              "allowed_commands": [
+                "commit",
+                "hold"
+              ],
+              "allowed_options": [
+                "invest_4"
+              ],
+              "public_requirements": [
+                {
+                  "metric": "reputation",
+                  "scope": "civic_ward",
+                  "operator": "\u003e=",
+                  "value": 4,
+                  "label": "Civic Ward standing 4+ required; spends 4 standing."
                 },
                 {
                   "metric": "debt",
@@ -5039,7 +5759,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -5057,7 +5777,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 20,
+                  "yield": 198,
                   "insight": 1,
                   "aura": 0,
                   "debt": 0,
@@ -5069,7 +5789,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_1",
                   "option": "invest_1"
                 },
                 "requirements": {
@@ -5081,8 +5801,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 1,
-                  "miss_penalties": 10
+                  "debt": 10,
+                  "miss_penalties": 100
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5090,7 +5810,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -5108,7 +5828,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 17,
+                  "yield": 170,
                   "insight": 2,
                   "aura": 0,
                   "debt": 0,
@@ -5120,7 +5840,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_2",
                   "option": "invest_2"
                 },
                 "requirements": {
@@ -5132,8 +5852,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 2,
-                  "miss_penalties": 12
+                  "debt": 20,
+                  "miss_penalties": 120
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5141,7 +5861,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -5150,7 +5870,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 3
                   }
                 },
                 "effects": {
@@ -5159,7 +5879,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 11,
+                  "yield": 106,
                   "insight": 3,
                   "aura": 0,
                   "debt": 0,
@@ -5171,7 +5891,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_3",
                   "option": "invest_3"
                 },
                 "requirements": {
@@ -5183,8 +5903,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 3,
-                  "miss_penalties": 14
+                  "debt": 30,
+                  "miss_penalties": 140
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"
@@ -5192,7 +5912,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -5201,7 +5921,7 @@
                   ],
                   "max_debt": 45,
                   "min_reputation": {
-                    "civic_ward": 2
+                    "civic_ward": 4
                   }
                 },
                 "effects": {
@@ -5210,7 +5930,7 @@
                   }
                 },
                 "delta": {
-                  "yield": 2,
+                  "yield": 23,
                   "insight": 4,
                   "aura": 0,
                   "debt": 0,
@@ -5222,7 +5942,7 @@
               {
                 "match": {
                   "command": "commit",
-                  "target": "hazard.cluster.002.5",
+                  "target": "hazard.cluster.002.5.invest_4",
                   "option": "invest_4"
                 },
                 "requirements": {
@@ -5234,8 +5954,8 @@
                   "yield": 0,
                   "insight": 0,
                   "aura": 0,
-                  "debt": 4,
-                  "miss_penalties": 16
+                  "debt": 40,
+                  "miss_penalties": 160
                 },
                 "label": "You tried to respond but lacked the standing to act.",
                 "classification": "bad"

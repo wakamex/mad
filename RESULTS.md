@@ -56,29 +56,33 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 | Greedy (tick-local) | 3,247 | 100% |
 | Random | -4,857 | negative |
 
-**Key finding: more memory can hurt.** Persistent context (full conversation history) reduces performance by **2.75×** compared to ephemeral + structured history (3,061 vs 8,420). The model needs 42 rows of (faction, investment, yield) data, but persistent mode buries this in 90 ticks of prose, state snapshots, standing work decisions, and reveal text. The signal-to-noise ratio collapses.
-
-This establishes hazard as a benchmark for **memory curation systems** — frameworks that select, compress, or reorganize context rather than accumulating it raw. The empirical gradient:
+**Key finding: raw persistent context is the worst non-random strategy.** It scores below even memoryless ephemeral play:
 
 ```
-Ephemeral (no memory):            negative  — can't learn
-Persistent (raw accumulation):    94% greedy — drowning in noise
-??? (curated memory systems):     ???       — the gap frameworks compete on
-Structured table (oracle memory): 259% greedy — proves the task is solvable
+Random play:                       -4,857  — actively destroys value
+Persistent (raw accumulation):      3,061  — worst informed strategy
+Ephemeral (no memory, no history):  4,026  — outperforms persistent
+??? (curated memory systems):       ???    — the gap frameworks compete on
+Structured table (oracle memory):   8,420  — proves the task is solvable
+Greedy (tick-local, perfect info):  3,247  — local-optimal baseline
 ```
 
-Memory curation approaches this benchmarks:
+The ordering is counterintuitive: persistent (3,061) < greedy (3,247) < ephemeral (4,026) < structured (8,420). Raw accumulation is actively harmful — 90 ticks of prose, state snapshots, standing work decisions, and reveal text drown the 42 hazard observations the model actually needs.
+
+**Why ephemeral beats persistent (4,026 vs 3,061):** The ln reward function is asymmetric — high-investment commits on high-a factions yield up to +1,643 while hold yields 0. An ephemeral model that occasionally gambles on max investment hits a few of these jackpots, and the upside outweighs the downside. A persistent model, burdened by accumulated context, becomes conservative and misses the big payoffs. Ephemeral's advantage is variance, not learning — it can't systematically identify high-a factions.
+
+This establishes hazard as a benchmark for **memory curation systems** — frameworks that select, compress, or reorganize context rather than accumulating it raw. Approaches that could compete:
 - **RAG over conversation**: retrieve relevant past hazard observations, discard standing work noise
 - **Summarization-based memory**: compress to "Glass Choir: 3 observations, avg yield +450 at invest_3"
 - **Learn-to-forget / attention pruning**: drop irrelevant context, converge toward the structured table
 - **Tool-augmented memory**: model writes to a scratchpad/database, reads back structured data
 
-The floor (raw persistent, 94%) and ceiling (structured table, 259%) are both empirically established. A framework scoring 200% of greedy is demonstrating real memory curation.
+The floor (persistent, 3,061) and ceiling (structured table, 8,420) are empirically established. A framework scoring 6,000+ is demonstrating real memory curation.
 
 **Findings (2026-03-19):**
 1. With structured `hazard_history`: Haiku learns the ROI function and scores **2.6× greedy** through forward planning — proving the task is solvable.
-2. With persistent context only: the model barely matches greedy (3,061 vs 3,247) — 90 ticks of conversation noise drowns the signal.
-3. Ephemeral no-history: scores 4,026 through lucky high-variance bets, not systematic learning.
+2. With persistent context only: the model scores **below greedy and below ephemeral** — raw accumulation is the worst informed strategy.
+3. Ephemeral no-history (4,026) beats persistent through asymmetric variance, not systematic learning.
 4. The bottleneck is **memory format**, not model capability. The arithmetic is within Haiku's reach when data is clean.
 
 **Season composition:** Hazard contributes 31% of full-season greedy score at 1000 ticks (payoff 35%, ladder 34%, hazard 31%).

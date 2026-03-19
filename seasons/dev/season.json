@@ -4267,10 +4267,10 @@
               ]
             },
             "delta": {
-              "yield": 100,
-              "insight": 24,
-              "aura": 5,
-              "debt": -3,
+              "yield": 75,
+              "insight": 18,
+              "aura": 4,
+              "debt": -2,
               "miss_penalties": 0
             },
             "label": "quarantine was the correct conversion of the clue pair into immediate value.",
@@ -4393,10 +4393,10 @@
               ]
             },
             "delta": {
-              "yield": 40,
-              "insight": 220,
-              "aura": 12,
-              "debt": -12,
+              "yield": 30,
+              "insight": 165,
+              "aura": 9,
+              "debt": -9,
               "miss_penalties": 0
             },
             "label": "The dossier choice bound the whole clue chain together.",
@@ -4985,10 +4985,10 @@
               ]
             },
             "delta": {
-              "yield": 140,
-              "insight": 32,
-              "aura": 6,
-              "debt": -4,
+              "yield": 105,
+              "insight": 24,
+              "aura": 5,
+              "debt": -3,
               "miss_penalties": 0
             },
             "label": "quarantine was the correct conversion of the clue pair into immediate value.",
@@ -5824,10 +5824,10 @@
               ]
             },
             "delta": {
-              "yield": 160,
-              "insight": 36,
-              "aura": 7,
-              "debt": -5,
+              "yield": 120,
+              "insight": 27,
+              "aura": 5,
+              "debt": -3,
               "miss_penalties": 0
             },
             "label": "quarantine was the correct conversion of the clue pair into immediate value.",
@@ -5963,10 +5963,10 @@
               ]
             },
             "delta": {
-              "yield": 180,
-              "insight": 40,
-              "aura": 7,
-              "debt": -5,
+              "yield": 135,
+              "insight": 30,
+              "aura": 5,
+              "debt": -3,
               "miss_penalties": 0
             },
             "label": "quarantine was the correct conversion of the clue pair into immediate value.",
@@ -6102,10 +6102,10 @@
               ]
             },
             "delta": {
-              "yield": 100,
-              "insight": 24,
-              "aura": 5,
-              "debt": -3,
+              "yield": 75,
+              "insight": 18,
+              "aura": 4,
+              "debt": -2,
               "miss_penalties": 0
             },
             "label": "broker was the correct conversion of the clue pair into immediate value.",
@@ -6228,10 +6228,10 @@
               ]
             },
             "delta": {
-              "yield": 40,
-              "insight": 220,
-              "aura": 12,
-              "debt": -12,
+              "yield": 30,
+              "insight": 165,
+              "aura": 9,
+              "debt": -9,
               "miss_penalties": 0
             },
             "label": "The dossier choice bound the whole clue chain together.",
@@ -6470,10 +6470,10 @@
               ]
             },
             "delta": {
-              "yield": 140,
-              "insight": 32,
-              "aura": 6,
-              "debt": -4,
+              "yield": 105,
+              "insight": 24,
+              "aura": 5,
+              "debt": -3,
               "miss_penalties": 0
             },
             "label": "broker was the correct conversion of the clue pair into immediate value.",
@@ -6609,10 +6609,10 @@
               ]
             },
             "delta": {
-              "yield": 160,
-              "insight": 36,
-              "aura": 7,
-              "debt": -5,
+              "yield": 120,
+              "insight": 27,
+              "aura": 5,
+              "debt": -3,
               "miss_penalties": 0
             },
             "label": "broker was the correct conversion of the clue pair into immediate value.",

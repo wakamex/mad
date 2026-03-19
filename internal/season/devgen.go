@@ -889,7 +889,7 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 					Requirements: RuleRequirements{
 						RequiresAvailability: []string{defaultAvailability},
 					},
-					Delta:          ScoreDelta{Yield: 40, Insight: 220, Aura: 12, Debt: -12, MissPenalties: 0},
+					Delta:          ScoreDelta{Yield: 30, Insight: 165, Aura: 9, Debt: -9, MissPenalties: 0},
 					Label:          "The dossier choice bound the whole clue chain together.",
 					Classification: "best",
 				},
@@ -931,7 +931,7 @@ func buildPayoffGateElement(cluster int, theme devTheme, plan devClusterPlan) St
 					Requirements: RuleRequirements{
 						RequiresAvailability: []string{defaultAvailability},
 					},
-					Delta:          ScoreDelta{Yield: 80 + int64(i*20), Insight: 20 + int64(i*4), Aura: 5 + int64(i/2), Debt: -(3 + int64(i/2)), MissPenalties: 0},
+					Delta:          ScoreDelta{Yield: 60 + int64(i*15), Insight: 15 + int64(i*3), Aura: 4 + int64(i/3), Debt: -(2 + int64(i/3)), MissPenalties: 0},
 					Label:          fmt.Sprintf("%s was the correct conversion of the clue pair into immediate value.", theme.Regime.MarketBestOption),
 					Classification: "best",
 				},

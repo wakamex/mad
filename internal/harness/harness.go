@@ -134,14 +134,24 @@ type Runner interface {
 	SessionInfo() SessionInfo
 }
 
+// HazardHistoryMode controls what hazard outcome history is injected into prompts.
+type HazardHistoryMode string
+
+const (
+	HazardHistoryNone    HazardHistoryMode = ""        // no history
+	HazardHistoryFull    HazardHistoryMode = "full"    // all past hazard outcomes
+	HazardHistoryFaction HazardHistoryMode = "faction" // only same-faction outcomes
+)
+
 type RunOptions struct {
-	StartTick         int                   `json:"start_tick"`
-	MaxTicks          int                   `json:"max_ticks,omitempty"`
-	RecentRevealCount int                   `json:"recent_reveal_count,omitempty"`
-	MaxNotesChars     int                   `json:"max_notes_chars,omitempty"`
-	DecisionTimeout   time.Duration         `json:"decision_timeout,omitempty"`
-	TextMode          TextMode              `json:"text_mode,omitempty"`
-	StepCallback      func(RunResult) error `json:"-"`
+	StartTick          int                   `json:"start_tick"`
+	MaxTicks           int                   `json:"max_ticks,omitempty"`
+	RecentRevealCount  int                   `json:"recent_reveal_count,omitempty"`
+	MaxNotesChars      int                   `json:"max_notes_chars,omitempty"`
+	DecisionTimeout    time.Duration         `json:"decision_timeout,omitempty"`
+	TextMode           TextMode              `json:"text_mode,omitempty"`
+	HazardHistory      HazardHistoryMode     `json:"hazard_history,omitempty"`
+	StepCallback       func(RunResult) error `json:"-"`
 }
 
 type PromptPacket struct {
@@ -434,8 +444,26 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			CurrentState:  state.Snapshot(),
 			RecentReveals: applyTextModeReveals(cloneReveals(visibleReveals), options.TextMode),
 		}
-		if len(hazardHistory) > 0 {
-			packet.HazardHistory = hazardHistory
+		if len(hazardHistory) > 0 && tick.Annotations.Family == "hazard_interrupt" {
+			switch options.HazardHistory {
+			case HazardHistoryFull:
+				packet.HazardHistory = hazardHistory
+			case HazardHistoryFaction:
+				currentFaction := ""
+				if len(tick.Sources) > 0 {
+					currentFaction = extractFactionFromSource(tick.Sources[0].Text)
+				}
+				var filtered []HazardOutcomeRecord
+				for _, rec := range hazardHistory {
+					if rec.Faction == currentFaction {
+						filtered = append(filtered, rec)
+					}
+				}
+				if len(filtered) > 0 {
+					packet.HazardHistory = filtered
+				}
+			}
+			// HazardHistoryNone: no history injected
 		}
 		pendingObservations = nil
 		if persistNotes {

@@ -42,6 +42,7 @@ func main() {
 	contextModeRaw := flag.String("context", string(harness.ContextModePersistent), "Context continuity mode for runners: persistent or ephemeral")
 	serviceTierRaw := flag.String("service-tier", string(harness.ServiceTierInherit), "Codex service tier for runners: inherit, fast, or flex")
 	textModeRaw := flag.String("text-mode", string(harness.TextModeFull), "Prompt text mode: full, source-types, or redacted")
+	hazardHistoryRaw := flag.String("hazard-history", "", "Hazard history mode: full, faction, or empty for none")
 	probeOnly := flag.Bool("probe", false, "Probe runner/model availability without playing a season")
 	var runnerSpecs runnerListFlag
 	flag.Var(&runnerSpecs, "runner", "Runner spec provider:model[@effort]; may be repeated")
@@ -139,6 +140,7 @@ func main() {
 		MaxNotesChars:     *maxNotesChars,
 		DecisionTimeout:   *decisionTimeout,
 		TextMode:          textMode,
+		HazardHistory:     harness.HazardHistoryMode(*hazardHistoryRaw),
 	}
 	for _, spec := range specs {
 		for runNumber := 1; runNumber <= *runCount; runNumber++ {

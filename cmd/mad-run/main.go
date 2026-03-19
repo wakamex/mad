@@ -35,6 +35,7 @@ type config struct {
 	name             string
 	runDir           string
 	outPath          string
+	hazardHistory    string
 	probeOnly        bool
 	detach           bool
 }
@@ -179,6 +180,7 @@ func parseConfig() (config, error) {
 	flag.StringVar(&cfg.name, "name", "", "Optional run name suffix")
 	flag.StringVar(&cfg.runDir, "run-dir", "", "Explicit run directory")
 	flag.StringVar(&cfg.outPath, "out", "", "Explicit harness report path")
+	flag.StringVar(&cfg.hazardHistory, "hazard-history", "", "Hazard history mode: full, faction, or empty for none")
 	flag.BoolVar(&cfg.probeOnly, "probe", false, "Probe model availability only")
 	flag.BoolVar(&cfg.detach, "detach", false, "Run in background and log to launcher.log")
 	flag.Parse()
@@ -332,6 +334,9 @@ func buildHarnessCommand(repoRoot string, cfg config, codexHome string) (*exec.C
 		"-service-tier", string(cfg.serviceTier),
 		"-text-mode", string(cfg.textMode),
 		"-runner", runner,
+	}
+	if cfg.hazardHistory != "" {
+		args = append(args, "-hazard-history", cfg.hazardHistory)
 	}
 	if cfg.probeOnly {
 		args = append(args, "-probe")

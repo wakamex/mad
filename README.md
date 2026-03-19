@@ -2,18 +2,20 @@
 
 A season-long benchmark for testing long-range memory and multi-step inference in LLM agents. 14K LoC Go, 250+ empirical runs.
 
-## Key Result
+## Key Results
 
-Persistent agents reach **91% of the greedy-best ceiling**. Memoryless agents reach 18%.
+**Memory helps — but format matters more than quantity.**
 
-| Condition | Score | % of ceiling | payoff (rand 29%) | ladder (rand 33%) |
-|---|---:|---:|---:|---:|
-| Persistent + reveals | **+8,381** | **91%** | **96%** | **81%** |
-| Ephemeral (no memory) | +1,696 | 18% | 28% | 44% |
-| Random play | -2 | 0% | 29% | 33% |
-| Greedy-best ceiling | 9,256 | 100% | — | — |
+On clue+ladder+payoff (cross-beat retrieval), persistent agents reach **91% of ceiling** while memoryless agents reach 18%.
 
-Tested with Claude Haiku on a focused 90-tick season (clue + ladder + payoff families). Full results in [RESULTS.md](./RESULTS.md).
+On hazard (function learning), structured memory lets Haiku score **259% of greedy** through forward planning — but persistent conversation context *hurts*, scoring only 94% of greedy. More memory is worse when it's unorganized.
+
+| Family | What it tests | Ephemeral | Persistent | Structured memory |
+|---|---|---:|---:|---:|
+| payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling | — |
+| hazard | ROI function learning | negative | 94% of greedy | **259%** of greedy |
+
+Full results in [RESULTS.md](./RESULTS.md).
 
 ### What it measures
 

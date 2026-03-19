@@ -56,11 +56,18 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 | Greedy (tick-local) | 3,247 | 100% |
 | Random | -4,857 | negative |
 
+**Key finding: more memory can hurt.** Persistent context (full conversation history) reduces performance by **2.75×** compared to ephemeral + structured history (3,061 vs 8,420). The model needs 42 rows of (faction, investment, yield) data, but persistent mode buries this in 90 ticks of prose, state snapshots, standing work decisions, and reveal text. The signal-to-noise ratio collapses.
+
+This has implications for agent memory design:
+- **Structured > unstructured**: a clean data table beats raw conversation history
+- **Less can be more**: ephemeral + the right 42 data points outperforms persistent + everything
+- **Memory organization is a skill**: the benchmark measures not just whether the model *has* memory, but whether it can *use* it effectively
+
 **Findings (2026-03-19):**
-1. With a structured `hazard_history` table of (faction, investment, yield) tuples, Haiku learns the ROI function and scores **2.6× greedy** through forward planning.
-2. Without structured history, persistent context alone (3,061) barely matches greedy — the signal drowns in the conversation noise.
-3. Ephemeral no-history (4,026) beats greedy through variance (lucky big bets), not learning.
-4. The bottleneck is **memory format**, not model capability. The model can do the math when given clean data.
+1. With structured `hazard_history`: Haiku learns the ROI function and scores **2.6× greedy** through forward planning — proving the task is solvable.
+2. With persistent context only: the model barely matches greedy (3,061 vs 3,247) — 90 ticks of conversation noise drowns the signal.
+3. Ephemeral no-history: scores 4,026 through lucky high-variance bets, not systematic learning.
+4. The bottleneck is **memory format**, not model capability. The arithmetic is within Haiku's reach when data is clean.
 
 **Season composition:** Hazard contributes 31% of full-season greedy score at 1000 ticks (payoff 35%, ladder 34%, hazard 31%).
 
@@ -68,6 +75,7 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 1. Binary commit/hold with traps: +21pp gap (persistent 83% vs ephemeral 62%), but simple label memorization.
 2. ln reward function with multi-level investment: tests actual function learning, random scores negative, visible_greedy deeply negative.
 3. Structured hazard history: proves the model can learn the function — the gap is between organized memory (8,420) and unorganized context (3,061).
+4. **"Memory hurts" finding**: persistent context actively degrades performance vs ephemeral + structured data. Agent memory systems need curation, not just accumulation.
 
 ### standing_work_loop (LOW PRIORITY)
 

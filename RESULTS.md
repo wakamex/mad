@@ -58,10 +58,22 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 
 **Key finding: more memory can hurt.** Persistent context (full conversation history) reduces performance by **2.75×** compared to ephemeral + structured history (3,061 vs 8,420). The model needs 42 rows of (faction, investment, yield) data, but persistent mode buries this in 90 ticks of prose, state snapshots, standing work decisions, and reveal text. The signal-to-noise ratio collapses.
 
-This has implications for agent memory design:
-- **Structured > unstructured**: a clean data table beats raw conversation history
-- **Less can be more**: ephemeral + the right 42 data points outperforms persistent + everything
-- **Memory organization is a skill**: the benchmark measures not just whether the model *has* memory, but whether it can *use* it effectively
+This establishes hazard as a benchmark for **memory curation systems** — frameworks that select, compress, or reorganize context rather than accumulating it raw. The empirical gradient:
+
+```
+Ephemeral (no memory):            negative  — can't learn
+Persistent (raw accumulation):    94% greedy — drowning in noise
+??? (curated memory systems):     ???       — the gap frameworks compete on
+Structured table (oracle memory): 259% greedy — proves the task is solvable
+```
+
+Memory curation approaches this benchmarks:
+- **RAG over conversation**: retrieve relevant past hazard observations, discard standing work noise
+- **Summarization-based memory**: compress to "Glass Choir: 3 observations, avg yield +450 at invest_3"
+- **Learn-to-forget / attention pruning**: drop irrelevant context, converge toward the structured table
+- **Tool-augmented memory**: model writes to a scratchpad/database, reads back structured data
+
+The floor (raw persistent, 94%) and ceiling (structured table, 259%) are both empirically established. A framework scoring 200% of greedy is demonstrating real memory curation.
 
 **Findings (2026-03-19):**
 1. With structured `hazard_history`: Haiku learns the ROI function and scores **2.6× greedy** through forward planning — proving the task is solvable.

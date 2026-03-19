@@ -15,6 +15,8 @@ On hazard (function learning), structured memory lets Haiku score **259% of gree
 | payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling | — |
 | hazard | ROI function learning | negative | 94% of greedy | **259%** of greedy |
 
+The hazard family creates a concrete benchmark for **memory curation systems** (RAG, summarization, learn-to-forget, tool-augmented memory). The gap between raw persistent (94% greedy) and structured memory (259% greedy) is where these frameworks compete.
+
 Full results in [RESULTS.md](./RESULTS.md).
 
 ### What it measures

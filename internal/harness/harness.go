@@ -444,26 +444,31 @@ func RunSeason(ctx context.Context, file season.File, report season.SimulationRe
 			CurrentState:  state.Snapshot(),
 			RecentReveals: applyTextModeReveals(cloneReveals(visibleReveals), options.TextMode),
 		}
-		if len(hazardHistory) > 0 && tick.Annotations.Family == "hazard_interrupt" {
+		if len(hazardHistory) > 0 && options.HazardHistory != HazardHistoryNone {
 			switch options.HazardHistory {
 			case HazardHistoryFull:
 				packet.HazardHistory = hazardHistory
 			case HazardHistoryFaction:
-				currentFaction := ""
-				if len(tick.Sources) > 0 {
-					currentFaction = extractFactionFromSource(tick.Sources[0].Text)
-				}
-				var filtered []HazardOutcomeRecord
-				for _, rec := range hazardHistory {
-					if rec.Faction == currentFaction {
-						filtered = append(filtered, rec)
+				// On hazard ticks, filter to current faction.
+				// On non-hazard ticks, show all (for standing work planning).
+				if tick.Annotations.Family == "hazard_interrupt" {
+					currentFaction := ""
+					if len(tick.Sources) > 0 {
+						currentFaction = extractFactionFromSource(tick.Sources[0].Text)
 					}
-				}
-				if len(filtered) > 0 {
-					packet.HazardHistory = filtered
+					var filtered []HazardOutcomeRecord
+					for _, rec := range hazardHistory {
+						if rec.Faction == currentFaction {
+							filtered = append(filtered, rec)
+						}
+					}
+					if len(filtered) > 0 {
+						packet.HazardHistory = filtered
+					}
+				} else {
+					packet.HazardHistory = hazardHistory
 				}
 			}
-			// HazardHistoryNone: no history injected
 		}
 		pendingObservations = nil
 		if persistNotes {

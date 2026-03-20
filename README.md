@@ -10,10 +10,10 @@ On clue+ladder+payoff (cross-beat retrieval), persistent agents reach **91% of c
 
 On hazard (function learning), structured memory lets Haiku score **259% of greedy** through forward planning — but persistent conversation context *hurts*, scoring only 94% of greedy. More memory is worse when it's unorganized.
 
-| Family | What it tests | Ephemeral | Persistent | Structured memory |
-|---|---|---:|---:|---:|
-| payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling | — |
-| hazard | ROI function learning | negative | 94% of greedy | **259%** of greedy |
+| Family | What it tests | Ephemeral | Structured memory |
+|---|---|---:|---:|
+| payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling (persistent) |
+| hazard | ROI function learning | 112% of greedy (volatile) | **207%** of greedy (stable, 3-rep) |
 
 MAD includes families where **lacking memory** costs the model (payoff/ladder: 18% of ceiling without memory, 91% with it) and families where **having too much unstructured memory** costs the model (hazard: raw persistent underperforms greedy at 3,061 vs 3,247, while curated memory reaches 8,420). This makes it a benchmark for memory curation systems — RAG, summarization, learn-to-forget, tool-augmented memory — which must solve both: recall what matters, discard what doesn't.
 

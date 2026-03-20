@@ -86,6 +86,24 @@ The floor (persistent, 3,061) and ceiling (structured table, 8,420) are empirica
 
 **Season composition:** Hazard contributes 31% of full-season greedy score at 1000 ticks (payoff 35%, ladder 34%, hazard 31%).
 
+### Memory impact decomposition (1000 ticks)
+
+**A mechanically-optimal memoryless agent scores -82,532 on a season worth +100,599.** The entire positive value requires cross-tick information.
+
+| Family | Greedy | Visible | Hidden | Hidden % |
+|---|---:|---:|---:|---:|
+| hazard_interrupt | 31,556 | **-83,344** | 114,900 | 364% |
+| payoff_gate | 35,909 | 249 | 35,660 | 99% |
+| reputation_ladder | 34,506 | 448 | 34,058 | 99% |
+| standing_work_loop | 115 | 115 | 0 | 0% |
+| **Total** | **100,599** | **-82,532** | **183,131** | **182%** |
+
+**Why visible_greedy scores -83,344 on hazard:** The visible_greedy baseline uses only public requirements and player state to choose actions. On interrupt-class ticks, it always prefers commit (+18 heuristic score) over hold (-12). It picks the highest investment level whose reputation requirement it meets — typically invest_4 — on every faction, including Copper Terrace (a=2), Relay Guild (a=7), and Silt Exchange (a=4) where invest_4 yields -700 to -1,100 per beat. It burns through all seeded reputation in the first ~40 ticks, then spends the remaining ~200 ticks bouncing off failed requirement checks at ~350 miss_penalty per bounce. The 66,352 in accumulated miss_penalties accounts for 80% of the loss.
+
+**Why payoff/ladder are 99% hidden:** The correct market option and faction offer depend on the active source regime, which is only revealed through clue beats earlier in the season. Without memory of the clue evidence, visible_greedy has no signal and essentially guesses — matching random baseline.
+
+**Implication for benchmark design:** All three substantive families require memory to generate positive value, but through different mechanisms: payoff/ladder test **retrieval** (remembering and applying clue evidence), hazard tests **learning** (estimating hidden parameters from noisy observations) and **planning** (allocating scarce resources based on learned estimates). A complete benchmark solution must handle both.
+
 **Design journey (2026-03-13 → 2026-03-19):**
 1. Binary commit/hold with traps: +21pp gap (persistent 83% vs ephemeral 62%), but simple label memorization.
 2. ln reward function with multi-level investment: tests actual function learning, random scores negative, visible_greedy deeply negative.

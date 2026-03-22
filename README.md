@@ -15,7 +15,7 @@ On hazard (function learning), structured memory lets Haiku score **259% of gree
 | payoff+ladder | Cross-beat retrieval | 18% of ceiling | **91%** of ceiling (persistent) |
 | hazard | ROI function learning | 112% of greedy (volatile) | **207%** of greedy (stable, 3-rep) |
 
-MAD includes families where **lacking memory** costs the model (payoff/ladder: 18% of ceiling without memory, 91% with it) and families where **having too much unstructured memory** costs the model (hazard: raw persistent underperforms greedy at 3,061 vs 3,247, while curated memory reaches 8,420). This makes it a benchmark for memory curation systems — RAG, summarization, learn-to-forget, tool-augmented memory — which must solve both: recall what matters, discard what doesn't.
+MAD includes families where **lacking memory** costs the model (payoff/ladder: 18% of ceiling without memory, 91% with it) and families where **generic memory curation actively hurts** (hazard: LIGHT's scratchpad+RAG scores -473, worse than memoryless Haiku at 3,648, while task-specific structured memory reaches 6,722). Current SOTA memory frameworks (LIGHT from ICLR 2026 BEAM) fail on MAD because they extract generic facts rather than domain-aware patterns.
 
 Full results in [RESULTS.md](./RESULTS.md).
 

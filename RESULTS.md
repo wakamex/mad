@@ -59,24 +59,23 @@ Multi-level investment hazard. Each tick offers 4 investment levels (spend 1-4 r
 
 ```
 Random play:                       -4,857  — actively destroys value
+LIGHT (scratchpad + RAG + WM):       -473  — generic curation HURTS
 Ephemeral (no memory, no history):  3,648  — volatile (range 2,195-4,688)
-??? (curated memory systems):       ???    — the gap frameworks compete on
 Structured table (oracle memory):   6,722  — stable (range 6,607-6,902)
 
 Reference: greedy (tick-local)      3,247  — local-optimal with perfect per-tick info
 ```
 
-Structured memory scores **207% of greedy** with low variance — the model consistently learns per-faction ROI. Without memory, the model scores 112% of greedy through volatile lucky bets (range spans 2× the mean). The gap of 3,074 points (84% improvement) is robust across 3 repetitions.
+**LIGHT framework (ICLR 2026 BEAM paper) scores -473 — worse than no memory at all.** We adapted LIGHT's three-component architecture (episodic retrieval + working memory + scratchpad) to MAD's hazard season. The scratchpad records raw facts ("Civic Ward invest_1 yield -313") without synthesizing per-faction ROI patterns. The retrieval brings back noisy records. Generic memory curation doesn't just fail to help — it actively hurts by adding cost (3× LLM calls per tick) and noise without the right abstraction.
+
+Structured memory scores **207% of greedy** with low variance — the model consistently learns per-faction ROI. Without memory, the model scores 112% of greedy through volatile lucky bets. The gap of 3,074 points (84% improvement) is robust across 3 repetitions.
 
 **Variance tells the story:** Ephemeral-no-history has a range of 2,493 (68% of mean) — pure gambling. Ephemeral+history has a range of 295 (4.4% of mean) — systematic learning. The variance reduction is as significant as the score improvement.
 
-This establishes hazard as a benchmark for **memory curation systems** — frameworks that select, compress, or reorganize context rather than accumulating it raw. Approaches that could compete:
-- **RAG over conversation**: retrieve relevant past hazard observations, discard standing work noise
-- **Summarization-based memory**: compress to "Glass Choir: 3 observations, avg yield +450 at invest_3"
+This establishes hazard as a benchmark for **memory curation systems** that goes beyond passive retrieval. LIGHT's scratchpad+RAG (the current SOTA approach on LongMemEval) fails because MAD requires *task-aware* memory organization — not generic fact extraction. Approaches that might succeed:
+- **Domain-aware summarization**: compress to "Glass Choir: 3 observations, avg yield +450 at invest_1" (not raw key:value extraction)
 - **Learn-to-forget / attention pruning**: drop irrelevant context, converge toward the structured table
-- **Tool-augmented memory**: model writes to a scratchpad/database, reads back structured data
-
-The floor (persistent, 3,061) and ceiling (structured table, 8,420) are empirically established. A framework scoring 6,000+ is demonstrating real memory curation.
+- **Tool-augmented memory**: model writes to a structured database (faction → ROI estimates), reads back computed summaries
 
 **Findings (2026-03-20, 3-rep validated):**
 1. With structured `hazard_history`: Haiku scores **2.07× greedy** (mean 6,722, stable) through forward planning — proving the task is solvable.

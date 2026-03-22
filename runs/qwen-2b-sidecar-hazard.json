@@ -1,0 +1,388 @@
+{
+  "model": "sidecar",
+  "model_path": "/home/mihai/.cache/huggingface/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc/",
+  "sidecar": "/code/rc/checkpoints/scaling/qwen3.5_2b_instruct/final/",
+  "score": 0,
+  "best_count": 15,
+  "total": 42,
+  "results": [
+    {
+      "tick": 1,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 6,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 7,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 9,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 12,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 13,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 14,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 19,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 20,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 25,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 30,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 31,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 33,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 34,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 35,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 36,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 39,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 41,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 44,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 47,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 50,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 51,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 52,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 53,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 54,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 55,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 56,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 58,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 59,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 60,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 63,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 64,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 65,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 66,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 67,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 68,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 75,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 78,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 80,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 82,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 83,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nScore: 0,"
+    },
+    {
+      "tick": 87,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nScore: 0,"
+    }
+  ]
+}

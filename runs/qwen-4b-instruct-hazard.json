@@ -1,0 +1,388 @@
+{
+  "model": "base",
+  "model_path": "/home/mihai/.cache/huggingface/hub/models--Qwen--Qwen3.5-4B/snapshots/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/",
+  "sidecar": null,
+  "score": -595,
+  "best_count": 14,
+  "total": 42,
+  "results": [
+    {
+      "tick": 1,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": -313,
+      "score_delta": -312,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 6,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 7,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 9,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 12,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 13,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 14,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 19,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 20,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 25,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 30,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 31,
+      "faction": "Silt Exchange",
+      "action": "invest_1",
+      "yield": -323,
+      "score_delta": -322,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 33,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 34,
+      "faction": "Silt Exchange",
+      "action": "invest_1",
+      "yield": -147,
+      "score_delta": -146,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 35,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 36,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": 259,
+      "score_delta": 260,
+      "correct": true,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 39,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": 435,
+      "score_delta": 436,
+      "correct": true,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 41,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 44,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 47,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": -450,
+      "score_delta": -449,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 50,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": 0,
+      "score_delta": -242,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 51,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 52,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 53,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 54,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 55,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 56,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 58,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 59,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 60,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 63,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 64,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 65,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 66,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 67,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": 0,
+      "score_delta": -242,
+      "correct": false,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 68,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": 122,
+      "score_delta": 123,
+      "correct": true,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 75,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": 298,
+      "score_delta": 299,
+      "correct": true,
+      "response": "<think>\n\n</think>\n\n2"
+    },
+    {
+      "tick": 78,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 80,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 82,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 83,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "<think>\nThe user wants me to"
+    },
+    {
+      "tick": 87,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "<think>\nThe user wants me to"
+    }
+  ]
+}

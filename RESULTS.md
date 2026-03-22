@@ -77,11 +77,28 @@ This establishes hazard as a benchmark for **memory curation systems** that goes
 - **Learn-to-forget / attention pruning**: drop irrelevant context, converge toward the structured table
 - **Tool-augmented memory**: model writes to a structured database (faction → ROI estimates), reads back computed summaries
 
-**Findings (2026-03-20, 3-rep validated):**
+**Findings (2026-03-22):**
 1. With structured `hazard_history`: Haiku scores **2.07× greedy** (mean 6,722, stable) through forward planning — proving the task is solvable.
 2. Without memory: the model scores **1.12× greedy** (mean 3,648, volatile) through lucky bets, not learning.
 3. The **84% improvement** (3,074 points) from structured memory is robust across 3 repetitions.
 4. The bottleneck is **memory format**, not model capability. The arithmetic is within Haiku's reach when data is clean.
+5. **LIGHT framework (ICLR 2026 BEAM) scores -473** — generic scratchpad+RAG+working memory actively hurts. The scratchpad records raw facts without synthesizing per-faction ROI patterns.
+6. **Small models can't solve MAD regardless of memory augmentation.** Qwen 0.8B/2B/4B instruct all score near zero or negative. Larger vanilla models invest more aggressively but on wrong factions (4B: -595). All sidecar-augmented models converge to "always hold" (score 0).
+
+### Model comparison on hazard (90-tick focused season)
+
+| System | Score | Notes |
+|---|---:|---|
+| Random | -4,857 | actively destroys value |
+| 4B instruct | -595 | invests aggressively on wrong factions |
+| LIGHT (scratchpad+RAG+WM) | -473 | generic curation hurts |
+| Qwen 0.8B base | -348 | can't parse instructions |
+| 2B instruct | -48 | |
+| All sidecars (0.8B/2B/4B) | 0 | LoRA converges to always-hold |
+| 0.8B instruct | +75 | |
+| Greedy (tick-local) | 3,247 | perfect per-tick info |
+| Ephemeral Haiku (3-rep mean) | 3,648 | variance gambling, no learning |
+| **Structured table + Haiku (3-rep mean)** | **6,722** | **task-specific curation works** |
 
 **Season composition:** Hazard contributes 31% of full-season greedy score at 1000 ticks (payoff 35%, ladder 34%, hazard 31%).
 

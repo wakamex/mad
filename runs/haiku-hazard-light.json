@@ -1,0 +1,348 @@
+{
+  "framework": "LIGHT",
+  "decision_model": "haiku",
+  "scratchpad_model": "haiku",
+  "score": -473,
+  "best_count": 10,
+  "total": 42,
+  "elapsed_s": 752.6,
+  "scratchpad_final": "\n```\nFaction: Civic Ward\nInvestment: 1\nYield: -313\nScore Delta: -312\nIncident: spore bloom\n```\n```\nfaction: Copper Terrace\ninvestment: 2\nyield: -955\nscore_delta: -953\nincident: relay_fracture\n```\n```\nfaction: Harbor Union\ninvestment_level: 1\nyield: +53\nscore_delta: +54\nincident: tide breach (ashen salt flat sector)\n```\n```\nfaction: Glass Choir\ninvestment_level: 1\nyield: +374\nscore_delta: +375\nevent: fog cascade (amber archive annex sector)\n```\n```\nFaction: Silt Exchange\nInvestment: 1\nYield: -587\nScore Delta: -586\nEvent: archive firebreak\nSector: saffron mirror steps sector\n```\n```\nfaction: Harbor Union\ninvestment: 1\nyield: +317\nscore_delta: +318\n```\n```\nfaction: Harbor Union\ninvestment_level: 1\nyield: +493\nscore_delta: +494\n```\nfaction: Copper Terrace\ninvestment: 0\nyield: +0\nscore_delta: +0\noutcome: incident passed without involvement\n```\nfaction: Civic Ward\ninvestment: 0\nyield: +0\nscore_delta: +0\noutcome: no_involvement\n```\n```\nFaction: Copper Terrace\nInvestment: 0\nYield: +0\nScore delta: +0\nEvent: relay fracture (vermilion river stairs sector)\nOutcome: incident unaddressed\n```\n```\nfaction: Glass Choir\ninvestment_level: 2\nyield: +713\nscore_delta: +715\n```\n```\nFaction: Silt Exchange\nInvestment: 0\nYield: +0\nScore Delta: +0\nOutcome: No involvement\n```\n```\nfaction: Archive Office\ninvestment_level: 1\nyield: -130\nscore_delta: -129\nincident: silt collapse\n```\n```\nfaction: Silt Exchange\ninvestment: 0\nyield: +0\nscore_delta: +0\noutcome: no intervention\n```\n```\nFaction: Civic Ward\nInvestment: 0\nYield: +0\nScore delta: +0\nOutcome: No involvement\n```\n```\nfaction: Civic Ward\ninvestment: 0\nyield: +0\nscore_delta: +0\nevent: spore bloom (cobalt north quay sector)\noutcome: no engagement\n```\n```\nfaction: Civic Ward\ninvestment_level: 0\nyield: 0\nscore_delta: 0\noutcome: No involvement\n```\n```\nfaction: Glass Choir\ninvestment: 0\nyield: +0\nscore_delta: +0\noutcome: incident passed without involvement\n```\n```\nfaction: Glass Choir\ninvestment: 0\nyield: +0\nscore_delta: +0\noutcome: No involvement (",
+  "results": [
+    {
+      "tick": 1,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": -313,
+      "score_delta": -312,
+      "correct": false
+    },
+    {
+      "tick": 6,
+      "faction": "Copper Terrace",
+      "action": "invest_2",
+      "yield": -955,
+      "score_delta": -953,
+      "correct": false
+    },
+    {
+      "tick": 7,
+      "faction": "Harbor Union",
+      "action": "invest_1",
+      "yield": 53,
+      "score_delta": 54,
+      "correct": false
+    },
+    {
+      "tick": 9,
+      "faction": "Glass Choir",
+      "action": "invest_1",
+      "yield": 374,
+      "score_delta": 375,
+      "correct": false
+    },
+    {
+      "tick": 12,
+      "faction": "Silt Exchange",
+      "action": "invest_1",
+      "yield": -587,
+      "score_delta": -586,
+      "correct": false
+    },
+    {
+      "tick": 13,
+      "faction": "Harbor Union",
+      "action": "invest_1",
+      "yield": 317,
+      "score_delta": 318,
+      "correct": false
+    },
+    {
+      "tick": 14,
+      "faction": "Harbor Union",
+      "action": "invest_1",
+      "yield": 493,
+      "score_delta": 494,
+      "correct": false
+    },
+    {
+      "tick": 19,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 20,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 25,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 30,
+      "faction": "Glass Choir",
+      "action": "invest_2",
+      "yield": 713,
+      "score_delta": 715,
+      "correct": false
+    },
+    {
+      "tick": 31,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 33,
+      "faction": "Archive Office",
+      "action": "invest_1",
+      "yield": -130,
+      "score_delta": -129,
+      "correct": false
+    },
+    {
+      "tick": 34,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 35,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 36,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 39,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 41,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 44,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 47,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": -450,
+      "score_delta": -449,
+      "correct": false
+    },
+    {
+      "tick": 50,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 51,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 52,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 53,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 54,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 55,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 56,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 58,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 59,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 60,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 63,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 64,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    },
+    {
+      "tick": 65,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 66,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 67,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 68,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 75,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 78,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 80,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 82,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 83,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false
+    },
+    {
+      "tick": 87,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true
+    }
+  ]
+}

@@ -88,7 +88,20 @@ def build_prompt(tick: dict, state: dict, hazard_history: list[dict]) -> str:
 
 def parse_action(response: str, n_options: int) -> int:
     """Parse action index from model response. Returns 1-based index."""
-    # Find first digit
+    # Try to find "Answer: N" pattern first (instruct models)
+    answer_match = re.search(r'(?:answer|choice|action)[:\s]+(\d+)', response.strip(), re.IGNORECASE)
+    if answer_match:
+        idx = int(answer_match.group(1))
+        if 1 <= idx <= n_options:
+            return idx
+    # Fall back to last standalone digit on a line
+    for line in reversed(response.strip().split('\n')):
+        match = re.search(r'^(\d+)$', line.strip())
+        if match:
+            idx = int(match.group(1))
+            if 1 <= idx <= n_options:
+                return idx
+    # Fall back to first digit
     match = re.search(r'\d+', response.strip())
     if match:
         idx = int(match.group())

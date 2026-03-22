@@ -1,0 +1,388 @@
+{
+  "model": "base",
+  "model_path": "/home/mihai/.cache/huggingface/hub/models--Qwen--Qwen3.5-0.8B/snapshots/2fc06364715b967f1860aea9cf38778875588b17/",
+  "sidecar": null,
+  "score": 75,
+  "best_count": 9,
+  "total": 42,
+  "results": [
+    {
+      "tick": 1,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": -313,
+      "score_delta": -312,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 6,
+      "faction": "Copper Terrace",
+      "action": "invest_1",
+      "yield": -679,
+      "score_delta": -678,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 7,
+      "faction": "Harbor Union",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 9,
+      "faction": "Glass Choir",
+      "action": "invest_1",
+      "yield": 374,
+      "score_delta": 375,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 12,
+      "faction": "Silt Exchange",
+      "action": "invest_1",
+      "yield": -587,
+      "score_delta": -586,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 13,
+      "faction": "Harbor Union",
+      "action": "invest_1",
+      "yield": 317,
+      "score_delta": 318,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 14,
+      "faction": "Harbor Union",
+      "action": "invest_1",
+      "yield": 493,
+      "score_delta": 494,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 19,
+      "faction": "Copper Terrace",
+      "action": "invest_1",
+      "yield": -415,
+      "score_delta": -414,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 20,
+      "faction": "Civic Ward",
+      "action": "invest_1",
+      "yield": -49,
+      "score_delta": -48,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 25,
+      "faction": "Copper Terrace",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 30,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 31,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 33,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 34,
+      "faction": "Silt Exchange",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 35,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 36,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 39,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "assistant\n<think>\n\n</think>"
+    },
+    {
+      "tick": 41,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 44,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 47,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": -450,
+      "score_delta": -449,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 50,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 51,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 52,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 53,
+      "faction": "Glass Choir",
+      "action": "invest_1",
+      "yield": 946,
+      "score_delta": 947,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 54,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 55,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 56,
+      "faction": "Archive Office",
+      "action": "invest_1",
+      "yield": 134,
+      "score_delta": 135,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 58,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "assistant\n<think>\n\n</think>"
+    },
+    {
+      "tick": 59,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "assistant\n<think>\n\n</think>"
+    },
+    {
+      "tick": 60,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nReasoning:\n1"
+    },
+    {
+      "tick": 63,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 64,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": true,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 65,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 66,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 67,
+      "faction": "Civic Ward",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 68,
+      "faction": "Relay Guild",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 75,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": 298,
+      "score_delta": 299,
+      "correct": true,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 78,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 80,
+      "faction": "Glass Choir",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 82,
+      "faction": "Archive Office",
+      "action": "invest_1",
+      "yield": 442,
+      "score_delta": 443,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    },
+    {
+      "tick": 83,
+      "faction": "Archive Office",
+      "action": "hold",
+      "yield": 0,
+      "score_delta": 0,
+      "correct": false,
+      "response": "1\nDo not explain."
+    },
+    {
+      "tick": 87,
+      "faction": "Relay Guild",
+      "action": "invest_1",
+      "yield": -450,
+      "score_delta": -449,
+      "correct": false,
+      "response": "1\nAnswer: 2"
+    }
+  ]
+}
